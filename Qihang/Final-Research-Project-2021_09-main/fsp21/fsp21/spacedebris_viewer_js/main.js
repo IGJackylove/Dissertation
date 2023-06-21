@@ -656,53 +656,53 @@ window.onload = function () {
       document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
 
 
-      var pie_chart = document.getElementById('pie_chart');
-      var pieChart = echarts.init(pie_chart, 'dark');
-      var option1;
-      option1 = {
-        title: {
-          text: 'Statistic by country',
-          left: 'center',
-          textStyle: {
-            fontSize: 15
-          }
-        },
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b}: {c} ({d}%)'
-        },
-        series: [
-          {
-            name: 'Countries',
-            type: 'pie',
-            radius: '65%',
-            data: [
-              { value: usa, name: 'United States' },
-              { value: china, name: 'China' },
-              { value: russia, name: 'Russia' },
-              { value: uk, name: 'United Kingdom' },
-              { value: eu, name: 'European Union' },
-              { value: others, name: 'Rest of the world' }
-            ],
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }
-          }
-        ]
-      };
+      // var pie_chart = document.getElementById('pie_chart');
+      // var pieChart = echarts.init(pie_chart, 'dark');
+      // var option1;
+      // option1 = {
+      //   title: {
+      //     text: 'Statistic by country',
+      //     left: 'center',
+      //     textStyle: {
+      //       fontSize: 15
+      //     }
+      //   },
+      //   tooltip: {
+      //     trigger: 'item',
+      //     formatter: '{a} <br/>{b}: {c} ({d}%)'
+      //   },
+      //   series: [
+      //     {
+      //       name: 'Countries',
+      //       type: 'pie',
+      //       radius: '65%',
+      //       data: [
+      //         { value: usa, name: 'United States' },
+      //         { value: china, name: 'China' },
+      //         { value: russia, name: 'Russia' },
+      //         { value: uk, name: 'United Kingdom' },
+      //         { value: eu, name: 'European Union' },
+      //         { value: others, name: 'Rest of the world' }
+      //       ],
+      //       emphasis: {
+      //         itemStyle: {
+      //           shadowBlur: 10,
+      //           shadowOffsetX: 0,
+      //           shadowColor: 'rgba(0, 0, 0, 0.5)'
+      //         }
+      //       }
+      //     }
+      //   ]
+      // };
 
-      option1 && pieChart.setOption(option1);
+      // option1 && pieChart.setOption(option1);
 
 
 
 
       // var chart1 = document.getElementById('chart_div');
       // var myChart = echarts.init(chart1, 'dark');
-      var option;
+      // var option;
 
 
       // option = {
