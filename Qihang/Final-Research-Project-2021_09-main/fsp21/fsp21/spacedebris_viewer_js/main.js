@@ -12,9 +12,10 @@
 // S. Bhattarai's Cesium ion access token
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjMzVhMjQ1MS1iZjIxLTQxNTctODA2Yi1mOTJmNDkwYzU2MWUiLCJpZCI6OTczMiwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NDgxNDUzN30.5gySU1UpdweOzztxyf6KbIqYc-hR_yfgo5aEGLgGPDc';
 
+// 创建一个Map来存储额外的数据
+let pointDataMap = new Map();
 var viewer_main, radar_viewer;
 var start_jd;
-
 
 var clockViewModel; /// the clockmodel for synchronisation of two views
 var data_load = false;
@@ -465,10 +466,7 @@ function set_value() {
 
 
 window.onload = function () {
-
   satcat = new Catalogue();
-
-
 
   clockViewModel = new Cesium.ClockViewModel();
 
@@ -557,15 +555,7 @@ window.onload = function () {
         var cross_section = satcat.getDebriCross_Section(debrisID);
         var country = satcat.getDebriCountry(debrisID);
         let sat_infor = satcat.getDebriInfo(debrisID);
-
-        // 创建一个Map来存储额外的数据
-        let pointDataMap = new Map();
-        pointDataMap.set(debris_collection.id, sat_infor);
-        // 然后，当你需要访问这些额外数据时，你可以通过id来获取：
-        let pointData = pointDataMap.get(satcat.getDebriName[debrisID]);
-        console.log(pointData.RSO_name);
        
-
         if (country == 1) { usa = usa + 1 }
         if (country == 2) { china = china + 1 }
         if (country == 3) { russia = russia + 1 }
@@ -598,13 +588,23 @@ window.onload = function () {
         
         debris_collection.add({
           name: 'point',
-          id: satcat.getDebriName[debrisID],
+          id: {
+            name: satcat.getDebriName[debrisID],
+            type: sat_category,
+            country: country
+          },
           position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
           pixelSize: 3,
           color: colour
           // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
         });
-        // console.log(debris_collection)
+
+        
+        // pointDataMap.set(debris_collection.id, sat_infor);
+        // // 然后，当你需要访问这些额外数据时，你可以通过id来获取：
+        // let pointData = pointDataMap.get(satcat.getDebriName[debrisID]);
+        // console.log(pointData);
+        // // console.log(debris_collection)
 
         //radar cross section identifier
         if (cross_section > 0) {
@@ -700,50 +700,50 @@ window.onload = function () {
 
 
 
-      var chart1 = document.getElementById('chart_div');
-      var myChart = echarts.init(chart1, 'dark');
+      // var chart1 = document.getElementById('chart_div');
+      // var myChart = echarts.init(chart1, 'dark');
       var option;
 
 
-      option = {
-        color: ['#008cff'],
-        textStyle: [{
-          color: "#f0f0f0",
-          fontFamily: "Microsoft YaHei"
+      // option = {
+      //   color: ['#008cff'],
+      //   textStyle: [{
+      //     color: "#f0f0f0",
+      //     fontFamily: "Microsoft YaHei"
 
-        }],
-        grid: {
-          left: '5%',
-          bottom: '5%',
-          containLabel: true
-        },
-        title: {
-          left: 'center',
-          text: ' Statistics of satellites by category',
-          textStyle: {
-            fontSize: 15
-          }
-        },
-        tooltip: {},
-        legend: {
-          data: ['number']
-        },
-        xAxis: {
-          data: ["LEO", "MEO", "GEO", "Unknown"]
-        },
-        yAxis: {},
-        series: [{
-          name: 'satellite number',
-          type: 'bar',
-          barWidth: '55%',
-          data: [leo_num, meo_num, geo_num, unknowncat_num]
-        }]
-      };
-      option && myChart.setOption(option);
+      //   }],
+      //   grid: {
+      //     left: '5%',
+      //     bottom: '5%',
+      //     containLabel: true
+      //   },
+      //   title: {
+      //     left: 'center',
+      //     text: ' Statistics of satellites by category',
+      //     textStyle: {
+      //       fontSize: 15
+      //     }
+      //   },
+      //   tooltip: {},
+      //   legend: {
+      //     data: ['number']
+      //   },
+      //   xAxis: {
+      //     data: ["LEO", "MEO", "GEO", "Unknown"]
+      //   },
+      //   yAxis: {},
+      //   series: [{
+      //     name: 'satellite number',
+      //     type: 'bar',
+      //     barWidth: '55%',
+      //     data: [leo_num, meo_num, geo_num, unknowncat_num]
+      //   }]
+      // };
+      // option && myChart.setOption(option);
 
 
       data_load = true;
-      // clearInterval(timename); /// clear itself
+      // // clearInterval(timename); /// clear itself
     }
   }, 1000); /// allow sometime to load the Earth 
 
@@ -752,6 +752,29 @@ window.onload = function () {
   //这里调用update_debris_position方法
   viewer_main.scene.preRender.addEventListener(update_debris_position);
   ///viewer_main.scene.preRender.raiseEvent(debris_collection, viewer_main,mycatlog);
+
+
+
+  // var handler = new Cesium.ScreenSpaceEventHandler(viewer_main.scene.canvas);
+  // handler.setInputAction(function(movement) {
+  //   var pickedObject = viewer_main.scene.pick(movement.endPosition);
+  //   if (Cesium.defined(pickedObject) && (pickedObject.collection === pointPrimitives)) {
+  //       pickedObject.primitive.color = Cesium.Color.YELLOW;
+  //   }
+  // }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+  // // 添加点击事件监听器
+  // viewer_main.screenSpaceEventHandler.setInputAction(function (event) {
+  // // 获取被点击的对象
+  // var pickedObject = viewer_main.scene.pick(event.position);
+  // console.log(pickedObject)
+  // // 使用id从Map中获取信息
+  // let pointData = pointDataMap.get(pickedObject.id);
+    
+  //   // 显示信息，例如使用一个弹出窗口或控制台日志
+  //   console.log(pointData);
+  // }, Cesium.ScreenSpaceEventType.LEFT_CLICK); // 这里假设你想响应左键点击
+
+
 
 
   //********给雷达viewer添加点 ********
