@@ -589,7 +589,7 @@ window.onload = function () {
         debris_collection.add({
           name: 'point',
           id: {
-            name: satcat.getDebriName[debrisID],
+            name: satcat.getDebriName(debrisID),
             type: sat_category,
             country: country
           },
@@ -599,12 +599,6 @@ window.onload = function () {
           // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
         });
 
-        
-        // pointDataMap.set(debris_collection.id, sat_infor);
-        // // 然后，当你需要访问这些额外数据时，你可以通过id来获取：
-        // let pointData = pointDataMap.get(satcat.getDebriName[debrisID]);
-        // console.log(pointData);
-        // // console.log(debris_collection)
 
         //radar cross section identifier
         if (cross_section > 0) {
@@ -645,7 +639,33 @@ window.onload = function () {
         }
 
       }
+      
+      // Inforbox
+      var infoBoxContainer = document.createElement('div');
+      infoBoxContainer.className = 'cesium-viewer-infoBoxContainer';
+      viewer_main.container.appendChild(infoBoxContainer);
+      var infoBox = new Cesium.InfoBox(infoBoxContainer);
+      var infoBoxViewModel = infoBox.viewModel;
 
+      //Click Event
+      var handler = new Cesium.ScreenSpaceEventHandler(viewer_main.scene.canvas);
+      handler.setInputAction(function(click) {
+      var pick = viewer_main.scene.pick(click.position);
+      console.log(pick)
+      var showSelection = false;
+      var titleText = '';
+      var description = '';
+      if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
+        showSelection = true;
+        titleText = Cesium.defined(pick.id.name) ? pick.id.name : '';
+        description = Cesium.defined(pick.id.description) ? pick.id.description : '';
+      }
+      infoBoxViewModel.showInfo = showSelection;
+      infoBoxViewModel.titleText = titleText;
+      infoBoxViewModel.description = description;
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+      
       console.log(rc_1);
       console.log(rc_2);
       console.log(rc_3);
@@ -752,28 +772,6 @@ window.onload = function () {
   //这里调用update_debris_position方法
   viewer_main.scene.preRender.addEventListener(update_debris_position);
   ///viewer_main.scene.preRender.raiseEvent(debris_collection, viewer_main,mycatlog);
-
-
-
-  // var handler = new Cesium.ScreenSpaceEventHandler(viewer_main.scene.canvas);
-  // handler.setInputAction(function(movement) {
-  //   var pickedObject = viewer_main.scene.pick(movement.endPosition);
-  //   if (Cesium.defined(pickedObject) && (pickedObject.collection === pointPrimitives)) {
-  //       pickedObject.primitive.color = Cesium.Color.YELLOW;
-  //   }
-  // }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-  // // 添加点击事件监听器
-  // viewer_main.screenSpaceEventHandler.setInputAction(function (event) {
-  // // 获取被点击的对象
-  // var pickedObject = viewer_main.scene.pick(event.position);
-  // console.log(pickedObject)
-  // // 使用id从Map中获取信息
-  // let pointData = pointDataMap.get(pickedObject.id);
-    
-  //   // 显示信息，例如使用一个弹出窗口或控制台日志
-  //   console.log(pointData);
-  // }, Cesium.ScreenSpaceEventType.LEFT_CLICK); // 这里假设你想响应左键点击
-
 
 
 
