@@ -39,7 +39,7 @@
 <body>
   <div class="main_viewer" id="main_viewer",width=50px,length=10></div>
   
-  <div class="radar_viewer" id="radar_viewer" ></div>
+  <!-- <div class="radar_viewer" id="radar_viewer" ></div>
 		<style>
 		.radar_viewer{
 			position:absolute;
@@ -53,14 +53,14 @@
       border: 1px solid;
       color:#f0f0f0;
 		}
-    </style>
-  <div class="panel" id="user_input">
+    </style> -->
+  <!-- <div class="panel" id="user_input">
     <label id = "label1" for="user_latitude">Telescope Latitude</label><input type="text" size="30" id="user_latitude" value= "51"/>
     <label id = "label2" for="user_longitude">Telescope Longitude</label><input type="text" size="30" id="user_longitude" value= "0"/>
     <label style="color: rgb(255, 255, 255); font-style: italic; font-size: 11pt;">Note: The default telescope position is set as London</label>
     <button id= "button1" onclick="set_value()">click to set</button>
-  </div>
-  <style>
+  </div> -->
+  <!-- <style>
     @import url(widgets/widgets.css);
     #user_latitude {
       background-image: url("images/searchicon.png");
@@ -106,7 +106,7 @@
       color:#ffffff;
       font-size: 12.5pt
     }
-    </style>
+    </style> -->
 
   
   <div class="panel" id="legend1">
@@ -178,8 +178,8 @@
 
   <style>
     #catalogue_alert{
-      padding: 0 7px;
-			position:absolute;
+      /* padding: 0 7px;
+			position:fixed;
 			width:225px;
 			height:20px;
 			z-index:999;
@@ -188,7 +188,18 @@
       border: 2px solid;
       color:#f0f0f0e7;
 			background-color:#000000;
-			opacity:0.9;
+			opacity:0.9; */
+      padding: 0 7px;
+      position: fixed;  /* 使用 fixed 使元素相对于浏览器窗口定位 */
+      width: 225px;
+      height: 20px;
+      z-index: 999;
+      bottom: 40%;  /* 放在底部，但从底部留出30px的空间 */
+      left: 5px;  /* 距离左边5px */
+      border: 2px solid;
+      color: #f0f0f0e7;
+      background-color: #000000;
+      opacity: 0.9;
     }
 
     #label3{
@@ -202,9 +213,11 @@
   </div>
 
   <style>
-     #datgui{
-      position: absolute; top: 30px; right: 145px;
-    }
+     #datgui {
+    position: fixed;  /* 使用 fixed 使元素相对于浏览器窗口定位 */
+    bottom: 37%;  /* 放在底部，但从底部留出5px的空间 */
+    left: 5px;  /* 距离左边5px */
+  }
   </style>
 
 

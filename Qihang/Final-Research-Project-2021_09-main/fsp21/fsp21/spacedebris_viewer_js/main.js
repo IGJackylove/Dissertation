@@ -169,6 +169,7 @@ function xyz2enu_matrix(lat, lon) {
   return E;
 }
 /** simulate the radar screen*/
+/*
 function radar_screen(radar_position_ecef) {
 
   // var blh = ecef2blh(radar_position_ecef.x,radar_position_ecef.y,radar_position_ecef.z );
@@ -227,7 +228,7 @@ function radar_screen(radar_position_ecef) {
   // }));
 
 }
-
+*/
 
 //function update_debris_position(debris_set, viewer,mycatlog)
 function update_debris_position() {
@@ -259,7 +260,7 @@ function update_debris_position() {
   // {
   //   console.log("point number in debris_set._pointPrimitives is loaded!");
   // }
-
+  
   var pos_radar_view = new Cesium.Cartesian3();
 
   for (var i = 0; i < length; ++i) {
@@ -282,7 +283,7 @@ function update_debris_position() {
 
       ///更新radar_viewer中的点的位置
       //update the radar_view debri_collection在下边的windowonload function中定义了
-      debri_collection_radar._pointPrimitives[i].position = pos_radar_view; //pos_radar_view与position_ecef一致
+      //debri_collection_radar._pointPrimitives[i].position = pos_radar_view; //pos_radar_view与position_ecef一致
 
     }
   }
@@ -329,7 +330,7 @@ function GUIset() {
       satcat.clear_catalog();
       data_load = false;
       debris_collection.removeAll();
-      debri_collection_radar.removeAll();
+      //debri_collection_radar.removeAll();
 
       var satcat_logfile = "";
       var type = "";
@@ -413,53 +414,53 @@ function GUIset() {
 }
 
 
-function set_value() {
-  var radar_position_ecef = new Cesium.Cartesian3(0, 0, 0);
-  //******问题：如何实现用户自定义input的值，window.onload先后顺序问题 */
-  var longitude = document.getElementById("user_longitude").value;
-  var latitude = document.getElementById("user_latitude").value;
-  var height = 10.0;
+// function set_value() {
+//   var radar_position_ecef = new Cesium.Cartesian3(0, 0, 0);
+//   //******问题：如何实现用户自定义input的值，window.onload先后顺序问题 */
+//   var longitude = document.getElementById("user_longitude").value;
+//   var latitude = document.getElementById("user_latitude").value;
+//   var height = 10.0;
 
 
-  radar_position_ecef = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+//   radar_position_ecef = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
 
-  var point = viewer_main.entities.getById("London");
-  viewer_main.entities.remove(point);
-  // // /// show the position of the telescope
-  var redpoint = viewer_main.entities.add({
-    id: "London",
-    name: 'Telescope Point',
-    position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
-    point: { pixelSize: 15, color: Cesium.Color.DEEPPINK }
-  });
+//   var point = viewer_main.entities.getById("London");
+//   viewer_main.entities.remove(point);
+//   // // /// show the position of the telescope
+//   var redpoint = viewer_main.entities.add({
+//     id: "London",
+//     name: 'Telescope Point',
+//     position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
+//     point: { pixelSize: 15, color: Cesium.Color.DEEPPINK }
+//   });
 
 
-  /* var wyoming = viewer_main.entities.add({
-      polygon : {
-        hierarchy : Cesium.Cartesian3.fromDegreesArray([
-                                  -109.080842,45.002073,
-                                  -105.91517,45.002073,
-                                  -104.058488,44.996596,
-                                  -104.053011,43.002989,
-                                  -104.053011,41.003906,
-                                  -105.728954,40.998429,
-                                  -107.919731,41.003906,
-                                  -109.04798,40.998429,
-                                  -111.047063,40.998429,
-                                  -111.047063,42.000709,
-                                  -111.047063,44.476286,
-                                  -111.05254,45.002073]),
-        height : 0,
-        material : Cesium.Color.RED.withAlpha(0.5),
-        outline : true,
-        outlineColor : Cesium.Color.BLACK
-      }
-    });
-   */
+//   /* var wyoming = viewer_main.entities.add({
+//       polygon : {
+//         hierarchy : Cesium.Cartesian3.fromDegreesArray([
+//                                   -109.080842,45.002073,
+//                                   -105.91517,45.002073,
+//                                   -104.058488,44.996596,
+//                                   -104.053011,43.002989,
+//                                   -104.053011,41.003906,
+//                                   -105.728954,40.998429,
+//                                   -107.919731,41.003906,
+//                                   -109.04798,40.998429,
+//                                   -111.047063,40.998429,
+//                                   -111.047063,42.000709,
+//                                   -111.047063,44.476286,
+//                                   -111.05254,45.002073]),
+//         height : 0,
+//         material : Cesium.Color.RED.withAlpha(0.5),
+//         outline : true,
+//         outlineColor : Cesium.Color.BLACK
+//       }
+//     });
+//    */
 
-  radar_screen(radar_position_ecef);
+//   radar_screen(radar_position_ecef);
 
-}
+// }
 
 
 
@@ -511,9 +512,9 @@ window.onload = function () {
 
   /// debris_collection to store all the debris points
   debris_collection = new Cesium.PointPrimitiveCollection();
-  debri_collection_radar = new Cesium.PointPrimitiveCollection();
+  //debri_collection_radar = new Cesium.PointPrimitiveCollection();
   //By seting the blendOption to OPAQUE can improve the performance twice
-  debri_collection_radar.blendOption = Cesium.BlendOption.OPAQUE;
+  //debri_collection_radar.blendOption = Cesium.BlendOption.OPAQUE;
 
   /// add debris_collection to the viewer_main
   /// should organize debris in different orbtis to different collections
@@ -601,42 +602,42 @@ window.onload = function () {
 
 
         //radar cross section identifier
-        if (cross_section > 0) {
-          /// for the radar_view
-          if (cross_section == 1) {
-            debri_collection_radar.add({
-              id: satcat.getDebriName[debrisID],
-              position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-              pixelSize: 3,
-              color: Cesium.Color.DEEPSKYBLUE
-              // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-            });
-            rc_1 = rc_1 + 1;
-          }
+        // if (cross_section > 0) {
+        //   /// for the radar_view
+        //   if (cross_section == 1) {
+        //     debri_collection_radar.add({
+        //       id: satcat.getDebriName[debrisID],
+        //       position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+        //       pixelSize: 3,
+        //       color: Cesium.Color.DEEPSKYBLUE
+        //       // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
+        //     });
+        //     rc_1 = rc_1 + 1;
+        //   }
 
-          if (cross_section == 2) {
-            debri_collection_radar.add({
-              id: satcat.getDebriName[debrisID],
-              position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-              pixelSize: 5,
-              color: Cesium.Color.GOLDENROD
-              // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-            });
-            rc_2 = rc_2 + 1;
-          }
+        //   if (cross_section == 2) {
+        //     debri_collection_radar.add({
+        //       id: satcat.getDebriName[debrisID],
+        //       position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+        //       pixelSize: 5,
+        //       color: Cesium.Color.GOLDENROD
+        //       // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
+        //     });
+        //     rc_2 = rc_2 + 1;
+        //   }
 
-          if (cross_section == 3) {
-            debri_collection_radar.add({
-              id: satcat.getDebriName[debrisID],
-              position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-              pixelSize: 7,
-              color: Cesium.Color.HOTPINK
-              // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-            });
-            rc_3 = rc_3 + 1;
-          }
+        //   if (cross_section == 3) {
+        //     debri_collection_radar.add({
+        //       id: satcat.getDebriName[debrisID],
+        //       position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+        //       pixelSize: 7,
+        //       color: Cesium.Color.HOTPINK
+        //       // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
+        //     });
+        //     rc_3 = rc_3 + 1;
+        //   }
 
-        }
+        // }
 
       }
       
@@ -774,7 +775,7 @@ window.onload = function () {
   ///viewer_main.scene.preRender.raiseEvent(debris_collection, viewer_main,mycatlog);
 
 
-
+/*
   //********给雷达viewer添加点 ********
   radar_viewer = new Cesium.Viewer('radar_viewer', options3D);
   // /// view in ECEF, no need to update icrf
@@ -792,7 +793,7 @@ window.onload = function () {
   radar_viewer.scene.screenSpaceCameraController.enableLook = false;
 
   radar_viewer.scene.frameState.creditDisplay.removeDefaultCredit();
-
+*/
 
   var radar_position_ecef = new Cesium.Cartesian3(0, 0, 0);
 
@@ -807,7 +808,7 @@ window.onload = function () {
   });
 
 
-  radar_screen(radar_position_ecef);
+  //radar_screen(radar_position_ecef);
 
 
 
