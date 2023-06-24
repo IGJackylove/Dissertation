@@ -2,6 +2,8 @@
 // email: hpulizhen@163.com
 // enhanced author: Luyang Han
 // email: hanluhou98@gmail.com
+// Further enhanced auther: Qihang Chen
+// email: 1806495393@qq.com
 
 //the class to manage the Catalogue data
 
@@ -87,28 +89,28 @@ class Catalogue
 	//ref: http://www.celestrak.com/satcat/status.php
 	getDebriOperation_status(isat)
 	{
-		var s = -1;
+		var s = "Non-operational";
 		if(isat < this.debris_kep.length)
 		{
 			var aa = this.debris_kep[isat]["payload_operational_status"];
 			
-			if(aa == '+    ') {s = 1;} /// operational 
-			else if(aa == '-    ') 	{s = -1;} /// non-operational
-			else if(aa == 'P    ') 	{s = 0.5;} /// partially operational 
-			else if(aa == 'B    ') 	{s = 0.2;} /// backup/standby
-			else if(aa == 'S    ') 	{s = 0.8;} /// spare
-			else if(aa == 'X    ') 	{s = 0.3;} /// extended mission
-			else if(aa == 'D    ') 	{s = -0.2;} /// Decayed
-			else if(aa == '?    ')  {s = 0;} /// unknown	
+			if(aa == '+    ') {s = "Operational";} /// operational 
+			else if(aa == '-    ') 	{s = "Non-operational";} /// non-operational
+			else if(aa == 'P    ') 	{s = "Partially operational";} /// partially operational 
+			else if(aa == 'B    ') 	{s = "Backup/Standby";} /// backup/standby
+			else if(aa == 'S    ') 	{s = "Spare";} /// spare
+			else if(aa == 'X    ') 	{s = "Extened mission";} /// extended mission
+			else if(aa == 'D    ') 	{s = "Decayed";} /// Decayed
+			else if(aa == '?    ')  {s = "Unknown";} /// unknown	
 			else  /// not set
 			{
-				s = -1;
+				s = "Non-operational";
 			}
 		}
 		else if(isat >= this.debris_kep.length 
 			&& isat < this.getNumberTotal() )
 		{
-			s = 0;
+			s = "Unknown";
 			// return this.debris_tle[isat-this.debris_kep.length]["name"];
 			// tle  does not include operational status
 		}
@@ -119,7 +121,7 @@ class Catalogue
 
 	getDebriCategory(isat)
 	{
-		var cat_num = -1;
+		var cat = "Unknown";
 		if (isat < this.debris_kep.length)
 		{
 			var cat_00 = this.debris_kep[isat]["apogee_hgt"].trim()
@@ -127,46 +129,169 @@ class Catalogue
 			var cat_0 = Number(cat_00)
 			var cat_1 = Number(cat_11)
 
-			if ( cat_0 <= 2000 && cat_1 <= 2000 ) { cat_num = 1} //LEO
-			else if ( (cat_0 > 2000 && cat_0 < 35786) && (cat_1 > 2000 && cat_1 < 35786) ) {cat_num = 2} //MEO
-			else if ( cat_0 == 35786 || cat_1 == 35786 ) { cat_num = 3 } //GEO
-			else { cat_num = -1 }
+			if ( cat_0 <= 2000 && cat_1 <= 2000 ) { cat = "Low Earth Orbit"} //LEO
+			else if ( (cat_0 > 2000 && cat_0 < 35786) && (cat_1 > 2000 && cat_1 < 35786) ) {cat = "Middle Earth Orbit"} //MEO
+			else if ( cat_0 == 35786 || cat_1 == 35786 ) { cat = "Geosynchronous Equatorial Orbit" } //GEO
+			else { cat = "Unknown" }
 
 		}
 
 		else if(isat >= this.debris_kep.length 
 			&& isat < this.getNumberTotal() )
 		{
-			cat_num = -1;
+			cat = "Unknown";
 			// return this.debris_tle[isat-this.debris_kep.length]["name"];
 			// tle  does not include LEO MEO GEO Information
 		}
 
-		return cat_num;
+		return cat;
 	}
 
 	getDebriCountry(isat)
 	{
-		var c = -1;
+		var c = "Unknown";
+		let deriOwnership ={
+			AB:	 	"Arab Satellite Communications Organization",
+			ABS: 	"Asia Broadcast Satellite",
+			AC:		"Asia Satellite Telecommunications Company (ASIASAT)",
+			ALG:	"Algeria",
+			ANG:	"Angola",
+			ARGN:	"Argentina",
+			ASRA:	"Austria",
+			AUS:	"Australia",
+			AZER:	"Azerbaijan",
+			BEL:	"Belgium",
+			BELA:	"Belarus",
+			BERM:	"Bermuda",
+			BGD:	"Peoples Republic of Bangladesh",
+			BHUT:	"Kingdom of Bhutan",
+			BOL:	"Bolivia",
+			BRAZ:	"Brazil",
+			BUL:	"Bulgaria",
+			CA:		"Canada",
+			CHBZ:	"China/Brazil",
+			CHTU:	"China/Turkey",
+			CHLE:	"Chile",
+			CIS:	"Commonwealth of Independent States (former USSR)",
+			COL:	"Colombia",
+			CRI:	"Republic of Costa Rica",
+			CZCH:	"Czech Republic (former Czechoslovakia)",
+			DEN:	"Denmark",
+			ECU:	"Ecuador",
+			EGYP:	"Egypt",
+			ESA:	"European Space Agency",
+			ESRO:	"European Space Research Organization",
+			EST:	"Estonia",
+			EUME:	"European Organization for the Exploitation of Meteorological Satellites (EUMETSAT)",
+			EUTE:	"European Telecommunications Satellite Organization (EUTELSAT)",
+			FGER:	"France/Germany",
+			FIN:	"Finland",
+			FR:		"France",
+			FRIT:	"France/Italy",
+			GER:	"Germany",
+			GHA:	"Republic of Ghana",
+			GLOB:	"Globalstar",
+			GREC:	"Greece",
+			GRSA:	"Greece/Saudi Arabia",
+			GUAT:	"Guatemala",
+			HUN:	"Hungary",
+			IM:		"International Mobile Satellite Organization (INMARSAT)",
+			IND:	"India",
+			INDO:	"Indonesia",
+			IRAN:	"Iran",
+			IRAQ:	"Iraq",
+			IRID:	"Iridium",
+			ISRA:	"Israel",
+			ISRO:	"Indian Space Research Organisation",
+			ISS:	"International Space Station",
+			IT:		"Italy",
+			ITSO:	"International Telecommunications Satellite Organization (INTELSAT)",
+			JPN:	"Japan",
+			KAZ:	"Kazakhstan",
+			KEN:	"Republic of Kenya",
+			LAOS:	"Laos",
+			LKA:	"Democratic Socialist Republic of Sri Lanka",
+			LTU:	"Lithuania",
+			LUXE:	"Luxembourg",
+			MA:		"Morroco",
+			MALA:	"Malaysia",
+			MCO:	"Principality of Monaco",
+			MDA:	"Republic of Moldova",
+			MEX:	"Mexico",
+			MMR:	"Republic of the Union of Myanmar",
+			MNG:	"Mongolia",
+			MUS:	"Mauritius",
+			NATO:	"North Atlantic Treaty Organization",
+			NETH:	"Netherlands",
+			NICO:	"New ICO",
+			NIG:	"Nigeria",
+			NKOR:	"Democratic People's Republic of Korea",
+			NOR:	"Norway",
+			NPL:	"Federal Democratic Republic of Nepal",
+			NZ:		"New Zealand",
+			O3B:	"O3b Networks",
+			ORB:	"ORBCOMM",
+			PAKI:	"Pakistan",
+			PERU:	"Peru",
+			POL:	"Poland",
+			POR:	"Portugal",
+			PRC:	"People's Republic of China",
+			PRY:	"Republic of Paraguay",
+			PRES:	"People's Republic of China/European Space Agency",
+			QAT:	"State of Qatar",
+			RASC:	"RascomStar-QAF",
+			ROC:	"Taiwan (Republic of China)",
+			ROM:	"Romania",
+			RP:		"Philippines (Republic of the Philippines)",
+			RWA:	"Republic of Rwanda",
+			SAFR:	"South Africa",
+			SAUD:	"Saudi Arabia",
+			SDN:	"Republic of Sudan",
+			SEAL:	"Sea Launch",
+			SES:	"SES",
+			SGJP:	"Singapore/Japan",
+			SING:	"Singapore",
+			SKOR:	"Republic of Korea",
+			SPN:	"Spain",
+			STCT:	"Singapore/Taiwan",
+			SVN:	"Slovenia",
+			SWED:	"Sweden",
+			SWTZ:	"Switzerland",
+			TBD:	"To Be Determined",
+			THAI:	"Thailand",
+			TMMC:	"Turkmenistan/Monaco",
+			TUN:	"Republic of Tunisia",
+			TURK:	"Turkey",
+			UAE:	"United Arab Emirates",
+			UK:		"United Kingdom",
+			UKR:	"Ukraine",
+			UNK:	"Unknown",
+			URY:	"Uruguay",
+			US:		"United States",
+			USBZ:	"United States/Brazil",
+			VENZ:	"Venezuela",
+			VTNM:	"Vietnam"
+		}
 		if (isat < this.debris_kep.length)
 		{
-			var bb = this.debris_kep[isat]["owner"];
-			if (bb == 'US   ') {c = 1} //The United states
-			else if (bb == 'PRC  ') {c = 2} //China
-			else if (bb == 'CIS  ') {c = 3 } //Russia
-			else if (bb == 'UK   ') {c = 4} //UK
-			else if (bb == 'ESA  ') {c = 5} //European Union
-			else {c = 6} //other countris
+			var bb = this.debris_kep[isat]["owner"].trim();
+			// if (bb == 'US') {c = "The United states"} //The United states
+			// else if (bb == 'PRC') {c = "China"} //China
+			// else if (bb == 'CIS') {c = "Russia" } //Russia
+			// else if (bb == 'UK') {c = "United Kindom"} //UK
+			// else if (bb == 'ESA') {c = "European Union"} //European Union
+			// else {c = "Other countries"} //other countris
+			// 检查bb是否在deriOwnership的键中
+			if (deriOwnership.hasOwnProperty(bb)) {
+				// 如果存在，将c设置为对应的值（所有者全名）
+				c = deriOwnership[bb];
+			} else {
+				c = "Unknown"; // 其他国家
+			}
 		}
-
-		else if(isat >= this.debris_kep.length 
-			&& isat < this.getNumberTotal() )
-		{
-			c = -1;
-			// return this.debris_tle[isat-this.debris_kep.length]["name"];
-			// tle  does not include LEO MEO GEO Information
+		else if(isat >= this.debris_kep.length && isat < this.getNumberTotal() ){
+			c = "Unknown";
 		}
-
 		return c;
 	}
 

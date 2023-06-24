@@ -557,15 +557,15 @@ window.onload = function () {
         var country = satcat.getDebriCountry(debrisID);
         let sat_infor = satcat.getDebriInfo(debrisID);
        
-        if (country == 1) { usa = usa + 1 }
-        if (country == 2) { china = china + 1 }
-        if (country == 3) { russia = russia + 1 }
-        if (country == 4) { uk = uk + 1 }
-        if (country == 5) { eu = eu + 1 }
-        if (country == 6) { others = others + 1 }
+        // if (country == 1) { usa = usa + 1 }
+        // if (country == 2) { china = china + 1 }
+        // if (country == 3) { russia = russia + 1 }
+        // if (country == 4) { uk = uk + 1 }
+        // if (country == 5) { eu = eu + 1 }
+        // if (country == 6) { others = others + 1 }
 
 
-        if (operation_status > 0.0) {
+        if (operation_status !== "Decayed" && operation_status !== "Non-operational" && operation_status !== "Unknown") {
           colour = Cesium.Color.GREEN;
           active_num = active_num + 1;
           ////////这里加判断条件只有运行的卫星才统计GEO,LEO,MEO的数量
@@ -579,20 +579,21 @@ window.onload = function () {
         }
 
 
-        //satellite category identifier
-        if (sat_category == 1) { leo_num = leo_num + 1 }
-        if (sat_category == 2) { meo_num = meo_num + 1 }
-        if (sat_category == 3) { geo_num = geo_num + 1 }
-        if (sat_category == -1) { unknowncat_num = unknowncat_num + 1 }
-        //在这里加if，else判断条件根据radar_cross_section以调整小窗口的显示，先试试改颜色color
+        // //satellite category identifier
+        // if (sat_category == 1) { leo_num = leo_num + 1 }
+        // if (sat_category == 2) { meo_num = meo_num + 1 }
+        // if (sat_category == 3) { geo_num = geo_num + 1 }
+        // if (sat_category == -1) { unknowncat_num = unknowncat_num + 1 }
+        // //在这里加if，else判断条件根据radar_cross_section以调整小窗口的显示，先试试改颜色color
         
         
         debris_collection.add({
           name: 'point',
           id: {
-            name: satcat.getDebriName(debrisID),
-            type: sat_category,
-            country: country
+            Name: satcat.getDebriName(debrisID).trim(), // .trim to remove the space after the string
+            Category: satcat.getDebriCategory(debrisID),
+            Operation_status: operation_status,
+            Owner: country
           },
           position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
           pixelSize: 3,
@@ -654,12 +655,15 @@ window.onload = function () {
       var pick = viewer_main.scene.pick(click.position);
       console.log(pick)
       var showSelection = false;
-      var titleText = '';
+      var titleText = "Selected Object";
       var description = '';
       if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
         showSelection = true;
-        titleText = Cesium.defined(pick.id.name) ? pick.id.name : '';
-        description = Cesium.defined(pick.id.description) ? pick.id.description : '';
+        let listItems = Object.entries(pick.id).map(function([key, value]) {
+        return '<li>' + key + ': ' + value + '</li>';
+      });
+      //Cesium.defined(pick.id) ? pick.id : '';
+        description = '<ul>' + listItems.join('') + '</ul>';
       }
       infoBoxViewModel.showInfo = showSelection;
       infoBoxViewModel.titleText = titleText;
