@@ -657,19 +657,38 @@ window.onload = function () {
       var showSelection = false;
       var titleText = "Selected Object";
       var description = '';
+      // if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
+      //   showSelection = true;
+      //   let listItems = Object.entries(pick.id).map(function([key, value]) {
+      //   return '<li>' + '<b style = "font-size: 15px">'+ key + '</b>' + ': '+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:' + value + '</li>';
+      // });
+      // //Cesium.defined(pick.id) ? pick.id : '';
+      //   description = '<ul>' + listItems.join('') + '</ul>';
+      // }
+      // infoBoxViewModel.showInfo = showSelection;
+      // infoBoxViewModel.titleText = titleText;
+      // infoBoxViewModel.description = description;
+      // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
       if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
         showSelection = true;
         let listItems = Object.entries(pick.id).map(function([key, value]) {
-        return '<li>' + key + ': ' + value + '</li>';
-      });
-      //Cesium.defined(pick.id) ? pick.id : '';
-        description = '<ul>' + listItems.join('') + '</ul>';
+          return '<tr><td style="text-align:left; font-size: 16px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 300px;">' + value + '</td></tr>';
+        });
+        description = '<table style="width:100%">' + listItems.join('') + '</table>';
       }
       infoBoxViewModel.showInfo = showSelection;
-      infoBoxViewModel.titleText = titleText;
+      infoBoxViewModel.titleText =  titleText ;
       infoBoxViewModel.description = description;
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
+      infoBoxViewModel.closeClicked.addEventListener(function() { // closeClicked function is an event, therefore need addEventListener to call the function
+        infoBoxViewModel.showInfo = false; // Hide the info box when close button is clicked
+    });
+    
+
+      infoBoxViewModel.enableCamera = true;
+      infoBoxViewModel.isCameraTracking = true;
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       
       console.log(rc_1);
       console.log(rc_2);
