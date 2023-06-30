@@ -29,6 +29,9 @@ var longitude = 0.0;
 var latitude = 51.0;
 var height = 10.0;
 
+let tempEntity = undefined; // used to track the cliced point
+    let deleteEntity;
+
 
 var options3D = {
   homeButton: false,
@@ -278,13 +281,18 @@ function update_debris_position() {
 
       Cesium.Cartesian3.clone(position_ecef, pos_radar_view);
 
+      if (tempEntity && point.id["COSPAR ID"] === tempEntity.id){
+        tempEntity._position._value = position_ecef;
+        
+        // viewer_main.trackedEntity = tempEntity
+      }
+
       //更新viewer_main中的点的位置
       point.position = position_ecef; //// update back
 
       ///更新radar_viewer中的点的位置
       //update the radar_view debri_collection在下边的windowonload function中定义了
       //debri_collection_radar._pointPrimitives[i].position = pos_radar_view; //pos_radar_view与position_ecef一致
-
     }
   }
 }
@@ -344,24 +352,6 @@ function GUIset() {
           viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
           viewer_main.timeline.updateFromClock();
           viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
-
-          /*viewer_main.clock.startTime = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z")
-          viewer_main.clock.stopTime = Cesium.JulianDate.fromIso8601("2019-05-23T00:00:00Z")
-          var startTime = viewer_main.clock.startTime;
-          var stopTime = viewer_main.clock.stopTime;
-          function tick() {
-            var currentTime = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z")
-            if (Cesium.JulianDate.greaterThan(currentTime, stopTime)){
-              startTime = Cesium.JulianDate.addSeconds(startTime, 86400, startTime);
-              stopTime = Cesium.JulianDate.addSeconds(stopTime, 86400, stopTime);
-              viewer_main.timeline.zoomTo(startTime, stopTime);
-            }
-            Cesium.requestAnimationFrame(tick);
-          }
-          Cesium.requestAnimationFrame(tick);
-*/
-
-
         }
 
         if (value.substring(6, 15) == "_20280101") {
@@ -462,10 +452,6 @@ function GUIset() {
 
 // }
 
-
-
-
-
 window.onload = function () {
   satcat = new Catalogue();
 
@@ -481,14 +467,11 @@ window.onload = function () {
     clockViewModel: clockViewModel
   });
 
-
   //Enable depth testing so things behind the terrain disappear.
   viewer_main.scene.globe.depthTestAgainstTerrain = true;
-
-
   viewer_main.globe = true;
   viewer_main.scene.globe.enableLighting = true;
-  viewer_main.clock.multiplier = 100;               // speed of the simulation
+  viewer_main.clock.multiplier = 25;               // speed of the simulation
 
   var mycredit = new Cesium.Credit("Space Geodesy and Navigation Laboratory", 'data/sgnl.png', 'https://www.ucl.ac.uk');
   // var mycredit = new Cesium.Credit('Cesium', 'data/sgnl.png', 'https://www.ucl.ac.uk');
@@ -523,10 +506,89 @@ window.onload = function () {
 
   var colour = Cesium.Color.YELLOW;
 
+
+  // Inforbox
+  var infoBoxContainer = document.createElement('div');
+  infoBoxContainer.className = 'cesium-viewer-infoBoxContainer';
+  viewer_main.container.appendChild(infoBoxContainer);
+  var infoBox = new Cesium.InfoBox(infoBoxContainer);
+  var infoBoxViewModel = infoBox.viewModel;
+
+  //Click Event
+  var handler = new Cesium.ScreenSpaceEventHandler(viewer_main.scene.canvas);
+  handler.setInputAction(function(click) {
+  var pick = viewer_main.scene.pick(click.position);
+  var showSelection = false;
+  let titleText = "Selected Object";
+  let description = '';
+  // if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
+  //   showSelection = true;
+  //   let listItems = Object.entries(pick.id).map(function([key, value]) {
+  //   return '<li>' + '<b style = "font-size: 15px">'+ key + '</b>' + ': '+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:' + value + '</li>';
+  // });
+  // //Cesium.defined(pick.id) ? pick.id : '';
+  //   description = '<ul>' + listItems.join('') + '</ul>';
+  // }
+  // infoBoxViewModel.showInfo = showSelection;
+  // infoBoxViewModel.titleText = titleText;
+  // infoBoxViewModel.description = description;
+  // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+  
+  // If a tempEntity is currently being tracked, stop tracking it and remove it.
+  // if (tempEntity) {
+  //   if (viewer_main.trackedEntity === tempEntity) {
+  //       viewer_main.trackedEntity = undefined;
+  //   }
+  //   // viewer_main.entities.remove(tempEntity);
+  // }
+  if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
+    showSelection = true;
+    let tableItems = Object.entries(pick.id).map(function([key, value]) {
+      return '<tr><td style="text-align:left; font-size: 16px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 300px;">' + value + '</td></tr>';
+    });
+    description = '<table style="width:100%">' + tableItems.join('') + '</table>';
+
+    
+    if (tempEntity){
+      console.log("tempentity exist, remove")
+      deleteEntity = viewer_main.entities.getById(tempEntity.id) 
+      viewer_main.entities.remove(deleteEntity)
+    }
+
+    // assign value to tempEntity and start tracking it.
+    tempEntity = viewer_main.entities.add({
+      id: pick.id["COSPAR ID"],
+      position : pick.primitive._actualPosition
+    });
+  console.log(pick)
+  console.log(tempEntity)
+  // // Move the camera to a desired distance and angle
+  // viewer_main.camera.flyTo({
+  //   destination: pick.primitive._actualPosition,
+  //   offset: {
+  //     heading: Cesium.Math.toRadians(0),
+  //     pitch: Cesium.Math.toRadians(-45), // tilt camera down by 45 degrees
+  //     range: 10000000.0 // move camera back by 1000 meters
+  //   }
+  // })
+  }
+  
+  infoBoxViewModel.showInfo = showSelection;
+  infoBoxViewModel.titleText =  titleText ;
+  infoBoxViewModel.description = description;
+
+  infoBoxViewModel.closeClicked.addEventListener(function() { // closeClicked function is an event, therefore need addEventListener to call the function
+    infoBoxViewModel.showInfo = false; // Hide the info box when close button is clicked
+    viewer_main.trackedEntity = undefined; // Clear the tracked entity
+});
+}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
   /// a timer is used to deal with the async reading of JSON
   var timename = setInterval(function () {
+    console.log('time_interval start')
     if (satcat.data_load_complete == true
       && data_load == false) {
+        console.log('load complete, start counting')
       //ShowDebris(viewer_main,mycatlog,4);
 
       active_num = 0;
@@ -544,9 +606,8 @@ window.onload = function () {
       rc_1 = 0;
       rc_2 = 0;
       rc_3 = 0;
+      let SL_8 =0;
 
-
-      
 
       for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) {
 
@@ -556,6 +617,9 @@ window.onload = function () {
         var cross_section = satcat.getDebriCross_Section(debrisID);
         var country = satcat.getDebriCountry(debrisID);
         let sat_infor = satcat.getDebriInfo(debrisID);
+        let sat_name = satcat.getDebriName(debrisID).trim();
+        let sat_Id = satcat.getDebriID(debrisID).trim();
+        let sat_type =satcat.getDebriType(debrisID).trim();
        
         // if (country == 1) { usa = usa + 1 }
         // if (country == 2) { china = china + 1 }
@@ -578,6 +642,13 @@ window.onload = function () {
           inactive_num = inactive_num + 1;
         }
 
+        if (sat_name == "SL-19 R/B") {
+          colour = Cesium.Color.YELLOW;
+          ////////这里加判断条件只有运行的卫星才统计GEO,LEO,MEO的数量
+          //但首先要在Catalogue.js写一个判断程序以实现判断GEO,LEO,MEO；
+          //可以模仿getDebriOperation_status（），给不同种类如变量名起名为cate_sat附不同的值
+        }
+
 
         // //satellite category identifier
         // if (sat_category == 1) { leo_num = leo_num + 1 }
@@ -590,10 +661,12 @@ window.onload = function () {
         debris_collection.add({
           name: 'point',
           id: {
-            Name: satcat.getDebriName(debrisID).trim(), // .trim to remove the space after the string
-            Category: satcat.getDebriCategory(debrisID),
-            Operation_status: operation_status,
-            Owner: country
+            "COSPAR ID": sat_Id,
+            "Name": sat_name, // .trim to remove the space after the string
+            "Object Type": sat_type,
+            "Orbit Type": sat_category,
+            "Operation Status": operation_status,
+            "Owner": country
           },
           position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
           pixelSize: 3,
@@ -642,57 +715,12 @@ window.onload = function () {
 
       }
       
-      // Inforbox
-      var infoBoxContainer = document.createElement('div');
-      infoBoxContainer.className = 'cesium-viewer-infoBoxContainer';
-      viewer_main.container.appendChild(infoBoxContainer);
-      var infoBox = new Cesium.InfoBox(infoBoxContainer);
-      var infoBoxViewModel = infoBox.viewModel;
-
-      //Click Event
-      var handler = new Cesium.ScreenSpaceEventHandler(viewer_main.scene.canvas);
-      handler.setInputAction(function(click) {
-      var pick = viewer_main.scene.pick(click.position);
-      console.log(pick)
-      var showSelection = false;
-      var titleText = "Selected Object";
-      var description = '';
-      // if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
-      //   showSelection = true;
-      //   let listItems = Object.entries(pick.id).map(function([key, value]) {
-      //   return '<li>' + '<b style = "font-size: 15px">'+ key + '</b>' + ': '+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:' + value + '</li>';
-      // });
-      // //Cesium.defined(pick.id) ? pick.id : '';
-      //   description = '<ul>' + listItems.join('') + '</ul>';
-      // }
-      // infoBoxViewModel.showInfo = showSelection;
-      // infoBoxViewModel.titleText = titleText;
-      // infoBoxViewModel.description = description;
-      // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-      if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
-        showSelection = true;
-        let listItems = Object.entries(pick.id).map(function([key, value]) {
-          return '<tr><td style="text-align:left; font-size: 16px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 300px;">' + value + '</td></tr>';
-        });
-        description = '<table style="width:100%">' + listItems.join('') + '</table>';
-      }
-      infoBoxViewModel.showInfo = showSelection;
-      infoBoxViewModel.titleText =  titleText ;
-      infoBoxViewModel.description = description;
-
-      infoBoxViewModel.closeClicked.addEventListener(function() { // closeClicked function is an event, therefore need addEventListener to call the function
-        infoBoxViewModel.showInfo = false; // Hide the info box when close button is clicked
-    });
-    
-
-      infoBoxViewModel.enableCamera = true;
-      infoBoxViewModel.isCameraTracking = true;
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       
       console.log(rc_1);
       console.log(rc_2);
       console.log(rc_3);
+      console.log(SL_8);
+      
 
 
 
@@ -832,7 +860,5 @@ window.onload = function () {
 
 
   //radar_screen(radar_position_ecef);
-
-
 
 }

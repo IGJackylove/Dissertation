@@ -126,13 +126,21 @@ class Catalogue
 		{
 			var cat_00 = this.debris_kep[isat]["apogee_hgt"].trim()
 			var cat_11 = this.debris_kep[isat]["perigee_hgt"].trim()
+			var inclinationDegree = Number(this.debris_kep[isat]["inclination_deg"].trim())
 			var cat_0 = Number(cat_00)
 			var cat_1 = Number(cat_11)
 
 			if ( cat_0 <= 2000 && cat_1 <= 2000 ) { cat = "Low Earth Orbit"} //LEO
-			else if ( (cat_0 > 2000 && cat_0 < 35786) && (cat_1 > 2000 && cat_1 < 35786) ) {cat = "Middle Earth Orbit"} //MEO
-			else if ( cat_0 == 35786 || cat_1 == 35786 ) { cat = "Geosynchronous Equatorial Orbit" } //GEO
-			else { cat = "Unknown" }
+			else if ( (cat_0 > 2000 && cat_0 < 35786) && (cat_1 > 2000 && cat_1 < 35786)){
+				cat = "Middle Earth Orbit"} //MEO
+			else if ((cat_0 > 35500 && cat_0 < 36500) && (cat_1 > 35500 && cat_1< 36500 )){
+				cat = "Geosynchronous Equatorial Orbit"; //GEO (HEIGHT REFERENCE FROM https://earthobservatory.nasa.gov/features/OrbitsCatalog)
+			}			
+			// else if ( cat_0 == 35786 || cat_1 == 35786 ) { cat = "Geosynchronous Equatorial Orbit" } //GEO
+			// else if (cat_0 > 35786 && ev){ cat = "Highly Elliptical Orbit"} //HEO
+			else{
+				cat = "Unknown" 
+			} 
 
 		}
 
@@ -142,7 +150,7 @@ class Catalogue
 			cat = "Unknown";
 			// return this.debris_tle[isat-this.debris_kep.length]["name"];
 			// tle  does not include LEO MEO GEO Information
-		}
+		} // Seems not important
 
 		return cat;
 	}
@@ -317,6 +325,46 @@ class Catalogue
 		}
 
 		return m;
+	}
+
+	getDebriID(isat){
+		let id = "unknown";
+		if(isat < this.debris_kep.length)
+		{
+			id =  this.debris_kep[isat]["COSPAR_ID"];
+		}
+		else if(isat >= this.debris_kep.length 
+			&& isat < this.getNumberTotal() )
+		{
+			id =  "Unknown";
+			// return this.debris_tle[isat-this.debris_kep.length]["name"];
+			// tle  does not include operational status
+		}
+
+		return id;
+
+	}
+
+	getDebriType(isat){
+		let type = "unknown";
+		if(isat < this.debris_kep.length)
+		{
+			let typeOrign =  this.debris_kep[isat]["RSO_type"].trim();
+			if (typeOrign == "rb"){type = "Rocket Body"}
+			else if (typeOrign == "plat"){type = "Platform"}
+			else if (typeOrign == "deb"){type = "Debris"}
+			else if (typeOrign == "u"){type = "Unknown"}
+		}
+		else if(isat >= this.debris_kep.length 
+			&& isat < this.getNumberTotal() )
+		{
+			type =  "Unknown";
+			// return this.debris_tle[isat-this.debris_kep.length]["name"];
+			// tle  does not include operational status
+		}
+
+		return type;
+
 	}
 
 
