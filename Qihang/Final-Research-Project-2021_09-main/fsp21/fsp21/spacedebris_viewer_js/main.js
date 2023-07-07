@@ -12,8 +12,6 @@
 // S. Bhattarai's Cesium ion access token
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjMzVhMjQ1MS1iZjIxLTQxNTctODA2Yi1mOTJmNDkwYzU2MWUiLCJpZCI6OTczMiwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NDgxNDUzN30.5gySU1UpdweOzztxyf6KbIqYc-hR_yfgo5aEGLgGPDc';
 
-// 创建一个Map来存储额外的数据
-let pointDataMap = new Map();
 var viewer_main, radar_viewer;
 var start_jd;
 
@@ -30,7 +28,8 @@ var latitude = 51.0;
 var height = 10.0;
 
 let tempEntity = undefined; // used to track the cliced point
-    let deleteEntity;
+let deleteEntity;
+
 
 
 var options3D = {
@@ -265,6 +264,8 @@ function update_debris_position() {
   // }
   
   var pos_radar_view = new Cesium.Cartesian3();
+ 
+  
 
   for (var i = 0; i < length; ++i) {
     var point = points[i];
@@ -278,16 +279,32 @@ function update_debris_position() {
       var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x * 1000, positionAndVelocity.position.y * 1000, positionAndVelocity.position.z * 1000);
 
       position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
+      // Cesium.Cartesian3.clone(position_ecef, pos_radar_view);
 
-      Cesium.Cartesian3.clone(position_ecef, pos_radar_view);
-
-      if (tempEntity && point.id["COSPAR ID"] === tempEntity.id){
-        tempEntity._position._value = position_ecef;
+      if (tempEntity && point.id["COSPAR ID"] == tempEntity.id){
         
-        // viewer_main.trackedEntity = tempEntity
-      }
 
+        tempEntity.position = position_ecef;
+
+        // viewer_main.trackedEntity = tempEntity;
+        // 创立一个全新的cesium文件，添加一个entity并track，检查是否是设置问题
+
+        
+        // console.log(tempEntity)
+        // viewer_main.trackedEntity = tempEntity;
+        // console.log(viewer_main.trackedEntity._position._value)
+        
+      //   viewer_main.flyTo({
+      //     destination: tempEntity.position,
+      //     maximumHeight: 10,
+      //     complete: function () {
+      //       viewer_main.trackedEntity = tempEntity;
+      //     }
+      // });
+        
+      }
       //更新viewer_main中的点的位置
+      // console.log(position_ecef)
       point.position = position_ecef; //// update back
 
       ///更新radar_viewer中的点的位置
@@ -471,7 +488,7 @@ window.onload = function () {
   viewer_main.scene.globe.depthTestAgainstTerrain = true;
   viewer_main.globe = true;
   viewer_main.scene.globe.enableLighting = true;
-  viewer_main.clock.multiplier = 25;               // speed of the simulation
+  viewer_main.clock.multiplier = 15;               // speed of the simulation
 
   var mycredit = new Cesium.Credit("Space Geodesy and Navigation Laboratory", 'data/sgnl.png', 'https://www.ucl.ac.uk');
   // var mycredit = new Cesium.Credit('Cesium', 'data/sgnl.png', 'https://www.ucl.ac.uk');
@@ -491,6 +508,19 @@ window.onload = function () {
 
   GUIset();
 
+// 测试代码
+let tempEntity2 = viewer_main.entities.add({
+  id: "Test2019-028B",
+  position: new Cesium.Cartesian3(1415428.3804646356, -6594248.609551645, 1278224.739309752),
+  point: {
+    color: Cesium.Color.WHITE,
+    pixelSize: 30
+  }
+});
+
+
+
+
 
 
   /// debris_collection to store all the debris points
@@ -504,7 +534,6 @@ window.onload = function () {
   debris_collection = viewer_main.scene.primitives.add(debris_collection);
   debris_collection.blendOption = Cesium.BlendOption.OPAQUE;
 
-  var colour = Cesium.Color.YELLOW;
 
 
   // Inforbox
@@ -513,7 +542,7 @@ window.onload = function () {
   viewer_main.container.appendChild(infoBoxContainer);
   var infoBox = new Cesium.InfoBox(infoBoxContainer);
   var infoBoxViewModel = infoBox.viewModel;
-
+  let previousPick = null;
   //Click Event
   var handler = new Cesium.ScreenSpaceEventHandler(viewer_main.scene.canvas);
   handler.setInputAction(function(click) {
@@ -534,7 +563,7 @@ window.onload = function () {
   // infoBoxViewModel.description = description;
   // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
   
-  // If a tempEntity is currently being tracked, stop tracking it and remove it.
+  // //If a tempEntity is currently being tracked, stop tracking it and remove it.
   // if (tempEntity) {
   //   if (viewer_main.trackedEntity === tempEntity) {
   //       viewer_main.trackedEntity = undefined;
@@ -549,30 +578,66 @@ window.onload = function () {
     description = '<table style="width:100%">' + tableItems.join('') + '</table>';
 
     
+
+    console.log(pick.id["Operation Status"])
+     // 取消上一次点击的颜色修改和点大小修改效果
+    if (previousPick !== null) {
+        if (pick.id["Operation Status"]!== "Decayed" && pick.id["Operation Status"]!== "Non-operational" && pick.id["Operation Status"] !== "Unknown"){
+        previousPick.color = Cesium.Color.GREEN;  // 恢复为默认颜色
+        previousPick.pixelSize = 4;  // 恢复为默认大小
+        }
+        else{
+        previousPick.color = Cesium.Color.RED;  // 恢复为默认颜色
+        previousPick.pixelSize = 4;  // 恢复为默认大小
+        }
+   }
+
+   // 保存当前选中的点为上一次点击的对象
+    previousPick = pick.primitive;
+    
+    pick.primitive.color = Cesium.Color.YELLOW
+    pick.primitive.pixelSize = 10
+    
+    /*
+    console.log(pick.primitive._actualPosition)
     if (tempEntity){
+      
       console.log("tempentity exist, remove")
       deleteEntity = viewer_main.entities.getById(tempEntity.id) 
       viewer_main.entities.remove(deleteEntity)
     }
 
     // assign value to tempEntity and start tracking it.
+    // console.log("tempentity added")
     tempEntity = viewer_main.entities.add({
       id: pick.id["COSPAR ID"],
-      position : pick.primitive._actualPosition
+      position : pick.primitive._actualPosition,
+      point: {
+        color: Cesium.Color.YELLOW,
+        pixelSize: 15
+      },
+    //   viewFrom: new Cesium.Cartesian3(0, 0, 10000) // 设置相机的初始偏移量
     });
-  console.log(pick)
-  console.log(tempEntity)
-  // // Move the camera to a desired distance and angle
-  // viewer_main.camera.flyTo({
-  //   destination: pick.primitive._actualPosition,
-  //   offset: {
-  //     heading: Cesium.Math.toRadians(0),
-  //     pitch: Cesium.Math.toRadians(-45), // tilt camera down by 45 degrees
-  //     range: 10000000.0 // move camera back by 1000 meters
-  //   }
-  // })
+    // viewer_main.trackedEntity = tempEntity
+    */    
+
+
+    //1985-090B(4107843.7766305073, 4122387.934857915, 3445873.6059593093)1985-090B(4107843.7766305073, 4122387.934857915, 3445873.6059593093)
+    //console.log(pick.id["COSPAR ID"] + pick.primitive._actualPosition + tempEntity.id + tempEntity.position._value) 
+    
+    // 平滑过渡到新的相机位置
+    // viewer_main.camera.flyTo({
+    //   destination: tempEntity.position._value,
+    //   duration: 1.0 // 过渡时间，单位为秒
+    //  })
+    
+    
+
   }
   
+ 
+
+  // set the infobox information
   infoBoxViewModel.showInfo = showSelection;
   infoBoxViewModel.titleText =  titleText ;
   infoBoxViewModel.description = description;
@@ -642,14 +707,6 @@ window.onload = function () {
           inactive_num = inactive_num + 1;
         }
 
-        if (sat_name == "SL-19 R/B") {
-          colour = Cesium.Color.YELLOW;
-          ////////这里加判断条件只有运行的卫星才统计GEO,LEO,MEO的数量
-          //但首先要在Catalogue.js写一个判断程序以实现判断GEO,LEO,MEO；
-          //可以模仿getDebriOperation_status（），给不同种类如变量名起名为cate_sat附不同的值
-        }
-
-
         // //satellite category identifier
         // if (sat_category == 1) { leo_num = leo_num + 1 }
         // if (sat_category == 2) { meo_num = meo_num + 1 }
@@ -669,8 +726,8 @@ window.onload = function () {
             "Owner": country
           },
           position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-          pixelSize: 3,
-          color: colour
+          pixelSize: 4,
+          color: colour,
           // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
         });
 
@@ -707,7 +764,7 @@ window.onload = function () {
         //       pixelSize: 7,
         //       color: Cesium.Color.HOTPINK
         //       // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-        //     });
+        //     });        
         //     rc_3 = rc_3 + 1;
         //   }
 
@@ -719,7 +776,7 @@ window.onload = function () {
       console.log(rc_1);
       console.log(rc_2);
       console.log(rc_3);
-      console.log(SL_8);
+      
       
 
 
@@ -857,8 +914,8 @@ window.onload = function () {
     position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
     point: { pixelSize: 15, color: Cesium.Color.PINK }
   });
-
-
+  // viewer_main.trackedEntity=redpoint
+  // console.log(viewer_main.trackedEntity)
   //radar_screen(radar_position_ecef);
 
 }
