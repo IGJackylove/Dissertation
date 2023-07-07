@@ -367,6 +367,15 @@ class Catalogue
 
 	}
 
+	getDebriOrbitPeriod(cosparID) {
+		console.log(cosparID)
+		for (let i = 0; i < this.debris_kep.length; i++) {
+		  if (this.debris_kep[i]["COSPAR_ID"].trim() == cosparID.trim()) {
+			return this.debris_kep[i].orbital_period.trim(); // in seconds
+		}
+		}
+		
+	  }
 
 	/// read in the debris data in the format of JSON 读取json文件
 	loadcatlog(orbit_type,jsonFile)

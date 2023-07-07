@@ -29,6 +29,8 @@ var height = 10.0;
 
 let tempEntity = undefined; // used to track the cliced point
 let deleteEntity;
+let clickedObject = undefined;
+
 
 
 
@@ -265,7 +267,7 @@ function update_debris_position() {
   
   var pos_radar_view = new Cesium.Cartesian3();
  
-  
+
 
   for (var i = 0; i < length; ++i) {
     var point = points[i];
@@ -280,7 +282,8 @@ function update_debris_position() {
 
       position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
       // Cesium.Cartesian3.clone(position_ecef, pos_radar_view);
-
+      
+      /*
       if (tempEntity && point.id["COSPAR ID"] == tempEntity.id){
         
 
@@ -303,6 +306,7 @@ function update_debris_position() {
       // });
         
       }
+      */
       //更新viewer_main中的点的位置
       // console.log(position_ecef)
       point.position = position_ecef; //// update back
@@ -469,6 +473,81 @@ function GUIset() {
 
 // }
 
+function addOrbit(pick){
+  let orbitPosArray = [];
+  var debris_set = debris_collection; //这里的debris_collection在下边的window.onload()中定义了
+  // console.log(debris_set)
+  var viewer = viewer_main; //这里的viewer_main也在下边的window.onload()中定义了
+  console.log("add orbit")
+  // for (let i = 0; i < ){
+
+      clickedObject = pick
+      console.log(clickedObject)
+      if (clickedObject){
+        orbitPeriod = parseFloat(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"]))*60; 
+        console.log(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"]) + " " + orbitPeriod)
+        let currentTime = viewer.clock.currentTime;
+        let tai_utc = Cesium.JulianDate.computeTaiMinusUtc(currentTime);
+        let startTime = Cesium.JulianDate.addSeconds(currentTime, tai_utc, new Cesium.JulianDate());
+        let endTime = Cesium.JulianDate.addSeconds(startTime, orbitPeriod, new Cesium.JulianDate());
+        let timeStep = orbitPeriod / 360; // divide orbit period into 360 parts to calculate the position
+        let time = new Cesium.JulianDate();
+        let points = debris_set._pointPrimitives;
+        let clickIndex = undefined;
+
+        for (var i = 0; i < points.length; ++i) {
+          var point = points[i];
+          // console.log(point)
+          if (point.id["COSPAR ID"] == clickedObject.id["COSPAR ID"]){
+              clickIndex = i
+          }
+        }
+
+        for (let i = 0; i < 361; i++){
+          time = Cesium.JulianDate.addSeconds(startTime, i * timeStep, time);
+          let icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
+          let time_date_js = Cesium.JulianDate.toDate(time); /// convert time into js Date()
+          let position_ecef = new Cesium.Cartesian3();
+        
+          if (Cesium.defined(icrfToFixed)) {
+            let positionAndVelocity = satcat.compute_debri_position_eci(clickIndex, time_date_js);//  satellite.propagate(tle_rec,time_date);
+        
+            var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x * 1000, positionAndVelocity.position.y * 1000, positionAndVelocity.position.z * 1000);
+        
+            position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef)
+
+            orbitPosArray.push(position_ecef)
+          }
+
+        }
+        console.log(orbitPosArray)
+          // 创建Polyline Entity
+        var polylineEntity = viewer.entities.add({
+          polyline: {
+            positions: orbitPosArray,
+            width: 5,
+            material: Cesium.Color.RED,
+            loop: true
+          },
+        });
+        console.log(polylineEntity)
+      //   // 创建PolylineCollection
+      //   let polylineCollection = new Cesium.PolylineCollection();
+
+      //   // 创建Polyline并设置属性
+      //   let polyline = polylineCollection.add({
+      //     positions: orbitPosArray, // 设置折线的位置
+      //     width: 5, // 设置折线的宽度'
+      //     loop: true,
+      //     material: Cesium.Color.GREEN, // 设置折线的颜色
+      //   });
+      //   console.log(polyline)
+      //   // 将PolylineCollection添加到场景中
+      //  viewer_main.scene.primitives.add(polyline);
+    }
+  // }
+}
+
 window.onload = function () {
   satcat = new Catalogue();
 
@@ -594,9 +673,12 @@ let tempEntity2 = viewer_main.entities.add({
 
    // 保存当前选中的点为上一次点击的对象
     previousPick = pick.primitive;
+    clickobject = pick;
 
     pick.primitive.color = Cesium.Color.YELLOW
     pick.primitive.pixelSize = 10
+
+    addOrbit(pick);
     
     /*
     console.log(pick.primitive._actualPosition)
