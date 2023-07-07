@@ -582,19 +582,19 @@ let tempEntity2 = viewer_main.entities.add({
     console.log(pick.id["Operation Status"])
      // 取消上一次点击的颜色修改和点大小修改效果
     if (previousPick !== null) {
-        if (pick.id["Operation Status"]!== "Decayed" && pick.id["Operation Status"]!== "Non-operational" && pick.id["Operation Status"] !== "Unknown"){
+        if (previousPick.id["Operation Status"]!== "Decayed" && previousPick.id["Operation Status"]!== "Non-operational" && previousPick.id["Operation Status"] !== "Unknown"){
         previousPick.color = Cesium.Color.GREEN;  // 恢复为默认颜色
         previousPick.pixelSize = 4;  // 恢复为默认大小
         }
         else{
-        previousPick.color = Cesium.Color.RED;  // 恢复为默认颜色
-        previousPick.pixelSize = 4;  // 恢复为默认大小
+        previousPick.color = Cesium.Color.RED;  // default color
+        previousPick.pixelSize = 4;  // default size
         }
    }
 
    // 保存当前选中的点为上一次点击的对象
     previousPick = pick.primitive;
-    
+
     pick.primitive.color = Cesium.Color.YELLOW
     pick.primitive.pixelSize = 10
     
