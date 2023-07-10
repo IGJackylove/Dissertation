@@ -526,7 +526,7 @@ function addOrbit(pick){
           polyline: {
             positions: orbitPosArray,
             width: 5,
-            material: Cesium.Color.RED,
+            material: Cesium.Color.WHITE,
             loop: true
           },
         });
@@ -550,6 +550,7 @@ function addOrbit(pick){
 
 window.onload = function () {
   satcat = new Catalogue();
+  
 
   clockViewModel = new Cesium.ClockViewModel();
 
@@ -575,6 +576,7 @@ window.onload = function () {
   viewer_main.CreditDisplay = true;
   viewer_main.scene.debugShowFramesPerSecond = true;
   viewer_main.scene.frameState.creditDisplay.removeDefaultCredit();
+  
 
 
   //start_jd = Cesium.JulianDate.now();
@@ -652,7 +654,7 @@ let tempEntity2 = viewer_main.entities.add({
   if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
     showSelection = true;
     let tableItems = Object.entries(pick.id).map(function([key, value]) {
-      return '<tr><td style="text-align:left; font-size: 16px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 300px;">' + value + '</td></tr>';
+      return '<tr><td style="text-align:left; font-size: 15px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 300px;">' + value + '</td></tr>';
     });
     description = '<table style="width:100%">' + tableItems.join('') + '</table>';
 
