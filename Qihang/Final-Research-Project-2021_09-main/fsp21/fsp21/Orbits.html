@@ -1,0 +1,346 @@
+<!-- Use correct character set. 
+// author: Zhen Li
+// email: hpulizhen@163.com
+// enhanced author: Luyang Han
+// email: hanluhou98@gmail.com
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>Space debris telescope simulation</title>
+
+  <style>
+    @import url(Cesium/Widgets/widgets.css);
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #main_viewer {
+      width: 70%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      position: relative;
+      /* Used as position the legend*/
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <div class="cesiumContainer" id="main_viewer">
+    <div class="panel" id="legend1">
+      <ul id="legend1-ul">
+        <li id="active_num" style="color: rgb(38, 146, 16); font-size: 13pt; ">Active satellite</li>
+        <li id="inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
+      </ul>
+    </div>
+
+  </div>
+
+
+  <script>
+    window.shouldAddEntities = true;  // A global variable
+  </script>
+
+  <style>
+    #legend1-ul {
+      position: absolute;
+      right: 0.5%;
+      width: 200px;
+      height: 40px;
+      z-index: 999;
+      bottom: 5%;
+      border: 1px solid;
+      color: #f0f0f0c0;
+      background-color: #000000;
+      list-style-position: inside;
+      text-align: left;
+      margin: 0px;
+      padding: 0.5%;
+    }
+  </style>
+
+
+  <div id="catalogue_alert">
+    <label id="Label3">Please choose a FSP Catalogue file</label>
+  </div>
+
+  <style>
+    #catalogue_alert {
+      padding: 0 7px;
+      position: fixed;
+      width: 20%;
+      height: 2.5%;
+      z-index: 999;
+      top: 5px;
+      left: 5px;
+      border: 2px solid;
+      color: #f0f0f0e7;
+      background-color: #000000;
+      opacity: 0.9;
+    }
+
+    #label3 {
+      color: #ffffff;
+      font-size: 10pt;
+    }
+  </style>
+
+  <div id="datgui">
+  </div>
+
+  <style>
+    #datgui {
+      position: fixed;
+      /* 使用 fixed 使元素相对于浏览器窗口定位 */
+      top: 30px;
+      /* 放在底部，但从底部留出5px的空间 */
+      left: 5px;
+      /* 距离左边5px */
+    }
+  </style>
+
+  <!-- Reference for the design and information in this part: https://geoxc-apps.bd.esri.com/space/satellite-explorer/ -->
+  <div id="background_infor">
+    <a href="space_debris.html" class="backButton">&laquo; Back</a>
+    <h1 class="background_title">Where are space orbit?</h1>
+    <div class="content" id="intro">
+      Despite the immense expanse of space beyond Earth's atmosphere, human-made space object predominantly occupy one
+      of three common orbital zones: low earth orbit, medium earth orbit, and geosynchronous orbit.
+    </div>
+    <div>
+      <p class="title_rec_LEO"> LEO (Low Earth Orbit)</p>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" x="0" y="0" height="20" width="5%" fill="rgb(238, 128, 38)"></rect>;
+        <text x="5%" y="90%" class="rect_label">4,042 satellites (85.62%)</text>;
+      </svg>
+
+      <p class="title_rec_MEO"> MEO (Middle Earth Orbit)</p>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" x="0" y="0" height="20" width="5%" fill="#bdbf47"></rect>;
+        <text x="5%" y="90%" class="rect_label">4,042 satellites (85.62%)</text>;
+      </svg>
+
+      <p class="title_rec_GEO"> GEO (Geosynchronous Earth Orbit)</p>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" x="0" y="0" height="20" width="5%" fill="#5ec491"></rect>;
+        <text x="5%" y="90%" class="rect_label">4,042 satellites (85.62%)</text>;
+      </svg>
+
+    </div>
+
+    <div class="block_orbit">
+      <p class="orbit_bot">160 km / 99 miles</p>
+      <div id="content_LEO">
+        <button class="interactive_button" id="button_LEO">Low Earth Orbit</button>
+        - typically take between 90 minutes and 2 hours to complete one full orbit around the Earth. Low altitudes in
+        combination with short orbital periods make LEO satellites ideally situated for remote sensing missions,
+        including Earth observation and reconnaissance.
+      </div>
+    </div>
+
+    <div class="block_orbit">
+      <p class="orbit_bot">2,000 km / 1,243 miles</p>
+      <div id="content_MEO">
+        <button class="interactive_button" id="button_MEO">Medium Earth Orbit</button>
+        - navigation satellite systems (like the ones used by our car's GPS) work well at this altitude. Being so high
+        up they have larger footprints and can see more of the Earth's surface at a time. One reason there are fewer
+        satellites in this region is the presence of the Van Allen Radiation Belt, which can damage satellites' onboard
+        electronic systems.
+      </div>
+    </div>
+
+    
+    <div class="clock_orbit">
+      <p class="orbit_bot">35,000 km / 21,748 miles</p>
+      <p class="orbit_bot" id="GEO_bot">35,786 km / 22,236 miles</p>
+      <div id="content_GEO">
+        <button class="interactive_button" id="button_GEO">Geosychronous Orbit</button>
+        - have an orbital period that matches Earth's rotation around its axis. These satellites have a constant altitude
+        of 35,786km (22,236 miles). A special case of geosynchronous orbit is the geostationary orbit which is a circular
+        geosynchronous orbit in Earth's equatorial plane (their inclination is zero).
+      </div>
+      <p class="orbit_bot" id="GEO_bot">35,786 km / 22,236 miles</p>
+    </div>
+
+
+
+    <style>
+      #background_infor {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 30%;
+        height: 100%;
+        background: linear-gradient(180deg, #000d14 0%, #1B3944 100%);
+        color: rgb(219, 216, 216);
+        font-family: "Poppins", sans-serif;
+        font-size: 15px;
+        padding: 25px;
+        box-sizing: border-box;
+        border-style: inset;
+        border-width: 3px;
+        border-color: rgb(131, 207, 182);
+        overflow: auto;
+        text-align: justify;
+
+        
+      }
+      .backButton {
+          color: rgb(219, 216, 216);
+        }
+
+      .background_title {
+        font-size: 20px;
+
+      }
+
+      .title_rec_LEO {
+        font-size: 15px;
+        color: rgb(238, 128, 38);
+        margin-bottom: 0%;
+      }
+
+      .title_rec_MEO {
+        font-size: 15px;
+        color: #bdbf47;
+        margin-bottom: 0%;
+      }
+
+      .title_rec_GEO {
+        font-size: 15px;
+        color: #5ec491;
+        margin-bottom: 0%;
+      }
+
+      .rect_label {
+        fill: antiquewhite
+      }
+
+
+      .orbit_bot {
+        display: flex;
+        flex-direction: row;
+        font-size: .8rem;
+        font-weight: 700;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        ;
+        margin: 20px 0;
+      }
+
+      #GEO_bot{
+        margin: 45px 0; /*set to make the GEO rect far from the MEO*/
+      }
+
+      .orbit_bot::before,
+      .orbit_bot::after {
+
+        content: "";
+        flex: 1 1;
+        border-bottom: 1px solid rgb(219, 216, 216);
+        margin: auto;
+      }
+
+      .orbit_bot::before {
+        margin-right: 10px;
+      }
+
+      .orbit_bot::after {
+        margin-left: 10px;
+      }
+
+      .block_orbit {
+        display: block;
+        margin: 20px 0;
+      }
+
+      #content_LEO,
+      #content_MEO
+      {
+        border-left: 1px dashed rgb(219, 216, 216);
+        padding: 20px 15px;
+        margin-top: -27px;
+        margin-bottom: -29px;
+      }
+
+      #content_GEO{
+        border-left: 1px dashed rgb(219, 216, 216);
+        padding: 20px 15px;
+        margin-top: -52px;
+        margin-bottom: -52px;
+      }
+
+
+      .interactive_button {
+        background-color: transparent;
+        /* 设置背景色为透明 */
+        border-radius: 5px;
+        /* 设置边角的圆弧半径，你可以调整这个值以获得你想要的效果 */
+        padding: 2PX;
+        /* 设置内边距，增加button的可点击区域，你可以根据需要调整这个值 */
+      }
+
+      #button_LEO {
+        border: 2px solid rgb(238, 128, 38);
+        /* 设置边框颜色为橙色，你可以调整边框的粗细 */
+        color: rgb(238, 128, 38);
+        /* 设置字体颜色为橙色 */
+      }
+
+      #button_MEO {
+        border: 2px solid #bdbf47;
+        /* 设置边框颜色为橙色，你可以调整边框的粗细 */
+        color: #bdbf47;
+        /* 设置字体颜色为橙色 */
+      }
+
+      #button_GEO {
+        border: 2px solid #5ec491;
+        /* 设置边框颜色为橙色，你可以调整边框的粗细 */
+        color: #5ec491;
+        /* 设置字体颜色为橙色 */
+      }
+    </style>
+
+
+  </div>
+
+
+
+
+
+  <script src="Cesium/Cesium.js"> </script>
+  <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
+  <script src="spacedebris_viewer_js/satellite.min.js"> </script>
+  <script src="spacedebris_viewer_js/dat.gui.min.js"> </script>
+  <script src="spacedebris_viewer_js/Catalogue.js"> </script>
+  <script src="spacedebris_viewer_js/KeplerianElement.js"> </script>
+  <script src="spacedebris_viewer_js/main.js"> </script>
+  <script src="spacedebris_viewer_js/echarts.min.js"> </script>
+
+
+</body>
+
+</html>

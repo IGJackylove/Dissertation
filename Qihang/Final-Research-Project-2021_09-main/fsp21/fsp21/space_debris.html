@@ -17,27 +17,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Space debris telescope simulation</title>
  	
- 	<style>
-      @import url(Cesium/Widgets/widgets.css);
-      html, body, #main_viewer {
-          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
-      }
+  <style>
+    @import url(Cesium/Widgets/widgets.css);
+     html, body {
+     width: 100%;
+     height: 100%;
+     margin: 0;
+     padding: 0;
+     overflow: hidden;
+}
 
-      
-  </style>
-  
-  <!-- <style>
-  datgui{
-    position: absolute;
-    top: 2px;
-    left: 4px}
-  </style> -->
-  
+     #main_viewer {
+       width: 100%;
+       height: 100%;
+       margin: 0;
+       padding: 0;
+       overflow: visible;
+       position: relative; /* Used as position the legend*/
+     }
+     
+ </style>
+ 
 
 </head>
 
 <body>
-  <div class="main_viewer" id="main_viewer",width=50px,length=10></div>
+ <div class="cesiumContainer" id="main_viewer">
+   <div class="panel" id="legend1">
+     <ul id="legend1-ul">
+       <li id = "active_num" style="color: rgb(38, 146, 16); font-size: 13pt; ">Active satellite</li>
+       <li id = "inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
+     </ul>
+   </div>
+ </div>
   
   <!-- <div class="radar_viewer" id="radar_viewer" ></div>
 		<style>
@@ -108,31 +120,27 @@
     }
     </style> -->
 
-  
-  <div class="panel" id="legend1">
-    <ul>
-      <li id = "active_num" style="color: rgb(38, 146, 16); font-size: 13pt; ">Active satellite</li>
-      <li id = "inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
-      </ul>
-  </div>
 
   <div class="panel" id="pie_chart">
   </div>
 
   <style>
-    #legend1{
-      padding: 0 7px;
-			position:absolute;
-			width:270px;
-			height:80px;
+    #legend1-ul {
+			position: absolute;
+      right:0.5%;
+			width:200px;
+			height:40px;
 			z-index:999;
-			bottom: 50px;
-			right:15px;
+			bottom: 5%;
       border: 1px solid;
       color:#f0f0f0c0;
 			background-color:#000000;
-			opacity:0.9;
+      list-style-position: inside;
+      text-align: left;
+      margin: 0px;
+      padding: 0.5%;
     }
+
 
     /* #pie_chart{
       padding: 0 7px;
@@ -147,9 +155,9 @@
 			background-color:#333333;
     } */
 
-    #catelabel{
+    /* #catelabel{
       padding: 5px 25px;
-    }
+    } */
   
   </style>
 
@@ -177,21 +185,10 @@
 
   <style>
     #catalogue_alert{
-      /* padding: 0 7px;
-			position:fixed;
-			width:225px;
-			height:20px;
-			z-index:999;
-			top:2px;
-			right:415px;
-      border: 2px solid;
-      color:#f0f0f0e7;
-			background-color:#000000;
-			opacity:0.9; */
       padding: 0 7px;
       position: fixed;  
-      width: 225px;
-      height: 20px;
+      width: 20%;
+      height: 2.5%;
       z-index: 999;
       top: 5px;  
       left: 5px;  
@@ -208,13 +205,12 @@
   </style>
   
   <div id="datgui">
-    
   </div>
 
   <style>
      #datgui {
     position: fixed;  /* 使用 fixed 使元素相对于浏览器窗口定位 */
-    top: 25px;  /* 放在底部，但从底部留出5px的空间 */
+    top: 30px;  /* 放在底部，但从底部留出5px的空间 */
     left: 5px;  /* 距离左边5px */
   }
   </style>
@@ -226,10 +222,10 @@
   <div class="background_infor">
     <ul class="info-item">
       <li class="single-infor">
-        <a href="#">
+        <a href="Orbits.html">
           <div>
             <p class="title">ORBITS</p>
-            <p class="question">Curious about orbits?</p>
+            <p class="question">Where are space orbit?</p>
           </div>
         </a>
       </li>
@@ -252,7 +248,15 @@
       <li class="single-infor">
         <a href="#">
           <div>
-            <p class="title">Custom ORBITS</p>
+            <p class="title">RADAR</p>
+            <p class="question">What's it like over you from a radar perspective?</p>
+          </div>
+        </a>
+      </li>
+      <li class="single-infor">
+        <a href="#">
+          <div>
+            <p class="title">CUSTOM ORBITS</p>
             <p class="question">Create your own orbit?</p>
           </div>
         </a>
@@ -278,6 +282,7 @@
         width: 100%;
         list-style-type: none; /* Remove default bullet points */
         padding: 0; /* Remove default padding */
+        gap: 2%;
     }
 
     .single-infor{
@@ -300,6 +305,7 @@
       font-weight: bold;
       margin-bottom: 2px;
       font-size: 15px;
+      /* text-align: center; */
     }
 
     .single-infor p.question {
@@ -308,7 +314,13 @@
       margin-bottom: 0px;
       padding-top: 2px;
       font-size: 13px;
+      /* text-align: center; */
+      transition: border-color 0.5s ease; /* Add transition effect */
     }
+
+    .single-infor a:hover p.question {
+    border-color: orange; /* Apply orange color on hover */
+  }
 
   </style>
     

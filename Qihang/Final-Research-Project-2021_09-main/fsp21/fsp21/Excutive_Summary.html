@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excutive summary</title>
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
+    <script src="spacedebris_viewer_js/Catalogue.js"></script>
+    <script src="spacedebris_viewer_js/echarts.min.js"> </script>
+</head>
+
+
+<body>
+    <!-- <div class="background">
+        <img class="background_image" src="images/background.jpg" alt="Background Image">
+    </div>
+
+    <div class="title">
+        <p class="title_main">Excutive summary for the result of the future space population</p>
+    </div> -->
+
+    <div class="scatter plot">
+        <div id="scatter_2023"></div>
+        <div id="scatter_2028"></div>
+        <div id="scatter_2043"></div>
+    </div>
+
+    <script>
+        let satcat = new Catalogue();
+        let data_load = false;
+        let status1;
+        let results_active = [];
+        let results_inactive = [];
+        console.log(satcat)
+
+        satcat.loadcatlog("kep", "data/catalogue/fspcat_20230101_v280819_nodeb.json");
+        setInterval(function () {
+            if (satcat.data_load_complete == true && data_load == false) {
+                for (let debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) {
+                    let operation_status1 = satcat.getDebriOperation_status("isat", debrisID);
+                    let sat_category1 = satcat.getDebriCategory(debrisID);
+                    let cross_section1 = satcat.getDebriCross_Section(debrisID);
+                    let country1 = satcat.getDebriCountry(debrisID);
+                    let sat_infor1 = satcat.getDebriInfo(debrisID);
+                    let sat_name1 = satcat.getDebriName(debrisID).trim();
+                    let sat_Id1 = satcat.getDebriID(debrisID).trim();
+                    let sat_type1 = satcat.getDebriType(debrisID).trim();
+                    let sat_sma1 = satcat.getSemiMajorAxis(debrisID);
+                    let apogee1 = parseFloat(satcat.getApogee(debrisID));
+                    let perigee1 = parseFloat(satcat.getPerigee(debrisID));
+                    let height = avg(apogee1, perigee1);
+
+                    if (sat_category1 == "Low Earth Orbit"){
+                        if (operation_status1 !== "Decayed" && operation_status1 !== "Non-operational" && operation_status1 !== "Unknown") {
+                        status1 = "active"
+                        results_active.push([
+                            height,
+                            Math.random()
+                        ]);
+                    } else {
+                        status1 = "inactive"
+                        results_inactive.push([
+                            height,
+                            Math.random()
+                        ])
+                    }
+                    }
+                    
+                }
+                data_load = true;
+                console.log(results_active)
+                console.log(results_inactive)
+
+                let scatter_2023 = document.getElementById('scatter_2023');
+                let scatter_2023_plot = echarts.init(scatter_2023);
+                option = {
+                    xAxis: {},
+                    yAxis: {},
+                    series: [
+                        {
+                            symbolSize: 4,
+                            data: results_active,
+                            type: 'scatter',
+                            color:["#00CC00"]
+                        },
+                        {
+                            symbolSize: 4,
+                            data: results_inactive,
+                            type: 'scatter',
+                            color:["#FF3333"]
+                        }
+                    ]
+                };
+                option && scatter_2023_plot.setOption(option);
+
+
+                
+
+           
+            }
+
+        }, 1000);
+
+        function avg(num1, num2) {
+            return (num1 + num2) / 2;
+        }
+
+
+      // var option;
+
+
+
+
+
+        let satcat2 = new Catalogue();
+        let data_load2 = false;
+        let status2;
+        let results_active2 = [];
+        let results_inactive2 = [];
+        console.log(satcat2)
+
+        satcat2.loadcatlog("kep", "data/catalogue/fspcat_20280101_v280819_nodeb.json");
+        setInterval(function () {
+            if (satcat2.data_load_complete == true && data_load2 == false) {
+                for (let debrisID = 0; debrisID < satcat2.getNumberTotal(); debrisID++) {
+                    let operation_status2 = satcat2.getDebriOperation_status("isat", debrisID);
+                    let sat_category2 = satcat2.getDebriCategory(debrisID);
+                    let cross_section2 = satcat2.getDebriCross_Section(debrisID);
+                    let country2 = satcat2.getDebriCountry(debrisID);
+                    let sat_infor2 = satcat2.getDebriInfo(debrisID);
+                    let sat_name2 = satcat2.getDebriName(debrisID).trim();
+                    let sat_Id2 = satcat2.getDebriID(debrisID).trim();
+                    let sat_type2 = satcat2.getDebriType(debrisID).trim();
+                    let sat_sma2 = satcat2.getSemiMajorAxis(debrisID);
+                    let apogee2 = parseFloat(satcat2.getApogee(debrisID));
+                    let perigee2 = parseFloat(satcat2.getPerigee(debrisID));
+                    let height2 = avg(apogee2, perigee2);
+
+                    if (sat_category2 == "Low Earth Orbit"){
+                        if (operation_status2 !== "Decayed" && operation_status2 !== "Non-operational" && operation_status2 !== "Unknown") {
+                        status2 = "active"
+                        results_active2.push([
+                            height2,
+                            Math.random()
+                        ]);
+                    } else {
+                        status2 = "inactive"
+                        results_inactive2.push([
+                            height2,
+                            Math.random()
+                        ])
+                    }
+                    }
+                    
+                }
+                data_load2 = true;
+                console.log(results_active2)
+                console.log(results_inactive2)
+
+                let scatter_2028 = document.getElementById('scatter_2028');
+                let scatter_2028_plot = echarts.init(scatter_2028);
+                option2 = {
+                    xAxis: {},
+                    yAxis: {},
+                    series: [
+                        {
+                            symbolSize: 4,
+                            data: results_active2,
+                            type: 'scatter',
+                            color:["#00CC00"]
+                        },
+                        {
+                            symbolSize: 4,
+                            data: results_inactive2,
+                            type: 'scatter',
+                            color:["#FF3333"]
+                        }
+                    ]
+                };
+                option2 && scatter_2028_plot.setOption(option2);
+
+
+                
+
+           
+            }
+
+        }, 1000);
+
+
+        let satcat3 = new Catalogue();
+        let data_load3 = false;
+        let status3;
+        let results_active3 = [];
+        let results_inactive3 = [];
+        console.log(satcat3)
+
+        satcat3.loadcatlog("kep", "data/catalogue/fspcat_20430701_v280819_nodeb.json");
+        setInterval(function () {
+            if (satcat3.data_load_complete == true && data_load3 == false) {
+                for (let debrisID = 0; debrisID < satcat3.getNumberTotal(); debrisID++) {
+                    let operation_status3 = satcat3.getDebriOperation_status("isat", debrisID);
+                    let sat_category3 = satcat3.getDebriCategory(debrisID);
+                    let cross_section3 = satcat3.getDebriCross_Section(debrisID);
+                    let country3 = satcat3.getDebriCountry(debrisID);
+                    let sat_infor3 = satcat3.getDebriInfo(debrisID);
+                    let sat_name3 = satcat3.getDebriName(debrisID).trim();
+                    let sat_Id3 = satcat3.getDebriID(debrisID).trim();
+                    let sat_type3 = satcat3.getDebriType(debrisID).trim();
+                    let sat_sma3 = satcat3.getSemiMajorAxis(debrisID);
+                    let apogee3 = parseFloat(satcat3.getApogee(debrisID));
+                    let perigee3 = parseFloat(satcat3.getPerigee(debrisID));
+                    let height3 = avg(apogee3, perigee3);
+
+                    if (sat_category3 == "Low Earth Orbit"){
+                        if (operation_status3 !== "Decayed" && operation_status3 !== "Non-operational" && operation_status3 !== "Unknown") {
+                        status3 = "active"
+                        results_active3.push([
+                            height3,
+                            Math.random()
+                        ]);
+                    } else {
+                        status3 = "inactive"
+                        results_inactive3.push([
+                            height3,
+                            Math.random()
+                        ])
+                    }
+                    }
+                    
+                }
+                data_load3 = true;
+                console.log(results_active3)
+                console.log(results_inactive3)
+
+                let scatter_2043 = document.getElementById('scatter_2043');
+                let scatter_2043_plot = echarts.init(scatter_2043);
+                option3 = {
+                    xAxis: {},
+                    yAxis: {},
+                    series: [
+                        {
+                            symbolSize: 4,
+                            data: results_active3,
+                            type: 'scatter',
+                            color:["#00CC00"]
+                        },
+                        {
+                            symbolSize: 4,
+                            data: results_inactive3,
+                            type: 'scatter',
+                            color:["#FF3333"]
+                        }
+                    ]
+                };
+                option3 && scatter_2043_plot.setOption(option3);
+
+
+                
+
+           
+            }
+
+        }, 1000);
+
+    </script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 50%;
+            left: 0;
+            overflow: hidden;
+            z-index: -999;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .background_image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .title {
+            font-family: "Poppins", sans-serif;
+            font-size: 30px;
+            text-align: left;
+            color: white;
+            z-index: 999;
+        }
+
+        #scatter_2023 {
+            display: flex;
+            justify-content: center;
+            height: 350px
+        }
+
+        #scatter_2028 {
+            display: flex;
+            justify-content: center;
+            height: 350px
+        }
+
+        #scatter_2043 {
+            display: flex;
+            justify-content: center;
+            height: 350px
+        }
+    </style>
+</body>
+
+
+
+</html>

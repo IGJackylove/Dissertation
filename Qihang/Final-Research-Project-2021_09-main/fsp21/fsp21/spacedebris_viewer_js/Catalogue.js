@@ -87,35 +87,42 @@ class Catalogue
 	}
 	
 	//ref: http://www.celestrak.com/satcat/status.php
-	getDebriOperation_status(isat)
-	{
-		var s = "Non-operational";
-		if(isat < this.debris_kep.length)
-		{
-			var aa = this.debris_kep[isat]["payload_operational_status"];
+	getDebriOperation_status(choice, data){
+		if (choice == "isat"){
+			var s = "Non-operational";
+			if(data < this.debris_kep.length){
+				var aa = this.debris_kep[data]["payload_operational_status"];
 			
-			if(aa == '+    ') {s = "Operational";} /// operational 
-			else if(aa == '-    ') 	{s = "Non-operational";} /// non-operational
-			else if(aa == 'P    ') 	{s = "Partially operational";} /// partially operational 
-			else if(aa == 'B    ') 	{s = "Backup/Standby";} /// backup/standby
-			else if(aa == 'S    ') 	{s = "Spare";} /// spare
-			else if(aa == 'X    ') 	{s = "Extened mission";} /// extended mission
-			else if(aa == 'D    ') 	{s = "Decayed";} /// Decayed
-			else if(aa == '?    ')  {s = "Unknown";} /// unknown	
-			else  /// not set
-			{
-				s = "Non-operational";
-			}
-		}
-		else if(isat >= this.debris_kep.length 
-			&& isat < this.getNumberTotal() )
-		{
-			s = "Unknown";
-			// return this.debris_tle[isat-this.debris_kep.length]["name"];
-			// tle  does not include operational status
-		}
+				if(aa == '+    ') {s = "Operational";} /// operational 
+				else if(aa == '-    ') 	{s = "Non-operational";} /// non-operational
+				else if(aa == 'P    ') 	{s = "Partially operational";} /// partially operational 
+				else if(aa == 'B    ') 	{s = "Backup/Standby";} /// backup/standby
+				else if(aa == 'S    ') 	{s = "Spare";} /// spare
+				else if(aa == 'X    ') 	{s = "Extened mission";} /// extended mission
+				else if(aa == 'D    ') 	{s = "Decayed";} /// Decayed
+				else if(aa == '?    ')  {s = "Unknown";} /// unknown	
+				else  /// not set
+				{
+					s = "Non-operational";
+				}
+			}else if(data >= this.debris_kep.length 
+				&& data < this.getNumberTotal() ){
+				s = "Unknown";
+				// return this.debris_tle[isat-this.debris_kep.length]["name"];
+				// tle  does not include operational status
+			}	
 
-		return s;
+			return s;
+		}
+		else if (choice == "cosparID"){
+			for (let i = 0; i < this.debris_kep.length; i++) {
+				if (this.debris_kep[i]["COSPAR_ID"].trim() == data.trim()) {
+				  return this.debris_kep[i].payload_operational_status.trim();
+			  	}
+			  }
+			
+		}
+		
 
 	}
 
@@ -176,6 +183,7 @@ class Catalogue
 			BOL:	"Bolivia",
 			BRAZ:	"Brazil",
 			BUL:	"Bulgaria",
+			CHN:    "People's Republic of China",
 			CA:		"Canada",
 			CHBZ:	"China/Brazil",
 			CHTU:	"China/Turkey",
@@ -187,6 +195,7 @@ class Catalogue
 			DEN:	"Denmark",
 			ECU:	"Ecuador",
 			EGYP:	"Egypt",
+			EU:     "European Union",
 			ESA:	"European Space Agency",
 			ESRO:	"European Space Research Organization",
 			EST:	"Estonia",
@@ -215,6 +224,7 @@ class Catalogue
 			IT:		"Italy",
 			ITSO:	"International Telecommunications Satellite Organization (INTELSAT)",
 			JPN:	"Japan",
+			Japan:  "Japan",
 			KAZ:	"Kazakhstan",
 			KEN:	"Republic of Kenya",
 			LAOS:	"Laos",
@@ -237,6 +247,7 @@ class Catalogue
 			NOR:	"Norway",
 			NPL:	"Federal Democratic Republic of Nepal",
 			NZ:		"New Zealand",
+			Other:  "Other countries",
 			O3B:	"O3b Networks",
 			ORB:	"ORBCOMM",
 			PAKI:	"Pakistan",
@@ -252,6 +263,7 @@ class Catalogue
 			ROM:	"Romania",
 			RP:		"Philippines (Republic of the Philippines)",
 			RWA:	"Republic of Rwanda",
+			RUS:    "Russia",
 			SAFR:	"South Africa",
 			SAUD:	"Saudi Arabia",
 			SDN:	"Republic of Sudan",
@@ -260,6 +272,7 @@ class Catalogue
 			SGJP:	"Singapore/Japan",
 			SING:	"Singapore",
 			SKOR:	"Republic of Korea",
+			SK:     "Republic of Korea",
 			SPN:	"Spain",
 			STCT:	"Singapore/Taiwan",
 			SVN:	"Slovenia",
@@ -276,6 +289,7 @@ class Catalogue
 			UNK:	"Unknown",
 			URY:	"Uruguay",
 			US:		"United States",
+			USA:    "United States",
 			USBZ:	"United States/Brazil",
 			VENZ:	"Venezuela",
 			VTNM:	"Vietnam"
@@ -376,6 +390,25 @@ class Catalogue
 		}
 		
 	  }
+	
+	getSemiMajorAxis(isat){
+		let sma =  this.debris_kep[isat]["semi_major_axis"];
+		return sma
+	}
+
+	getApogee(isat){
+		let apogee =  this.debris_kep[isat]["apogee_hgt"];
+		return apogee
+	}
+
+	getPerigee(isat){
+		let perigee =  this.debris_kep[isat]["perigee_hgt"];
+		return perigee
+	}
+
+
+
+
 
 	/// read in the debris data in the format of JSON 读取json文件
 	loadcatlog(orbit_type,jsonFile)
@@ -417,6 +450,8 @@ class Catalogue
 					that.debris_kep[isat]["RAAN"] = parseFloat(idebri["RAAN"]);
 					that.debris_kep[isat]["argument_of_perigee"] = parseFloat(idebri["argument_of_perigee"]);
 					that.debris_kep[isat]["true_anomaly"] = parseFloat(idebri["true_anomaly"]);
+					that.debris_kep[isat]["apogee"] = parseFloat(idebri["apogee_hgt"]);
+					that.debris_kep[isat]["perigee"] = parseFloat(idebri["perigee_hgt"]);
 				}
 				console.log("I am loading kep data using ajax");
 				console.log(that.debris_kep.length);

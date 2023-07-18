@@ -1,0 +1,64 @@
+<!-- Use correct character set. 
+// author: Zhen Li
+// email: hpulizhen@163.com
+// enhanced author: Luyang Han
+// email: hanluhou98@gmail.com
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>Space debris telescope simulation</title>
+ 	
+ 	<style>
+     @import url(Cesium/Widgets/widgets.css);
+      html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+}
+
+      #main_viewer {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: visible;
+        position: relative; /* Used as position the legend*/
+      }
+      
+  </style>
+  
+
+</head>
+
+<body>
+  <div class="cesiumContainer" id="main_viewer">
+  </div>
+  
+
+
+    
+  
+
+  <script src="Cesium/Cesium.js"> </script>
+  <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
+  <script src = "spacedebris_viewer_js/satellite.min.js"> </script> 
+  <script src = "spacedebris_viewer_js/dat.gui.min.js"> </script> 
+  <script src ="spacedebris_viewer_js/Catalogue.js"> </script> 
+  <script src ="spacedebris_viewer_js/KeplerianElement.js"> </script> 
+  <script src ="spacedebris_viewer_js/main.js"> </script>
+  <script src ="spacedebris_viewer_js/echarts.min.js"> </script>
+
+  
+</body>
+</html>

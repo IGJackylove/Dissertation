@@ -27,9 +27,10 @@ var longitude = 0.0;
 var latitude = 51.0;
 var height = 10.0;
 
-let tempEntity = undefined; // used to track the cliced point
-let deleteEntity;
+// let tempEntity = undefined; // used to track the cliced point
+// let deleteEntity;
 let clickedObject = undefined;
+let orbitEntity = undefined;
 
 
 
@@ -309,7 +310,7 @@ function update_debris_position() {
       */
       //更新viewer_main中的点的位置
       // console.log(position_ecef)
-      point.position = position_ecef; //// update back
+      point.position = position_eci; //// update back
 
       ///更新radar_viewer中的点的位置
       //update the radar_view debri_collection在下边的windowonload function中定义了
@@ -317,10 +318,6 @@ function update_debris_position() {
     }
   }
 }
-
-
-
-
 
 var cataloglist =
 {
@@ -343,7 +340,7 @@ var cataloglist =
 }
 
 function GUIset() {
-  var gui = new dat.GUI({ width: 500 });
+  var gui = new dat.GUI({ width: 350 });
   gui.domElement.id = 'datgui';
   // gui.domElement.id = 'datgui';
 
@@ -482,10 +479,9 @@ function addOrbit(pick){
   // for (let i = 0; i < ){
 
       clickedObject = pick
-      console.log(clickedObject)
       if (clickedObject){
         orbitPeriod = parseFloat(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"]))*60; 
-        console.log(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"]) + " " + orbitPeriod)
+        // console.log(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"]) + " " + orbitPeriod)
         let currentTime = viewer.clock.currentTime;
         let tai_utc = Cesium.JulianDate.computeTaiMinusUtc(currentTime);
         let startTime = Cesium.JulianDate.addSeconds(currentTime, tai_utc, new Cesium.JulianDate());
@@ -516,41 +512,49 @@ function addOrbit(pick){
         
             position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef)
 
-            orbitPosArray.push(position_ecef)
+            orbitPosArray.push(position_eci)
           }
 
         }
-        console.log(orbitPosArray)
-          // 创建Polyline Entity
-        var polylineEntity = viewer.entities.add({
+
+        
+        if (orbitEntity) {
+          viewer_main.entities.removeById(orbitEntity.id);
+          orbitEntity = undefined;
+        }
+
+        /* add orbit basedon operation status */
+        if (clickedObject.id["Operation Status"]!== "Decayed" 
+        && clickedObject.id["Operation Status"] !== "Non-operational" 
+        && clickedObject.id["Operation Status"] !== "Unknown"){
+          // create Polyline Entity
+        orbitEntity = viewer_main.entities.add({
+          id: "Orbit for" +" " + clickedObject.id["COSPAR ID"],
           polyline: {
             positions: orbitPosArray,
-            width: 5,
-            material: Cesium.Color.WHITE,
+            width: 2,
+            material: Cesium.Color.GREEN,
             loop: true
           },
         });
-        console.log(polylineEntity)
-      //   // 创建PolylineCollection
-      //   let polylineCollection = new Cesium.PolylineCollection();
-
-      //   // 创建Polyline并设置属性
-      //   let polyline = polylineCollection.add({
-      //     positions: orbitPosArray, // 设置折线的位置
-      //     width: 5, // 设置折线的宽度'
-      //     loop: true,
-      //     material: Cesium.Color.GREEN, // 设置折线的颜色
-      //   });
-      //   console.log(polyline)
-      //   // 将PolylineCollection添加到场景中
-      //  viewer_main.scene.primitives.add(polyline);
-    }
+        } else{
+          orbitEntity = viewer_main.entities.add({
+            id: "Orbit for" + " " + clickedObject.id["COSPAR ID"],
+            polyline: {
+              positions: orbitPosArray,
+              width: 2,
+              material: Cesium.Color.RED,
+              loop: true
+            },
+        })
+      
+      }
   // }
 }
+} // end of addOrbit
 
 window.onload = function () {
   satcat = new Catalogue();
-  
 
   clockViewModel = new Cesium.ClockViewModel();
 
@@ -563,6 +567,7 @@ window.onload = function () {
     timeline: true,
     clockViewModel: clockViewModel
   });
+
 
   //Enable depth testing so things behind the terrain disappear.
   viewer_main.scene.globe.depthTestAgainstTerrain = true;
@@ -592,17 +597,14 @@ window.onload = function () {
 // 测试代码
 let tempEntity2 = viewer_main.entities.add({
   id: "Test2019-028B",
-  position: new Cesium.Cartesian3(1415428.3804646356, -6594248.609551645, 1278224.739309752),
+  position: new Cesium.Cartesian3(0,0,0),
   point: {
     color: Cesium.Color.WHITE,
     pixelSize: 30
   }
 });
 
-
-
-
-
+// viewer_main.trackedEntity = tempEntity2
 
   /// debris_collection to store all the debris points
   debris_collection = new Cesium.PointPrimitiveCollection();
@@ -651,7 +653,8 @@ let tempEntity2 = viewer_main.entities.add({
   //   }
   //   // viewer_main.entities.remove(tempEntity);
   // }
-  if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
+  /*Only when data is loaded, pick and pick.id are defined and is primitive will call the following code */
+  if (data_load && Cesium.defined(pick) && Cesium.defined(pick.id)&& pick.primitive.constructor.name === 'f') {
     showSelection = true;
     let tableItems = Object.entries(pick.id).map(function([key, value]) {
       return '<tr><td style="text-align:left; font-size: 15px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 300px;">' + value + '</td></tr>';
@@ -660,7 +663,7 @@ let tempEntity2 = viewer_main.entities.add({
 
     
 
-    console.log(pick.id["Operation Status"])
+    
      // 取消上一次点击的颜色修改和点大小修改效果
     if (previousPick !== null) {
         if (previousPick.id["Operation Status"]!== "Decayed" && previousPick.id["Operation Status"]!== "Non-operational" && previousPick.id["Operation Status"] !== "Unknown"){
@@ -732,6 +735,26 @@ let tempEntity2 = viewer_main.entities.add({
 });
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
+
+if (window.shouldAddEntities){
+  // 定义圆饼的中心位置
+let center = Cesium.Cartesian3.fromDegrees(0,0,0); // New York City
+
+// 创建一个空心圆饼
+var hollowCircle = viewer_main.entities.add({
+    position: center,
+    name: 'Hollow Circle',
+    ellipse: {
+        semiMinorAxis: 500000.0, // 外半径
+        semiMajorAxis: 500000.0, // 外半径
+        innerRadii: new Cesium.Cartesian3(300000.0, 300000.0, 0), // 内半径
+        material: Cesium.Color.BLUE.withAlpha(0.5),
+        outline: true,
+        outlineColor: Cesium.Color.WHITE
+    }
+});
+}
+
   /// a timer is used to deal with the async reading of JSON
   var timename = setInterval(function () {
     console.log('time_interval start')
@@ -761,7 +784,7 @@ let tempEntity2 = viewer_main.entities.add({
       for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) {
 
 
-        var operation_status = satcat.getDebriOperation_status(debrisID);
+        var operation_status = satcat.getDebriOperation_status("isat",debrisID);
         var sat_category = satcat.getDebriCategory(debrisID);
         var cross_section = satcat.getDebriCross_Section(debrisID);
         var country = satcat.getDebriCountry(debrisID);
@@ -812,7 +835,7 @@ let tempEntity2 = viewer_main.entities.add({
           position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
           pixelSize: 4,
           color: colour,
-          // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
+          scaleByDistance : new Cesium.NearFarScalar(2000, 4.0, 6.0E4, 0.8)
         });
 
 
@@ -992,12 +1015,12 @@ let tempEntity2 = viewer_main.entities.add({
   radar_position_ecef = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
 
   // // /// show the position of the telescope
-  var redpoint = viewer_main.entities.add({
-    id: "London",
-    name: 'Telescope Point',
-    position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
-    point: { pixelSize: 15, color: Cesium.Color.PINK }
-  });
+  // var redpoint = viewer_main.entities.add({
+  //   id: "London",
+  //   name: 'Telescope Point',
+  //   position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
+  //   point: { pixelSize: 15, color: Cesium.Color.PINK }
+  // });
   // viewer_main.trackedEntity=redpoint
   // console.log(viewer_main.trackedEntity)
   //radar_screen(radar_position_ecef);
