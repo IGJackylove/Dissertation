@@ -14,9 +14,10 @@
   <!-- Tell IE to use the latest, best version. -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Space debris telescope simulation</title>
- 	
+
   <style>
     @import url(Cesium/Widgets/widgets.css);
 
@@ -39,7 +40,7 @@
       /* Used as position the legend*/
     }
   </style>
-  
+
 
 </head>
 
@@ -52,77 +53,20 @@
       </ul>
     </div>
   </div>
-  
-  <div class="radar_viewer" id="radar_viewer" ></div>
-		<style>
-		.radar_viewer{
-			position:absolute;
-			width:400px;
-			height:400px;
-			z-index:999;
-			top:90px;
-			left:5px;
-			background-color:#000000;
-			opacity:1;
-      border: 1px solid;
-      color:#f0f0f0;
-		}
-    </style>
-  <div class="panel" id="user_input">
-    <label id = "label1" for="user_latitude">Telescope Latitude</label><input type="text" size="30" id="user_latitude" value= "51"/>
-    <label id = "label2" for="user_longitude">Telescope Longitude</label><input type="text" size="30" id="user_longitude" value= "0"/>
-    <label style="color: rgb(255, 255, 255); font-style: italic; font-size: 11pt;">Note: The default telescope position is set as London</label>
-    <button id= "button1" onclick="set_value()">click to set</button>
-  </div>
-  <style>
-    @import url(widgets/widgets.css);
-    #user_latitude {
-      background-image: url("images/searchicon.png");
-      background-position: right; background-repeat: no-repeat;
-      width: 95%; font-size: 12pt; padding: 10px 5px 10px 5px; margin: 5px 0px 1px 0px; 
-      border: 0px;
-    }
-    #user_longitude {
-      background-image: url("images/searchicon.png");
-      background-position: right; background-repeat: no-repeat;
-      width: 95%; font-size: 12pt; padding: 10px 5px 10px 5px; margin: 5px 0px 1px 0px; 
-      border: 0px;
-    }
-		#user_input{
-      padding: 0 7px;
-			position:absolute;
-			width:280px;
-			height:208px;
-			z-index:999;
-			top:500px;
-			left:55px;
-      border: 1px solid;
-      color:#f0f0f0;
-			background-color:#00000096;
-			opacity:0.9;
-		}
-    #button1{
-    color: #000000;
-    background-color:#ffffff;
-    font-family: "Roboto";
-    font-size: 12pt;
-    border: 4px solid;
-    border-radius: 2px;
-    padding: 5 5px;
-    display: block;
-    margin: 0 auto;
-}
-    #label1{
-      color:#ffffff;
-      font-size: 12.5pt;
-    }
-    #label2{
-      color:#ffffff;
-      font-size: 12.5pt
-    }
-    </style>
 
-  
+  <div class="radar_viewer" id="radar_viewer"></div>
+
+  <div class="panel" id="user_input">
+    <label id="label1" for="user_latitude">Telescope Latitude</label><input type="text" size="30" id="user_latitude"
+      value="51" />
+    <label id="label2" for="user_longitude">Telescope Longitude</label><input type="text" size="30" id="user_longitude"
+      value="0" />
+    <label style="color: rgb(255, 255, 255); font-style: italic; font-size: 11pt;">Note: The default telescope position
+      is set as London</label>
+    <button id="button1" onclick="set_value()">click to set</button>
+  </div>
+
+
   <div class="cesiumContainer" id="main_viewer">
     <div class="panel" id="legend1">
       <ul id="legend1-ul">
@@ -133,7 +77,88 @@
   </div>
 
 
+  <div id="catalogue_alert">
+    <label id="Label3">Please choose a FSP Catalogue file</label>
+  </div>
+
+
+  <div id="datgui"></div>
+  <a href="space_debris.html" class="backButton">&laquo; Back</a>
+
   <style>
+    .radar_viewer {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      z-index: 999;
+      top: 90px;
+      left: 5px;
+      background-color: #000000;
+      opacity: 1;
+      border: 1px solid;
+      color: #f0f0f0;
+    }
+
+    @import url(widgets/widgets.css);
+
+    #user_latitude {
+      background-image: url("images/searchicon.png");
+      background-position: right;
+      background-repeat: no-repeat;
+      width: 95%;
+      font-size: 12pt;
+      padding: 10px 5px 10px 5px;
+      margin: 5px 0px 1px 0px;
+      border: 0px;
+    }
+
+    #user_longitude {
+      background-image: url("images/searchicon.png");
+      background-position: right;
+      background-repeat: no-repeat;
+      width: 95%;
+      font-size: 12pt;
+      padding: 10px 5px 10px 5px;
+      margin: 5px 0px 1px 0px;
+      border: 0px;
+    }
+
+    #user_input {
+      padding: 0 7px;
+      position: absolute;
+      width: 280px;
+      height: 208px;
+      z-index: 999;
+      top: 500px;
+      left: 55px;
+      border: 1px solid;
+      color: #f0f0f0;
+      background-color: #00000096;
+      opacity: 0.9;
+    }
+
+    #button1 {
+      color: #000000;
+      background-color: #ffffff;
+      font-family: "Roboto";
+      font-size: 12pt;
+      border: 4px solid;
+      border-radius: 2px;
+      padding: 5 5px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    #label1 {
+      color: #ffffff;
+      font-size: 12.5pt;
+    }
+
+    #label2 {
+      color: #ffffff;
+      font-size: 12.5pt
+    }
+
     #legend1-ul {
       position: absolute;
       right: 0.5%;
@@ -150,18 +175,10 @@
       padding: 0.5%;
     }
 
-    #catelabel{
+    #catelabel {
       padding: 5px 25px;
     }
-  
-  </style>
 
-
-  <div id = "catalogue_alert">
-    <label id = "Label3">Please choose a FSP Catalogue file</label>
-  </div>
-
-  <style>
     /* #catalogue_alert{
       padding: 0 7px;
 			position:absolute;
@@ -190,17 +207,11 @@
       opacity: 0.9;
     }
 
-    #label3{
-    color:#ffffff;
-    font-size: 10pt;
-  }
-  </style>
-  
-  <div id="datgui">
-    
-  </div>
+    #label3 {
+      color: #ffffff;
+      font-size: 10pt;
+    }
 
-  <style>
     #datgui {
       position: fixed;
       /* 使用 fixed 使元素相对于浏览器窗口定位 */
@@ -208,6 +219,14 @@
       /* 放在底部，但从底部留出5px的空间 */
       left: 5px;
       /* 距离左边5px */
+    }
+
+    .backButton {
+      position: fixed;
+      color: rgb(219, 216, 216);
+      right: 7%;
+      top: 10px;
+      font-size: 25px;
     }
   </style>
   <script>
@@ -223,12 +242,13 @@
 
   <script src="Cesium/Cesium.js"> </script>
   <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
-  <script src = "spacedebris_viewer_js/satellite.min.js"> </script> 
-  <script src = "spacedebris_viewer_js/dat.gui.min.js"> </script> 
-  <script src ="spacedebris_viewer_js/Catalogue.js"> </script> 
-  <script src ="spacedebris_viewer_js/KeplerianElement.js"> </script> 
-  <script src ="spacedebris_viewer_js/main.js"> </script>
-  <script src ="spacedebris_viewer_js/echarts.min.js"> </script>
-  
+  <script src="spacedebris_viewer_js/satellite.min.js"> </script>
+  <script src="spacedebris_viewer_js/dat.gui.min.js"> </script>
+  <script src="spacedebris_viewer_js/Catalogue.js"> </script>
+  <script src="spacedebris_viewer_js/KeplerianElement.js"> </script>
+  <script src="spacedebris_viewer_js/main.js"> </script>
+  <script src="spacedebris_viewer_js/echarts.min.js"> </script>
+
 </body>
+
 </html>

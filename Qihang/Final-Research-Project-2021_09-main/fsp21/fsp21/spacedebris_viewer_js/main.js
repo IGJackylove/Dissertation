@@ -980,7 +980,7 @@ window.onload = function () {
           }
         }
 
-        
+
         //radar cross section identifier
         /// for the radar_view
         if (cross_section == "RCS <= 1") {
@@ -1044,12 +1044,29 @@ window.onload = function () {
             color: colour,
             outlineColor: Cesium.Color.BLACK,
             outerWidth: 0.5,
-            
+
             // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
           });
           rc_3 = rc_3 + 1;
 
         }
+      } // end of for loop
+
+
+      // add dynamic list to the search bar in space_debris.html
+      if (typeof mainPage !== "undefined") {
+        let objectList = document.getElementById("object-list");
+        let points = debris_collection._pointPrimitives;
+        for (let i = 0; i < points.length; i++) {
+          let point = points[i];
+          let option = document.createElement("option");
+          option.innerHTML = point.id["COSPAR ID"];
+          objectList.appendChild(option);
+        }
+
+        // Get the <i> element (Font Awesome icon) and add a click event listener
+        const dropdownIcon = document.querySelector(".custom-dropdown-icon i");
+        dropdownIcon.addEventListener("click", function(){console.log("Hide the datalist")});
       }
 
       if (typeof ownerHTML !== 'undefined') {
@@ -1218,35 +1235,35 @@ window.onload = function () {
 
 
   //********给雷达viewer添加点 ********
-  if (typeof radarHTML != "undefined"){
+  if (typeof radarHTML != "undefined") {
     radar_viewer = new Cesium.Viewer('radar_viewer', options3D);
-  // /// view in ECEF, no need to update icrf
-  // radar_viewer.scene.postUpdate.addEventListener(icrf_radar); // enable Earth rotation, everything is seen to be in eci
-  radar_viewer.scene.globe.enableLighting = true;
+    // /// view in ECEF, no need to update icrf
+    // radar_viewer.scene.postUpdate.addEventListener(icrf_radar); // enable Earth rotation, everything is seen to be in eci
+    radar_viewer.scene.globe.enableLighting = true;
 
-  ///// disable the default event handlers
-  radar_viewer.scene.screenSpaceCameraController.enableRotate = false;
-  radar_viewer.scene.screenSpaceCameraController.enableTranslate = false;
-  radar_viewer.scene.screenSpaceCameraController.enableZoom = false;
-  radar_viewer.scene.screenSpaceCameraController.enableTilt = false;
-  radar_viewer.scene.screenSpaceCameraController.enableLook = false;
+    ///// disable the default event handlers
+    radar_viewer.scene.screenSpaceCameraController.enableRotate = false;
+    radar_viewer.scene.screenSpaceCameraController.enableTranslate = false;
+    radar_viewer.scene.screenSpaceCameraController.enableZoom = false;
+    radar_viewer.scene.screenSpaceCameraController.enableTilt = false;
+    radar_viewer.scene.screenSpaceCameraController.enableLook = false;
 
-  radar_viewer.scene.frameState.creditDisplay.removeDefaultCredit();
+    radar_viewer.scene.frameState.creditDisplay.removeDefaultCredit();
 
 
-  var radar_position_ecef = new Cesium.Cartesian3(0, 0, 0);
+    var radar_position_ecef = new Cesium.Cartesian3(0, 0, 0);
 
-  radar_position_ecef = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+    radar_position_ecef = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
 
-  // /// show the position of the telescope
-  var redpoint = viewer_main.entities.add({
-    id: "London",
-    name: 'Telescope Point',
-    position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
-    point: { pixelSize: 15, color: Cesium.Color.PINK }
-  });
+    // /// show the position of the telescope
+    var redpoint = viewer_main.entities.add({
+      id: "London",
+      name: 'Telescope Point',
+      position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
+      point: { pixelSize: 15, color: Cesium.Color.PINK }
+    });
 
-  radar_screen(radar_position_ecef);
+    radar_screen(radar_position_ecef);
   }
-  
+
 }

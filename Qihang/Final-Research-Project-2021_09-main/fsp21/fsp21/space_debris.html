@@ -17,6 +17,7 @@
   <meta name="viewport"
     content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Space debris telescope simulation</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <style>
     @import url(Cesium/Widgets/widgets.css);
@@ -55,8 +56,18 @@
   </div>
 
   <div class="search-container">
-    <input type="text" id="object-search" placeholder="Search Space Object based on COSPAR ID" onkeydown="checkEnterKey(event)">
-    <img id="search-img" src="https://img.icons8.com/ios-glyphs/30/000000/search.png" /> <!-- 这是一个公开可用的放大镜图标的URL，你可以替换为你自己的图标 -->
+    <input type="text" id="object-search" placeholder="Search Space Object based on COSPAR ID" list="object-list"
+      onkeydown="checkEnterKey(event)">
+    <datalist id="object-list">
+
+    </datalist>
+
+    <img id="search-img" src="https://img.icons8.com/ios-glyphs/30/000000/search.png" />
+    <!-- Used to cover the default drop down arrow, solving the conflict between cesium click and datalist focus -->
+    <div class="custom-dropdown-icon">
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    
   </div>
 
 
@@ -100,6 +111,30 @@
       height: 20px;
     }
 
+    /* Position the custom dropdown icon */
+    .custom-dropdown-icon {
+      position: absolute;
+      right: 24%;
+      z-index: 1000;
+      top: 50%;
+      width: 20px;
+      height: 20px;
+      transform: translateY(-50%);
+      /* Ensure the icon doesn't capture mouse events */
+    }
+
+    /* Optional styling for the icon */
+    .custom-dropdown-icon i {
+      z-index: 1000;
+      font-size: 20px;
+      /* Adjust the size of the icon */
+      color: #666;
+      /* Adjust the color of the icon */
+      background-color: white;
+      /* Remove background color */
+    }
+
+
 
 
     #legend1-ul {
@@ -117,7 +152,6 @@
       margin: 0px;
       padding: 0.5%;
     }
-
   </style>
 
 
@@ -208,6 +242,10 @@
       </li>
     </ul>
   </div>
+
+  <script>
+    let mainPage = true;
+  </script>
 
   <style>
     .background_infor {
