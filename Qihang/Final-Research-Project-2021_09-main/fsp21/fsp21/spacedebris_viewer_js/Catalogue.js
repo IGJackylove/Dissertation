@@ -133,18 +133,23 @@ class Catalogue
 		{
 			var cat_00 = this.debris_kep[isat]["apogee_hgt"].trim()
 			var cat_11 = this.debris_kep[isat]["perigee_hgt"].trim()
+			let cat_22 = this.debris_kep[isat]["eccentricity"]
 			var inclinationDegree = Number(this.debris_kep[isat]["inclination_deg"].trim())
 			var cat_0 = Number(cat_00)
 			var cat_1 = Number(cat_11)
-
-			if ( cat_0 <= 2000 && cat_1 <= 2000 ) { cat = "Low Earth Orbit"} //LEO
-			else if ( (cat_0 > 2000 && cat_0 < 35786) && (cat_1 > 2000 && cat_1 < 35786)){
-				cat = "Middle Earth Orbit"} //MEO
-			else if ((cat_0 > 35500 && cat_0 < 36500) && (cat_1 > 35500 && cat_1< 36500 )){
-				cat = "Geosynchronous Equatorial Orbit"; //GEO (HEIGHT REFERENCE FROM https://earthobservatory.nasa.gov/features/OrbitsCatalog)
-			}			
+			let cat_2 = Number(cat_22)
 			// else if ( cat_0 == 35786 || cat_1 == 35786 ) { cat = "Geosynchronous Equatorial Orbit" } //GEO
-			// else if (cat_0 > 35786 && ev){ cat = "Highly Elliptical Orbit"} //HEO
+			if ( cat_0 <= 2000 && cat_1 <= 2000 && cat_2 < 0.1 ) { cat = "Low Earth Orbit"} //LEO
+			else if ( (cat_0 > 2000 && cat_0 < 35586) && (cat_1 > 2000 && cat_1 < 35586)&& cat_2 < 0.05){
+				cat = "Middle Earth Orbit"} //MEO
+			else if ((cat_0 > 35586 && cat_0 < 36286) && (cat_1 > 35586 && cat_1< 336286 ) && cat_2 < 0.05){
+				cat = "Geosynchronous Equatorial Orbit"; 
+				//GEO (HEIGHT REFERENCE FROM https://earthobservatory.nasa.gov/features/OrbitsCatalog) 36000km
+				//https://www.esa.int/Enabling_Support/Space_Transportation/Types_of_orbits#GEO  35786km
+				//Current: https://orbitaldebris.jsc.nasa.gov/library/usg_orbital_debris_mitigation_standard_practices_november_2019.pdf 35586-35986(+300)
+
+			}else if ((cat_2 > 0.05 && inclinationDegree >=25 && inclinationDegree <= 155) || cat_2 > 0.05 ){ 
+				cat = "Highly Elliptical Orbit"} //HEO	REFERENCE FROM https://www.itu.int/itunews/manager/display.asp?lang=en&year=2003&issue=05&ipage=heo&ext=html		
 			else{
 				cat = "Unknown" 
 			} 
@@ -324,9 +329,9 @@ class Catalogue
 		{
 			var cross_section_0 = this.debris_kep[isat]["radar_cross_section"].trim()
 			var cross_section = Number(cross_section_0);
-			if (cross_section <= 1) {m = 1}
-			else if (cross_section <= 10 && cross_section > 1) {m = 2}
-			else if (cross_section > 10) {m = 3}
+			if (cross_section <= 1) {m = "RCS <= 1"}
+			else if (cross_section <= 10 && cross_section > 1) {m = "1 < RCS <= 10"}
+			else if (cross_section > 10) {m = "RCS > 10"}
 
 		}
 		
@@ -393,18 +398,30 @@ class Catalogue
 	
 	getSemiMajorAxis(isat){
 		let sma =  this.debris_kep[isat]["semi_major_axis"];
-		return sma
+		return sma;
 	}
 
 	getApogee(isat){
 		let apogee =  this.debris_kep[isat]["apogee_hgt"];
-		return apogee
+		return apogee;
 	}
 
 	getPerigee(isat){
 		let perigee =  this.debris_kep[isat]["perigee_hgt"];
-		return perigee
+		return perigee;
 	}
+
+	getInclinationAng(isat){
+		let inclinationAng =  this.debris_kep[isat]["inclination_deg"];
+		return inclinationAng;
+	}
+
+	getEccentricity(isat){
+		let eccentricity=  this.debris_kep[isat]["eccentricity"];
+		return eccentricity;
+	}
+
+
 
 
 

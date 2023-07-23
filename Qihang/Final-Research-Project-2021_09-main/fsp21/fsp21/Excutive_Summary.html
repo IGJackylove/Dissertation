@@ -11,14 +11,14 @@
 </head>
 
 
-<body>
+<body style="background-color:#141b2d;">
     <!-- <div class="background">
         <img class="background_image" src="images/background.jpg" alt="Background Image">
-    </div>
+    </div> -->
 
     <div class="title">
         <p class="title_main">Excutive summary for the result of the future space population</p>
-    </div> -->
+    </div>
 
     <div class="scatter plot">
         <div id="scatter_2023"></div>
@@ -49,55 +49,78 @@
                     let sat_sma1 = satcat.getSemiMajorAxis(debrisID);
                     let apogee1 = parseFloat(satcat.getApogee(debrisID));
                     let perigee1 = parseFloat(satcat.getPerigee(debrisID));
+                    let eccentricity1 = parseFloat(satcat.getEccentricity(debrisID));
+                    let inclinationAng1 = parseFloat(satcat.getInclinationAng(debrisID));
                     let height = avg(apogee1, perigee1);
 
-                    if (sat_category1 == "Low Earth Orbit"){
+
+                    if (sat_category1 == "Low Earth Orbit") {
                         if (operation_status1 !== "Decayed" && operation_status1 !== "Non-operational" && operation_status1 !== "Unknown") {
-                        status1 = "active"
-                        results_active.push([
-                            height,
-                            Math.random()
-                        ]);
-                    } else {
-                        status1 = "inactive"
-                        results_inactive.push([
-                            height,
-                            Math.random()
-                        ])
+                            status1 = "active"
+                            results_active.push([
+                                height,
+                                Math.random()
+                            ]);
+                        } else {
+                            status1 = "inactive"
+                            results_inactive.push([
+                                height,
+                                Math.random()
+                            ])
+                        }
                     }
-                    }
-                    
-                }
+                }// end of for loop
                 data_load = true;
                 console.log(results_active)
                 console.log(results_inactive)
 
                 let scatter_2023 = document.getElementById('scatter_2023');
-                let scatter_2023_plot = echarts.init(scatter_2023);
+                let scatter_2023_plot = echarts.init(scatter_2023, "dark");
                 option = {
-                    xAxis: {},
+                    title: {
+                        text: 'Distribution of Future Space Population by Height in 2023',
+                        left: 'center',
+                        padding: [20, 0, 0, 0] // 设置标题的上内边距为20，其他方向为0
+                    },
+                    xAxis: {
+                        type: 'value',
+                        name: 'Height (km)', // X-axis label
+                        min: 160,
+                        max: 2000,
+                        nameLocation: 'center', // 将x轴标签居中对齐
+                        nameTextStyle: {
+                            fontWeight: 'bold', // 加粗x轴标签文本
+                            fontSize: 16,
+                            padding: [10, 0, 0, 0]
+                        }
+                    },
                     yAxis: {},
+                    backgroundColor: "#1F2A40",
+                    grid: {
+                        left: '3%', // 将图表左侧空白缩小为容器宽度的 2%
+                        right:'3%', // 将图表右侧空白缩小为容器宽度的 2%
+                    },
                     series: [
                         {
-                            symbolSize: 4,
+                            symbolSize: 3,
                             data: results_active,
                             type: 'scatter',
-                            color:["#00CC00"]
+                            color: ["#00CC00"]
                         },
                         {
-                            symbolSize: 4,
+                            symbolSize: 3,
                             data: results_inactive,
                             type: 'scatter',
-                            color:["#FF3333"]
+                            color: ["#FF3333"]
                         }
                     ]
                 };
                 option && scatter_2023_plot.setOption(option);
 
 
-                
 
-           
+
+
             }
 
         }, 1000);
@@ -107,7 +130,7 @@
         }
 
 
-      // var option;
+        // var option;
 
 
 
@@ -137,53 +160,74 @@
                     let perigee2 = parseFloat(satcat2.getPerigee(debrisID));
                     let height2 = avg(apogee2, perigee2);
 
-                    if (sat_category2 == "Low Earth Orbit"){
+                    if (sat_category2 == "Low Earth Orbit") {
                         if (operation_status2 !== "Decayed" && operation_status2 !== "Non-operational" && operation_status2 !== "Unknown") {
-                        status2 = "active"
-                        results_active2.push([
-                            height2,
-                            Math.random()
-                        ]);
-                    } else {
-                        status2 = "inactive"
-                        results_inactive2.push([
-                            height2,
-                            Math.random()
-                        ])
+                            status2 = "active"
+                            results_active2.push([
+                                height2,
+                                Math.random()
+                            ]);
+                        } else {
+                            status2 = "inactive"
+                            results_inactive2.push([
+                                height2,
+                                Math.random()
+                            ])
+                        }
                     }
-                    }
-                    
+
                 }
                 data_load2 = true;
                 console.log(results_active2)
                 console.log(results_inactive2)
 
                 let scatter_2028 = document.getElementById('scatter_2028');
-                let scatter_2028_plot = echarts.init(scatter_2028);
+                let scatter_2028_plot = echarts.init(scatter_2028, "dark");
                 option2 = {
-                    xAxis: {},
+                    title: {
+                        text: 'Distribution of Future Space Population by Height in 2028',
+                        left: 'center',
+                        padding: [20, 0, 0, 0] // 设置标题的上内边距为20，其他方向为0
+                    },
+                    xAxis: {
+                        type: 'value',
+                        name: 'Height (km)', // X-axis label
+                        min: 160,
+                        max: 2000,
+                        nameLocation: 'center', // 将x轴标签居中对齐
+                        nameTextStyle: {
+                            fontWeight: 'bold', // 加粗x轴标签文本
+                            fontSize: 16,
+                            padding: [10, 0, 0, 0]
+                        }
+                    },
                     yAxis: {},
+                    backgroundColor: "#1F2A40",
+                    grid: {
+                        left: '3%', // 将图表左侧空白缩小为容器宽度的 2%
+                        right:'3%', // 将图表右侧空白缩小为容器宽度的 2%
+                    },
                     series: [
                         {
-                            symbolSize: 4,
+                            symbolSize: 3,
                             data: results_active2,
                             type: 'scatter',
-                            color:["#00CC00"]
+                            color: ["#00CC00"]
                         },
                         {
-                            symbolSize: 4,
+                            symbolSize: 3,
                             data: results_inactive2,
                             type: 'scatter',
-                            color:["#FF3333"]
+                            color: ["#FF3333"]
                         }
                     ]
                 };
                 option2 && scatter_2028_plot.setOption(option2);
 
 
-                
 
-           
+
+
             }
 
         }, 1000);
@@ -213,60 +257,82 @@
                     let perigee3 = parseFloat(satcat3.getPerigee(debrisID));
                     let height3 = avg(apogee3, perigee3);
 
-                    if (sat_category3 == "Low Earth Orbit"){
+                    if (sat_category3 == "Low Earth Orbit") {
                         if (operation_status3 !== "Decayed" && operation_status3 !== "Non-operational" && operation_status3 !== "Unknown") {
-                        status3 = "active"
-                        results_active3.push([
-                            height3,
-                            Math.random()
-                        ]);
-                    } else {
-                        status3 = "inactive"
-                        results_inactive3.push([
-                            height3,
-                            Math.random()
-                        ])
+                            status3 = "active"
+                            results_active3.push([
+                                height3,
+                                Math.random()
+                            ]);
+                        } else {
+                            status3 = "inactive"
+                            results_inactive3.push([
+                                height3,
+                                Math.random()
+                            ])
+                        }
                     }
-                    }
-                    
+
                 }
                 data_load3 = true;
                 console.log(results_active3)
                 console.log(results_inactive3)
 
                 let scatter_2043 = document.getElementById('scatter_2043');
-                let scatter_2043_plot = echarts.init(scatter_2043);
+                let scatter_2043_plot = echarts.init(scatter_2043, "dark");
                 option3 = {
-                    xAxis: {},
+                    title: {
+                        text: 'Distribution of Future Space Population by Height in 2043',
+                        left: 'center',
+                        padding: [20, 0, 0, 0] // 设置标题的上内边距为20，其他方向为0
+                    },
+                    xAxis: {
+                        type: 'value',
+                        name: 'Height (km)', // X-axis label
+                        min: 160,
+                        max: 2000,
+                        nameLocation: 'center', // 将x轴标签居中对齐
+                        nameTextStyle: {
+                            fontWeight: 'bold', // 加粗x轴标签文本
+                            fontSize: 16,
+                            padding: [10, 0, 0, 0]
+                        }
+                    },
                     yAxis: {},
+                    backgroundColor: "#1F2A40",
+                    grid: {
+                        left: '3%', // 将图表左侧空白缩小为容器宽度的 2%
+                        right:'3%', // 将图表右侧空白缩小为容器宽度的 2%
+                    },
                     series: [
                         {
-                            symbolSize: 4,
+                            symbolSize: 3,
                             data: results_active3,
                             type: 'scatter',
-                            color:["#00CC00"]
+                            color: ["#00CC00"]
                         },
                         {
-                            symbolSize: 4,
+                            symbolSize: 3,
                             data: results_inactive3,
                             type: 'scatter',
-                            color:["#FF3333"]
+                            color: ["#FF3333"]
                         }
                     ]
                 };
                 option3 && scatter_2043_plot.setOption(option3);
 
 
-                
 
-           
+
+
             }
 
         }, 1000);
 
     </script>
     <style>
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             overflow: auto;
@@ -300,19 +366,22 @@
         #scatter_2023 {
             display: flex;
             justify-content: center;
-            height: 350px
+            height: 350px;
+            width: 60%;
         }
 
         #scatter_2028 {
             display: flex;
             justify-content: center;
-            height: 350px
+            height: 350px;
+            width: 60%;
         }
 
         #scatter_2043 {
             display: flex;
             justify-content: center;
-            height: 350px
+            height: 350px;
+            width: 60%;
         }
     </style>
 </body>

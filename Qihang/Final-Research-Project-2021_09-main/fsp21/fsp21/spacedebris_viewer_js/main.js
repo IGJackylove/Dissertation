@@ -27,10 +27,17 @@ var longitude = 0.0;
 var latitude = 51.0;
 var height = 10.0;
 
-// let tempEntity = undefined; // used to track the cliced point
-// let deleteEntity;
-let clickedObject = undefined;
+
+let clickedObject = undefined; // Used in addOrbit()
 let orbitEntity = undefined;
+let infoBox, infoBoxViewModel;
+let previousPick = null;
+let showSelection = false;
+let entries;
+let radar_pick = null;
+
+
+
 
 
 
@@ -174,7 +181,7 @@ function xyz2enu_matrix(lat, lon) {
   return E;
 }
 /** simulate the radar screen*/
-/*
+
 function radar_screen(radar_position_ecef) {
 
   // var blh = ecef2blh(radar_position_ecef.x,radar_position_ecef.y,radar_position_ecef.z );
@@ -233,7 +240,7 @@ function radar_screen(radar_position_ecef) {
   // }));
 
 }
-*/
+
 
 //function update_debris_position(debris_set, viewer,mycatlog)
 function update_debris_position() {
@@ -265,14 +272,13 @@ function update_debris_position() {
   // {
   //   console.log("point number in debris_set._pointPrimitives is loaded!");
   // }
-  
+
   var pos_radar_view = new Cesium.Cartesian3();
- 
+
 
 
   for (var i = 0; i < length; ++i) {
     var point = points[i];
-    // console.log(point) //检查point属性
     //Cesium.Cartesian3.clone(point.position, position_ecef);
     ///compute the position of debris according to time
     if (Cesium.defined(icrfToFixed)) {
@@ -282,39 +288,16 @@ function update_debris_position() {
       var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x * 1000, positionAndVelocity.position.y * 1000, positionAndVelocity.position.z * 1000);
 
       position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
-      // Cesium.Cartesian3.clone(position_ecef, pos_radar_view);
-      
-      /*
-      if (tempEntity && point.id["COSPAR ID"] == tempEntity.id){
-        
+      Cesium.Cartesian3.clone(position_eci, pos_radar_view);
 
-        tempEntity.position = position_ecef;
 
-        // viewer_main.trackedEntity = tempEntity;
-        // 创立一个全新的cesium文件，添加一个entity并track，检查是否是设置问题
-
-        
-        // console.log(tempEntity)
-        // viewer_main.trackedEntity = tempEntity;
-        // console.log(viewer_main.trackedEntity._position._value)
-        
-      //   viewer_main.flyTo({
-      //     destination: tempEntity.position,
-      //     maximumHeight: 10,
-      //     complete: function () {
-      //       viewer_main.trackedEntity = tempEntity;
-      //     }
-      // });
-        
-      }
-      */
       //更新viewer_main中的点的位置
       // console.log(position_ecef)
       point.position = position_eci; //// update back
 
       ///更新radar_viewer中的点的位置
       //update the radar_view debri_collection在下边的windowonload function中定义了
-      //debri_collection_radar._pointPrimitives[i].position = pos_radar_view; //pos_radar_view与position_ecef一致
+      debri_collection_radar._pointPrimitives[i].position = pos_radar_view; //pos_radar_view与position_ecef一致
     }
   }
 }
@@ -422,55 +405,95 @@ function GUIset() {
 }
 
 
-// function set_value() {
-//   var radar_position_ecef = new Cesium.Cartesian3(0, 0, 0);
-//   //******问题：如何实现用户自定义input的值，window.onload先后顺序问题 */
-//   var longitude = document.getElementById("user_longitude").value;
-//   var latitude = document.getElementById("user_latitude").value;
-//   var height = 10.0;
+function set_value() {
+  var radar_position_ecef = new Cesium.Cartesian3(0, 0, 0);
+  //******问题：如何实现用户自定义input的值，window.onload先后顺序问题 */
+  var longitude = document.getElementById("user_longitude").value;
+  var latitude = document.getElementById("user_latitude").value;
+  var height = 10.0;
 
 
-//   radar_position_ecef = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+  radar_position_ecef = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
 
-//   var point = viewer_main.entities.getById("London");
-//   viewer_main.entities.remove(point);
-//   // // /// show the position of the telescope
-//   var redpoint = viewer_main.entities.add({
-//     id: "London",
-//     name: 'Telescope Point',
-//     position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
-//     point: { pixelSize: 15, color: Cesium.Color.DEEPPINK }
-//   });
+  var point = viewer_main.entities.getById("London");
+  viewer_main.entities.remove(point);
+  // // /// show the position of the telescope
+  var redpoint = viewer_main.entities.add({
+    id: "London",
+    name: 'Telescope Point',
+    position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
+    point: { pixelSize: 15, color: Cesium.Color.DEEPPINK }
+  });
 
 
-//   /* var wyoming = viewer_main.entities.add({
-//       polygon : {
-//         hierarchy : Cesium.Cartesian3.fromDegreesArray([
-//                                   -109.080842,45.002073,
-//                                   -105.91517,45.002073,
-//                                   -104.058488,44.996596,
-//                                   -104.053011,43.002989,
-//                                   -104.053011,41.003906,
-//                                   -105.728954,40.998429,
-//                                   -107.919731,41.003906,
-//                                   -109.04798,40.998429,
-//                                   -111.047063,40.998429,
-//                                   -111.047063,42.000709,
-//                                   -111.047063,44.476286,
-//                                   -111.05254,45.002073]),
-//         height : 0,
-//         material : Cesium.Color.RED.withAlpha(0.5),
-//         outline : true,
-//         outlineColor : Cesium.Color.BLACK
-//       }
-//     });
-//    */
+  //   /* var wyoming = viewer_main.entities.add({
+  //       polygon : {
+  //         hierarchy : Cesium.Cartesian3.fromDegreesArray([
+  //                                   -109.080842,45.002073,
+  //                                   -105.91517,45.002073,
+  //                                   -104.058488,44.996596,
+  //                                   -104.053011,43.002989,
+  //                                   -104.053011,41.003906,
+  //                                   -105.728954,40.998429,
+  //                                   -107.919731,41.003906,
+  //                                   -109.04798,40.998429,
+  //                                   -111.047063,40.998429,
+  //                                   -111.047063,42.000709,
+  //                                   -111.047063,44.476286,
+  //                                   -111.05254,45.002073]),
+  //         height : 0,
+  //         material : Cesium.Color.RED.withAlpha(0.5),
+  //         outline : true,
+  //         outlineColor : Cesium.Color.BLACK
+  //       }
+  //     });
+  //    */
 
-//   radar_screen(radar_position_ecef);
+  radar_screen(radar_position_ecef);
 
-// }
+}
 
-function addOrbit(pick){
+function removePrevisouPick(input) {
+  // 取消上一次点击的颜色修改和点大小修改效果
+  if (previousPick !== null) {
+    if (previousPick.id["Operation Status"] !== "Decayed" && previousPick.id["Operation Status"] !== "Non-operational" && previousPick.id["Operation Status"] !== "Unknown") {
+      previousPick.color = Cesium.Color.GREEN;  // 恢复为默认颜色
+      previousPick.pixelSize = 4;  // 恢复为默认大小
+    }
+    else {
+      previousPick.color = Cesium.Color.RED;  // default color
+      previousPick.pixelSize = 4;  // default size
+    }
+  }
+
+  if (input == "radar" && radar_pick != null) {
+    if (radar_pick.id["Operation Status"] !== "Decayed" && radar_pick.id["Operation Status"] !== "Non-operational" && radar_pick.id["Operation Status"] !== "Unknown") {
+      radar_pick.outlineColor = Cesium.Color.BLACK;  // 恢复为默认颜色
+      radar_pick.outlineWidth = 0.5;  // 恢复为默认大小
+    }
+    else {
+      radar_pick.outlineColor = Cesium.Color.BLACK;  // 恢复为默认颜色
+      radar_pick.outlineWidth = 0.5;  // 恢复为默认大小
+    }
+  }
+}
+
+function removeOrbitEntity() {
+  // Ensure that no orbit displayed on the screen when user have already click on the space objects
+  if (orbitEntity) {
+    viewer_main.entities.removeById(orbitEntity.id);
+    orbitEntity = undefined;
+  }
+}
+
+function removeInfoBox() {
+  if (infoBox) {
+    console.log("infobox exist")
+    infoBoxViewModel.showInfo = false; // Hide the info box
+  }
+}
+
+function addOrbit(pick) {
   let orbitPosArray = [];
   var debris_set = debris_collection; //这里的debris_collection在下边的window.onload()中定义了
   // console.log(debris_set)
@@ -478,83 +501,268 @@ function addOrbit(pick){
   console.log("add orbit")
   // for (let i = 0; i < ){
 
-      clickedObject = pick
-      if (clickedObject){
-        orbitPeriod = parseFloat(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"]))*60; 
-        // console.log(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"]) + " " + orbitPeriod)
-        let currentTime = viewer.clock.currentTime;
-        let tai_utc = Cesium.JulianDate.computeTaiMinusUtc(currentTime);
-        let startTime = Cesium.JulianDate.addSeconds(currentTime, tai_utc, new Cesium.JulianDate());
-        let endTime = Cesium.JulianDate.addSeconds(startTime, orbitPeriod, new Cesium.JulianDate());
-        let timeStep = orbitPeriod / 360; // divide orbit period into 360 parts to calculate the position
-        let time = new Cesium.JulianDate();
-        let points = debris_set._pointPrimitives;
-        let clickIndex = undefined;
+  clickedObject = pick
+  if (clickedObject) {
+    orbitPeriod = parseFloat(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"])) * 60;
+    // console.log(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"]) + " " + orbitPeriod)
+    let currentTime = viewer.clock.currentTime;
+    let tai_utc = Cesium.JulianDate.computeTaiMinusUtc(currentTime);
+    let startTime = Cesium.JulianDate.addSeconds(currentTime, tai_utc, new Cesium.JulianDate());
+    let endTime = Cesium.JulianDate.addSeconds(startTime, orbitPeriod, new Cesium.JulianDate());
+    let timeStep = orbitPeriod / 360; // divide orbit period into 360 parts to calculate the position
+    let time = new Cesium.JulianDate();
+    let points = debris_set._pointPrimitives;
+    let clickIndex = undefined;
 
-        for (var i = 0; i < points.length; ++i) {
-          var point = points[i];
-          // console.log(point)
-          if (point.id["COSPAR ID"] == clickedObject.id["COSPAR ID"]){
-              clickIndex = i
-          }
-        }
-
-        for (let i = 0; i < 361; i++){
-          time = Cesium.JulianDate.addSeconds(startTime, i * timeStep, time);
-          let icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
-          let time_date_js = Cesium.JulianDate.toDate(time); /// convert time into js Date()
-          let position_ecef = new Cesium.Cartesian3();
-        
-          if (Cesium.defined(icrfToFixed)) {
-            let positionAndVelocity = satcat.compute_debri_position_eci(clickIndex, time_date_js);//  satellite.propagate(tle_rec,time_date);
-        
-            var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x * 1000, positionAndVelocity.position.y * 1000, positionAndVelocity.position.z * 1000);
-        
-            position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef)
-
-            orbitPosArray.push(position_eci)
-          }
-
-        }
-
-        
-        if (orbitEntity) {
-          viewer_main.entities.removeById(orbitEntity.id);
-          orbitEntity = undefined;
-        }
-
-        /* add orbit basedon operation status */
-        if (clickedObject.id["Operation Status"]!== "Decayed" 
-        && clickedObject.id["Operation Status"] !== "Non-operational" 
-        && clickedObject.id["Operation Status"] !== "Unknown"){
-          // create Polyline Entity
-        orbitEntity = viewer_main.entities.add({
-          id: "Orbit for" +" " + clickedObject.id["COSPAR ID"],
-          polyline: {
-            positions: orbitPosArray,
-            width: 2,
-            material: Cesium.Color.GREEN,
-            loop: true
-          },
-        });
-        } else{
-          orbitEntity = viewer_main.entities.add({
-            id: "Orbit for" + " " + clickedObject.id["COSPAR ID"],
-            polyline: {
-              positions: orbitPosArray,
-              width: 2,
-              material: Cesium.Color.RED,
-              loop: true
-            },
-        })
-      
+    for (let i = 0; i < points.length; ++i) {
+      var point = points[i];
+      // console.log(point)
+      if (point.id["COSPAR ID"] == clickedObject.id["COSPAR ID"]) {
+        clickIndex = i
       }
-  // }
-}
+    }
+
+    for (let i = 0; i < 361; i++) {
+      time = Cesium.JulianDate.addSeconds(startTime, i * timeStep, time);
+      let icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
+      let time_date_js = Cesium.JulianDate.toDate(time); /// convert time into js Date()
+      let position_ecef = new Cesium.Cartesian3();
+
+      if (Cesium.defined(icrfToFixed)) {
+        let positionAndVelocity = satcat.compute_debri_position_eci(clickIndex, time_date_js);//  satellite.propagate(tle_rec,time_date);
+
+        var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x * 1000, positionAndVelocity.position.y * 1000, positionAndVelocity.position.z * 1000);
+
+        position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef)
+
+        orbitPosArray.push(position_eci)
+      }
+
+    }
+
+
+    if (orbitEntity) {
+      viewer_main.entities.removeById(orbitEntity.id);
+      orbitEntity = undefined;
+    }
+
+    /* add orbit basedon operation status */
+    if (clickedObject.id["Operation Status"] !== "Decayed"
+      && clickedObject.id["Operation Status"] !== "Non-operational"
+      && clickedObject.id["Operation Status"] !== "Unknown") {
+      // create Polyline Entity
+      orbitEntity = viewer_main.entities.add({
+        id: "Orbit for" + " " + clickedObject.id["COSPAR ID"],
+        polyline: {
+          positions: orbitPosArray,
+          width: 2,
+          material: Cesium.Color.GREEN,
+          loop: true
+        },
+      });
+    } else {
+      orbitEntity = viewer_main.entities.add({
+        id: "Orbit for" + " " + clickedObject.id["COSPAR ID"],
+        polyline: {
+          positions: orbitPosArray,
+          width: 2,
+          material: Cesium.Color.RED,
+          loop: true
+        },
+      })
+
+    }
+  }
 } // end of addOrbit
+
+function showLEO() {
+  console.log("filter LEO")
+
+  removeOrbitEntity();
+
+  removeInfoBox();
+
+  removePrevisouPick()
+
+  let points = debris_collection._pointPrimitives;
+  for (let i = 0; i < points.length; i++) {
+    let point = points[i];
+    if (point.id["Orbit Type"] == "Low Earth Orbit") {
+      point.show = true
+    } else {
+      point.show = false
+    }
+  }
+}
+
+function showMEO() {
+  console.log("filter MEO")
+  removeOrbitEntity();
+
+  removeInfoBox();
+
+  removePrevisouPick()
+
+  let points = debris_collection._pointPrimitives;
+  for (let i = 0; i < points.length; i++) {
+    let point = points[i];
+    if (point.id["Orbit Type"] == "Middle Earth Orbit") {
+      point.show = true
+    } else {
+      point.show = false
+    }
+  }
+}
+
+function showGEO() {
+  console.log("filter GEO")
+  removeOrbitEntity();
+
+  removeInfoBox();
+
+  removePrevisouPick()
+  let points = debris_collection._pointPrimitives;
+  for (let i = 0; i < points.length; i++) {
+    let point = points[i];
+    if (point.id["Orbit Type"] == "Geosynchronous Equatorial Orbit") {
+      point.show = true
+    } else {
+      point.show = false
+    }
+  }
+}
+
+function showHEO() {
+  console.log("filter GEO")
+  removeOrbitEntity();
+
+  removeInfoBox();
+
+  removePrevisouPick()
+  let points = debris_collection._pointPrimitives;
+  for (let i = 0; i < points.length; i++) {
+    let point = points[i];
+    if (point.id["Orbit Type"] == "Highly Elliptical Orbit") {
+      point.show = true
+    } else {
+      point.show = false
+    }
+  }
+}
+
+function showUnknown() {
+  console.log("filter GEO")
+  removeOrbitEntity();
+
+  removeInfoBox();
+
+  removePrevisouPick()
+  let points = debris_collection._pointPrimitives;
+  for (let i = 0; i < points.length; i++) {
+    let point = points[i];
+    if (point.id["Orbit Type"] == "Unknown") {
+      point.show = true
+    } else {
+      point.show = false
+    }
+  }
+}
+
+function checkEnterKey(event) {
+
+  if (event.keyCode === 13) {  // 13 is enter
+    let input = document.getElementById("object-search").value;
+    let points = debris_collection._pointPrimitives;
+
+    removePrevisouPick();
+    removeOrbitEntity();
+
+    for (let i = 0; i < points.length; i++) {
+      let point = points[i];
+      if (input == point.id["COSPAR ID"]) {
+        addOrbit(point);
+        point.color = Cesium.Color.YELLOW
+        point.pixelSize = 10
+        point.show = true
+        previousPick = point
+        showSelection = true
+
+        // add infobox for user input
+        if (showSelection = true) {
+          console.log(showSelection)
+          infoBoxViewModel.showInfo = showSelection;
+          infoBoxViewModel.titleText = "Selected Object";
+          let tableItems = Object.entries(point.id).map(function ([key, value]) {
+            return '<tr><td style="text-align:left; font-size: 15px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 250px;">' + value + '</td></tr>';
+          });
+          description = '<table style="width:100%">' + tableItems.join('') + '</table>';
+
+          infoBoxViewModel.description = description;
+
+          infoBoxViewModel.closeClicked.addEventListener(function () { // closeClicked function is an event, therefore need addEventListener to call the function
+            infoBoxViewModel.showInfo = false; // Hide the info box when close button is clicked
+          });
+        }
+        let userInput = document.getElementById("object-search")
+        console.log(userInput)
+        userInput.value = "";  // clear the input field
+      }
+    }
+  }
+}
+
+function getSelectedOption() {
+  removeInfoBox();
+  removeOrbitEntity();
+  removePrevisouPick();
+  let selectionElement = document.getElementById("ownership-list")
+  let selectionOption = selectionElement.options[selectionElement.selectedIndex].text;
+  console.log(debris_collection)
+  let points = debris_collection._pointPrimitives
+  for (let i = 0; i < points.length; i++) {
+    let point = points[i];
+    point.pixelSize = 6 // Make the point looks larger since some owner only have few point to visualize
+    if (selectionOption != point.id["Owner"]) {
+      point.show = false;
+    } else if (selectionOption == point.id["Owner"]) {
+      point.show = true;
+    }
+  }
+
+}
+
+function showOwner(index) {
+  removeInfoBox();
+  removeOrbitEntity();
+  removePrevisouPick();
+  let points = debris_collection._pointPrimitives
+  for (let i = 0; i < points.length; i++) {
+    let point = points[i];
+    point.pixelSize = 6 // Make the point looks larger since some owner only have few point to visualize
+    if (entries[index][0] != point.id["Owner"]) {
+      point.show = false;
+    } else if (entries[index][0] == point.id["Owner"]) {
+      point.show = true;
+    }
+  }
+}
+
+function clearFilter() {
+  removeInfoBox();
+  removeOrbitEntity();
+  removePrevisouPick();
+  let points = debris_collection._pointPrimitives
+  for (let i = 0; i < points.length; i++) {
+    let point = points[i];
+    point.pixelSize = 4 // Make the point looks larger since some owner only have few point to visualize
+    point.show = true;
+  }
+
+}
 
 window.onload = function () {
   satcat = new Catalogue();
+
 
   clockViewModel = new Cesium.ClockViewModel();
 
@@ -581,7 +789,7 @@ window.onload = function () {
   viewer_main.CreditDisplay = true;
   viewer_main.scene.debugShowFramesPerSecond = true;
   viewer_main.scene.frameState.creditDisplay.removeDefaultCredit();
-  
+
 
 
   //start_jd = Cesium.JulianDate.now();
@@ -594,23 +802,12 @@ window.onload = function () {
 
   GUIset();
 
-// 测试代码
-let tempEntity2 = viewer_main.entities.add({
-  id: "Test2019-028B",
-  position: new Cesium.Cartesian3(0,0,0),
-  point: {
-    color: Cesium.Color.WHITE,
-    pixelSize: 30
-  }
-});
-
-// viewer_main.trackedEntity = tempEntity2
 
   /// debris_collection to store all the debris points
   debris_collection = new Cesium.PointPrimitiveCollection();
-  //debri_collection_radar = new Cesium.PointPrimitiveCollection();
+  debri_collection_radar = new Cesium.PointPrimitiveCollection();
   //By seting the blendOption to OPAQUE can improve the performance twice
-  //debri_collection_radar.blendOption = Cesium.BlendOption.OPAQUE;
+  debri_collection_radar.blendOption = Cesium.BlendOption.OPAQUE;
 
   /// add debris_collection to the viewer_main
   /// should organize debris in different orbtis to different collections
@@ -623,182 +820,87 @@ let tempEntity2 = viewer_main.entities.add({
   var infoBoxContainer = document.createElement('div');
   infoBoxContainer.className = 'cesium-viewer-infoBoxContainer';
   viewer_main.container.appendChild(infoBoxContainer);
-  var infoBox = new Cesium.InfoBox(infoBoxContainer);
-  var infoBoxViewModel = infoBox.viewModel;
-  let previousPick = null;
+  infoBox = new Cesium.InfoBox(infoBoxContainer);
+  infoBoxViewModel = infoBox.viewModel;
+
+
   //Click Event
   var handler = new Cesium.ScreenSpaceEventHandler(viewer_main.scene.canvas);
-  handler.setInputAction(function(click) {
-  var pick = viewer_main.scene.pick(click.position);
-  var showSelection = false;
-  let titleText = "Selected Object";
-  let description = '';
-  // if (Cesium.defined(pick) && Cesium.defined(pick.id)) {
-  //   showSelection = true;
-  //   let listItems = Object.entries(pick.id).map(function([key, value]) {
-  //   return '<li>' + '<b style = "font-size: 15px">'+ key + '</b>' + ': '+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:' + value + '</li>';
-  // });
-  // //Cesium.defined(pick.id) ? pick.id : '';
-  //   description = '<ul>' + listItems.join('') + '</ul>';
-  // }
-  // infoBoxViewModel.showInfo = showSelection;
-  // infoBoxViewModel.titleText = titleText;
-  // infoBoxViewModel.description = description;
-  // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-  
-  // //If a tempEntity is currently being tracked, stop tracking it and remove it.
-  // if (tempEntity) {
-  //   if (viewer_main.trackedEntity === tempEntity) {
-  //       viewer_main.trackedEntity = undefined;
-  //   }
-  //   // viewer_main.entities.remove(tempEntity);
-  // }
-  /*Only when data is loaded, pick and pick.id are defined and is primitive will call the following code */
-  if (data_load && Cesium.defined(pick) && Cesium.defined(pick.id)&& pick.primitive.constructor.name === 'f') {
-    showSelection = true;
-    let tableItems = Object.entries(pick.id).map(function([key, value]) {
-      return '<tr><td style="text-align:left; font-size: 15px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 300px;">' + value + '</td></tr>';
-    });
-    description = '<table style="width:100%">' + tableItems.join('') + '</table>';
 
-    
+  handler.setInputAction(function (click) {
+    var pick = viewer_main.scene.pick(click.position);
+    let titleText = "Selected Object";
+    let description = '';
 
-    
-     // 取消上一次点击的颜色修改和点大小修改效果
-    if (previousPick !== null) {
-        if (previousPick.id["Operation Status"]!== "Decayed" && previousPick.id["Operation Status"]!== "Non-operational" && previousPick.id["Operation Status"] !== "Unknown"){
-        previousPick.color = Cesium.Color.GREEN;  // 恢复为默认颜色
-        previousPick.pixelSize = 4;  // 恢复为默认大小
-        }
-        else{
-        previousPick.color = Cesium.Color.RED;  // default color
-        previousPick.pixelSize = 4;  // default size
-        }
-   }
+    /*Only when data is loaded, pick and pick.id are defined and is primitive will call the following code */
+    if (data_load && Cesium.defined(pick) && Cesium.defined(pick.id) && pick.primitive.constructor.name === 'f') {
+      showSelection = true;
+      let tableItems = Object.entries(pick.id).map(function ([key, value]) {
+        return '<tr><td style="text-align:left; font-size: 15px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 250px;">' + value + '</td></tr>';
+      });
+      description = '<table style="width:100%">' + tableItems.join('') + '</table>';
 
-   // 保存当前选中的点为上一次点击的对象
-    previousPick = pick.primitive;
-    clickobject = pick;
 
-    pick.primitive.color = Cesium.Color.YELLOW
-    pick.primitive.pixelSize = 10
 
-    addOrbit(pick);
-    
-    /*
-    console.log(pick.primitive._actualPosition)
-    if (tempEntity){
-      
-      console.log("tempentity exist, remove")
-      deleteEntity = viewer_main.entities.getById(tempEntity.id) 
-      viewer_main.entities.remove(deleteEntity)
+
+      // 取消上一次点击的颜色修改和点大小修改效果
+      removePrevisouPick("radar");
+
+      // 保存当前选中的点为上一次点击的对象
+      previousPick = pick.primitive;
+      clickedObject = pick;
+
+      pick.primitive.color = Cesium.Color.YELLOW
+      pick.primitive.pixelSize = 10
+
+      addOrbit(pick);
     }
 
-    // assign value to tempEntity and start tracking it.
-    // console.log("tempentity added")
-    tempEntity = viewer_main.entities.add({
-      id: pick.id["COSPAR ID"],
-      position : pick.primitive._actualPosition,
-      point: {
-        color: Cesium.Color.YELLOW,
-        pixelSize: 15
-      },
-    //   viewFrom: new Cesium.Cartesian3(0, 0, 10000) // 设置相机的初始偏移量
+    // set the infobox information
+    infoBoxViewModel.showInfo = showSelection;
+    infoBoxViewModel.titleText = titleText;
+    infoBoxViewModel.description = description;
+
+    infoBoxViewModel.closeClicked.addEventListener(function () { // closeClicked function is an event, therefore need addEventListener to call the function
+      infoBoxViewModel.showInfo = false; // Hide the info box when close button is clicked
     });
-    // viewer_main.trackedEntity = tempEntity
-    */    
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
 
-    //1985-090B(4107843.7766305073, 4122387.934857915, 3445873.6059593093)1985-090B(4107843.7766305073, 4122387.934857915, 3445873.6059593093)
-    //console.log(pick.id["COSPAR ID"] + pick.primitive._actualPosition + tempEntity.id + tempEntity.position._value) 
-    
-    // 平滑过渡到新的相机位置
-    // viewer_main.camera.flyTo({
-    //   destination: tempEntity.position._value,
-    //   duration: 1.0 // 过渡时间，单位为秒
-    //  })
-    
-    
-
-  }
-  
- 
-
-  // set the infobox information
-  infoBoxViewModel.showInfo = showSelection;
-  infoBoxViewModel.titleText =  titleText ;
-  infoBoxViewModel.description = description;
-
-  infoBoxViewModel.closeClicked.addEventListener(function() { // closeClicked function is an event, therefore need addEventListener to call the function
-    infoBoxViewModel.showInfo = false; // Hide the info box when close button is clicked
-    viewer_main.trackedEntity = undefined; // Clear the tracked entity
-});
-}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
 
-if (window.shouldAddEntities){
-  // 定义圆饼的中心位置
-let center = Cesium.Cartesian3.fromDegrees(0,0,0); // New York City
-
-// 创建一个空心圆饼
-var hollowCircle = viewer_main.entities.add({
-    position: center,
-    name: 'Hollow Circle',
-    ellipse: {
-        semiMinorAxis: 500000.0, // 外半径
-        semiMajorAxis: 500000.0, // 外半径
-        innerRadii: new Cesium.Cartesian3(300000.0, 300000.0, 0), // 内半径
-        material: Cesium.Color.BLUE.withAlpha(0.5),
-        outline: true,
-        outlineColor: Cesium.Color.WHITE
-    }
-});
-}
 
   /// a timer is used to deal with the async reading of JSON
   var timename = setInterval(function () {
     console.log('time_interval start')
     if (satcat.data_load_complete == true
       && data_load == false) {
-        console.log('load complete, start counting')
+      console.log('load complete, start counting')
       //ShowDebris(viewer_main,mycatlog,4);
 
       active_num = 0;
       inactive_num = 0;
-      leo_num = 0;
-      meo_num = 0;
-      geo_num = 0;
-      unknowncat_num = 0;
-      usa = 0;
-      china = 0;
-      russia = 0;
-      uk = 0;
-      eu = 0;
-      others = 0;
       rc_1 = 0;
       rc_2 = 0;
       rc_3 = 0;
-      let SL_8 =0;
+      let LEO_num = 0;
+      let MEO_num = 0;
+      let GEO_num = 0;
+      let Unknown_num = 0;
+      let ownershipList = {};
 
 
       for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) {
 
 
-        var operation_status = satcat.getDebriOperation_status("isat",debrisID);
+        var operation_status = satcat.getDebriOperation_status("isat", debrisID);
         var sat_category = satcat.getDebriCategory(debrisID);
         var cross_section = satcat.getDebriCross_Section(debrisID);
         var country = satcat.getDebriCountry(debrisID);
         let sat_infor = satcat.getDebriInfo(debrisID);
         let sat_name = satcat.getDebriName(debrisID).trim();
         let sat_Id = satcat.getDebriID(debrisID).trim();
-        let sat_type =satcat.getDebriType(debrisID).trim();
-       
-        // if (country == 1) { usa = usa + 1 }
-        // if (country == 2) { china = china + 1 }
-        // if (country == 3) { russia = russia + 1 }
-        // if (country == 4) { uk = uk + 1 }
-        // if (country == 5) { eu = eu + 1 }
-        // if (country == 6) { others = others + 1 }
+        let sat_type = satcat.getDebriType(debrisID).trim();
 
 
         if (operation_status !== "Decayed" && operation_status !== "Non-operational" && operation_status !== "Unknown") {
@@ -814,14 +916,41 @@ var hollowCircle = viewer_main.entities.add({
           inactive_num = inactive_num + 1;
         }
 
-        // //satellite category identifier
-        // if (sat_category == 1) { leo_num = leo_num + 1 }
-        // if (sat_category == 2) { meo_num = meo_num + 1 }
-        // if (sat_category == 3) { geo_num = geo_num + 1 }
-        // if (sat_category == -1) { unknowncat_num = unknowncat_num + 1 }
-        // //在这里加if，else判断条件根据radar_cross_section以调整小窗口的显示，先试试改颜色color
-        
-        
+
+        if (typeof orbitHTML !== 'undefined') {
+          if (sat_category == 'Low Earth Orbit') {
+            LEO_num += 1;
+          } else if (sat_category == 'Middle Earth Orbit') {
+            MEO_num += 1;
+          } else if (sat_category == 'Geosynchronous Equatorial Orbit') {
+            GEO_num += 1;
+          } else if (sat_category == "Unknown") {
+            Unknown_num += 1;
+          }
+
+          // Code to modify the percentage of the LEO, MEO and GEO in Orbit.html
+          let rectLEO = document.getElementById("LEO_num");
+          let rectMEO = document.getElementById("MEO_num");
+          let rectGEO = document.getElementById("GEO_num");
+          let LEO_percent = (LEO_num / satcat.getNumberTotal()) * 100
+          let MEO_percent = (MEO_num / satcat.getNumberTotal()) * 100
+          let GEO_percent = (GEO_num / satcat.getNumberTotal()) * 100
+          let LEO_text = document.getElementById("LEO_text");
+          let MEO_text = document.getElementById("MEO_text");
+          let GEO_text = document.getElementById("GEO_text");
+          document.getElementById("text_Unknown").innerHTML = "Number of unknown: " + Unknown_num + '<br>The occurrence of "Unknown" is primarily due to the inaccuracies and complexities of orbital prediction models (like SGP4) and the uncertain status of certain objects. These objects could be retired satellites or debris in a "Graveyard orbit", whose exact state and location may not be accurately tracked, resulting in their inability to be classified into LEO, MEO, GEO, or HEO categories.';
+
+
+          rectLEO.setAttribute("width", LEO_percent + "%")
+          rectMEO.setAttribute("width", MEO_percent + "%")
+          rectGEO.setAttribute("width", GEO_percent + "%")
+          LEO_text.textContent = LEO_num + " Objects" + "(" + LEO_percent.toFixed(1) + " %)";
+          MEO_text.textContent = MEO_num + " Objects" + "(" + MEO_percent.toFixed(1) + " %)";
+          GEO_text.textContent = GEO_num + " Objects" + "(" + GEO_percent.toFixed(1) + " %)";
+
+        }
+
+
         debris_collection.add({
           name: 'point',
           id: {
@@ -835,148 +964,245 @@ var hollowCircle = viewer_main.entities.add({
           position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
           pixelSize: 4,
           color: colour,
-          scaleByDistance : new Cesium.NearFarScalar(2000, 4.0, 6.0E4, 0.8)
+          scaleByDistance: new Cesium.NearFarScalar(2000, 4.0, 6.0E4, 0.8)
         });
 
 
+        if (typeof ownerHTML !== 'undefined') {
+
+          // 检查这个ID是否已经在ownershipList中
+          if (country in ownershipList) {
+            // 如果已经在列表中，增加其值
+            ownershipList[country] += 1;
+          } else {
+            // 如果还不在列表中，将其值设为1
+            ownershipList[country] = 1;
+          }
+        }
+
+        
         //radar cross section identifier
-        // if (cross_section > 0) {
-        //   /// for the radar_view
-        //   if (cross_section == 1) {
-        //     debri_collection_radar.add({
-        //       id: satcat.getDebriName[debrisID],
-        //       position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-        //       pixelSize: 3,
-        //       color: Cesium.Color.DEEPSKYBLUE
-        //       // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-        //     });
-        //     rc_1 = rc_1 + 1;
-        //   }
+        /// for the radar_view
+        if (cross_section == "RCS <= 1") {
+          debri_collection_radar.add({
+            name: 'point',
+            id: {
+              "COSPAR ID": sat_Id,
+              "Name": sat_name, // .trim to remove the space after the string
+              "Object Type": sat_type,
+              "Orbit Type": sat_category,
+              "Operation Status": operation_status,
+              "Owner": country,
+              "Radar Cross Section(RCS/m^2)": cross_section,
+            },
+            position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+            pixelSize: 3,
+            color: colour,
+            outlineColor: Cesium.Color.BLACK,
+            outerWidth: 0.5,
+            // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
+          });
+          rc_1 = rc_1 + 1;
+        }
 
-        //   if (cross_section == 2) {
-        //     debri_collection_radar.add({
-        //       id: satcat.getDebriName[debrisID],
-        //       position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-        //       pixelSize: 5,
-        //       color: Cesium.Color.GOLDENROD
-        //       // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-        //     });
-        //     rc_2 = rc_2 + 1;
-        //   }
+        if (cross_section == "1 < RCS <= 10") {
+          debri_collection_radar.add({
+            name: 'point',
+            id: {
+              "COSPAR ID": sat_Id,
+              "Name": sat_name, // .trim to remove the space after the string
+              "Object Type": sat_type,
+              "Orbit Type": sat_category,
+              "Operation Status": operation_status,
+              "Owner": country,
+              "Radar Cross Section(RCS/m^2)": cross_section,
+            },
+            position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+            pixelSize: 6,
+            color: colour,
+            outlineColor: Cesium.Color.BLACK,
+            outerWidth: 0.5,
+            // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
+          });
+          rc_2 = rc_2 + 1;
+        }
 
-        //   if (cross_section == 3) {
-        //     debri_collection_radar.add({
-        //       id: satcat.getDebriName[debrisID],
-        //       position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-        //       pixelSize: 7,
-        //       color: Cesium.Color.HOTPINK
-        //       // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-        //     });        
-        //     rc_3 = rc_3 + 1;
-        //   }
+        if (cross_section == "RCS > 10") {
+          debri_collection_radar.add({
+            name: 'point',
+            id: {
+              "COSPAR ID": sat_Id,
+              "Name": sat_name, // .trim to remove the space after the string
+              "Object Type": sat_type,
+              "Orbit Type": sat_category,
+              "Operation Status": operation_status,
+              "Owner": country,
+              "Radar Cross Section(RCS/m^2)": cross_section,
+            },
+            position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+            pixelSize: 9,
+            color: colour,
+            outlineColor: Cesium.Color.BLACK,
+            outerWidth: 0.5,
+            
+            // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
+          });
+          rc_3 = rc_3 + 1;
 
-        // }
+        }
+      }
+
+      if (typeof ownerHTML !== 'undefined') {
+        console.log(ownershipList)
+
+        entries = Object.entries(ownershipList);
+        entries.sort((a, b) => b[1] - a[1]);
+
+        console.log(entries)
+
+        let rectOwner1 = document.getElementById("owner1_num");
+        let rectOwner2 = document.getElementById("owner2_num");
+        let rectOwner3 = document.getElementById("owner3_num");
+        let rectOwner4 = document.getElementById("owner4_num");
+        let rectOwner5 = document.getElementById("owner5_num");
+        let rectOwner6 = document.getElementById("owner6_num");
+        let rectOwner7 = document.getElementById("owner7_num");
+        let rectOwner8 = document.getElementById("owner8_num");
+        let rectOwner9 = document.getElementById("owner9_num");
+        let rectOwner10 = document.getElementById("owner10_num");
+        let titleOwner1 = document.getElementById("owner1");
+        let titleOwner2 = document.getElementById("owner2");
+        let titleOwner3 = document.getElementById("owner3");
+        let titleOwner4 = document.getElementById("owner4");
+        let titleOwner5 = document.getElementById("owner5");
+        let titleOwner6 = document.getElementById("owner6");
+        let titleOwner7 = document.getElementById("owner7");
+        let titleOwner8 = document.getElementById("owner8");
+        let titleOwner9 = document.getElementById("owner9");
+        let titleOwner10 = document.getElementById("owner10");
+
+        titleOwner1.innerHTML = "1." + entries[0][0];
+        titleOwner2.innerHTML = "2." + entries[1][0];
+        titleOwner3.innerHTML = "3." + entries[2][0];
+        titleOwner4.innerHTML = "4." + entries[3][0];
+        titleOwner5.innerHTML = "5." + entries[4][0];
+        titleOwner6.innerHTML = "6." + entries[5][0];
+        titleOwner7.innerHTML = "7." + entries[6][0];
+        titleOwner8.innerHTML = "8." + entries[7][0];
+        titleOwner9.innerHTML = "9." + entries[8][0];
+        titleOwner10.innerHTML = "10." + entries[9][0];
+
+        let owner1Percent = (entries[0][1] / satcat.getNumberTotal()) * 100;
+        let owner2Percent = (entries[1][1] / satcat.getNumberTotal()) * 100;
+        let owner3Percent = (entries[2][1] / satcat.getNumberTotal()) * 100;
+        let owner4Percent = (entries[3][1] / satcat.getNumberTotal()) * 100;
+        let owner5Percent = (entries[4][1] / satcat.getNumberTotal()) * 100;
+        let owner6Percent = (entries[5][1] / satcat.getNumberTotal()) * 100;
+        let owner7Percent = (entries[6][1] / satcat.getNumberTotal()) * 100;
+        let owner8Percent = (entries[7][1] / satcat.getNumberTotal()) * 100;
+        let owner9Percent = (entries[8][1] / satcat.getNumberTotal()) * 100;
+        let owner10Percent = (entries[9][1] / satcat.getNumberTotal()) * 100;
+
+        rectOwner1.setAttribute("width", owner1Percent + "%")
+        rectOwner2.setAttribute("width", owner2Percent + "%")
+        rectOwner3.setAttribute("width", owner3Percent + "%")
+        rectOwner4.setAttribute("width", owner4Percent + "%")
+        rectOwner5.setAttribute("width", owner5Percent + "%")
+        rectOwner6.setAttribute("width", owner6Percent + "%")
+        rectOwner7.setAttribute("width", owner7Percent + "%")
+        rectOwner8.setAttribute("width", owner8Percent + "%")
+        rectOwner9.setAttribute("width", owner9Percent + "%")
+        rectOwner10.setAttribute("width", owner10Percent + "%")
+
+        owner1_text.textContent = entries[0][1] + " Objects" + " (" + owner1Percent.toFixed(2) + " %)";
+        owner2_text.textContent = entries[1][1] + " Objects" + " (" + owner2Percent.toFixed(2) + " %)";
+        owner3_text.textContent = entries[2][1] + " Objects" + " (" + owner3Percent.toFixed(2) + " %)";
+        owner4_text.textContent = entries[3][1] + " Objects" + " (" + owner4Percent.toFixed(2) + " %)";
+        owner5_text.textContent = entries[4][1] + " Objects" + " (" + owner5Percent.toFixed(2) + " %)";
+        owner6_text.textContent = entries[5][1] + " Objects" + " (" + owner6Percent.toFixed(2) + " %)";
+        owner7_text.textContent = entries[6][1] + " Objects" + " (" + owner7Percent.toFixed(2) + " %)";
+        owner8_text.textContent = entries[7][1] + " Objects" + " (" + owner8Percent.toFixed(2) + " %)";
+        owner9_text.textContent = entries[8][1] + " Objects" + " (" + owner9Percent.toFixed(2) + " %)";
+        owner10_text.textContent = entries[9][1] + " Objects" + " (" + owner10Percent.toFixed(2) + " %)";
+
+
+
+
+        // 获取ownershipList所有的键并进行排序
+        let keys = Object.keys(ownershipList).sort();
+
+        let ownership = document.getElementById('ownership-list')
+        for (let i = 0; i < keys.length; i++) {
+
+          let key = keys[i];
+          let option = document.createElement("option");
+          option.value = ownershipList[key]; // 这里使用键从对象中获取到值
+          option.text = key;
+          ownership.appendChild(option);
+        }
+      }
+
+      if (typeof radarHTML !== 'undefined') {
+        radar_viewer.scene.primitives.add(debri_collection_radar);
+
+        var handler2 = new Cesium.ScreenSpaceEventHandler(radar_viewer.scene.canvas);
+
+        handler2.setInputAction(function (click) {
+          var pick2 = radar_viewer.scene.pick(click.position);
+          let titleText2 = "Selected Object(Radar)";
+          let description2 = '';
+
+          /*Only when data is loaded, pick and pick.id are defined and is primitive will call the following code */
+          if (data_load && Cesium.defined(pick2) && Cesium.defined(pick2.id) && pick2.primitive.constructor.name === 'f') {
+            showSelection = true;
+            console.log("radar click")
+            let tableItems = Object.entries(pick2.id).map(function ([key, value]) {
+              return '<tr><td style="text-align:left; font-size: 15px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 250px;">' + value + '</td></tr>';
+            });
+            description2 = '<table style="width:100%">' + tableItems.join('') + '</table>';
+
+            removePrevisouPick("radar");
+            radar_pick = pick2.primitive;
+            let points = debris_collection._pointPrimitives;
+            let points_radar = debri_collection_radar._pointPrimitives;
+            for (let i = 0; i < points.length; i++) {
+              let point = points[i];
+              let point_radar = points_radar[i]
+              if (point.id["COSPAR ID"] == radar_pick.id["COSPAR ID"]) {
+                previousPick = point
+                point.color = Cesium.Color.YELLOW;
+                point.pixelSize = 10;
+                addOrbit(point)
+              }
+
+              if (point_radar.id["COSPAR ID"] == radar_pick.id["COSPAR ID"]) {
+                point_radar.outlineColor = Cesium.Color.WHITE
+                point_radar.outlineWidth = 1.5
+              }
+            }
+
+          }
+
+          // set the infobox information
+          infoBoxViewModel.showInfo = showSelection;
+          infoBoxViewModel.titleText = titleText2;
+          infoBoxViewModel.description = description2;
+
+          infoBoxViewModel.closeClicked.addEventListener(function () { // closeClicked function is an event, therefore need addEventListener to call the function
+            infoBoxViewModel.showInfo = false; // Hide the info box when close button is clicked
+          });
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
       }
-      
-      
+
+
       console.log(rc_1);
       console.log(rc_2);
       console.log(rc_3);
-      
-      
-
 
 
       document.getElementById("active_num").innerHTML = "Active Number: " + active_num;
       document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
-
-
-      // var pie_chart = document.getElementById('pie_chart');
-      // var pieChart = echarts.init(pie_chart, 'dark');
-      // var option1;
-      // option1 = {
-      //   title: {
-      //     text: 'Statistic by country',
-      //     left: 'center',
-      //     textStyle: {
-      //       fontSize: 15
-      //     }
-      //   },
-      //   tooltip: {
-      //     trigger: 'item',
-      //     formatter: '{a} <br/>{b}: {c} ({d}%)'
-      //   },
-      //   series: [
-      //     {
-      //       name: 'Countries',
-      //       type: 'pie',
-      //       radius: '65%',
-      //       data: [
-      //         { value: usa, name: 'United States' },
-      //         { value: china, name: 'China' },
-      //         { value: russia, name: 'Russia' },
-      //         { value: uk, name: 'United Kingdom' },
-      //         { value: eu, name: 'European Union' },
-      //         { value: others, name: 'Rest of the world' }
-      //       ],
-      //       emphasis: {
-      //         itemStyle: {
-      //           shadowBlur: 10,
-      //           shadowOffsetX: 0,
-      //           shadowColor: 'rgba(0, 0, 0, 0.5)'
-      //         }
-      //       }
-      //     }
-      //   ]
-      // };
-
-      // option1 && pieChart.setOption(option1);
-
-
-
-
-      // var chart1 = document.getElementById('chart_div');
-      // var myChart = echarts.init(chart1, 'dark');
-      // var option;
-
-
-      // option = {
-      //   color: ['#008cff'],
-      //   textStyle: [{
-      //     color: "#f0f0f0",
-      //     fontFamily: "Microsoft YaHei"
-
-      //   }],
-      //   grid: {
-      //     left: '5%',
-      //     bottom: '5%',
-      //     containLabel: true
-      //   },
-      //   title: {
-      //     left: 'center',
-      //     text: ' Statistics of satellites by category',
-      //     textStyle: {
-      //       fontSize: 15
-      //     }
-      //   },
-      //   tooltip: {},
-      //   legend: {
-      //     data: ['number']
-      //   },
-      //   xAxis: {
-      //     data: ["LEO", "MEO", "GEO", "Unknown"]
-      //   },
-      //   yAxis: {},
-      //   series: [{
-      //     name: 'satellite number',
-      //     type: 'bar',
-      //     barWidth: '55%',
-      //     data: [leo_num, meo_num, geo_num, unknowncat_num]
-      //   }]
-      // };
-      // option && myChart.setOption(option);
-
 
       data_load = true;
       // // clearInterval(timename); /// clear itself
@@ -990,15 +1216,13 @@ var hollowCircle = viewer_main.entities.add({
   ///viewer_main.scene.preRender.raiseEvent(debris_collection, viewer_main,mycatlog);
 
 
-/*
+
   //********给雷达viewer添加点 ********
-  radar_viewer = new Cesium.Viewer('radar_viewer', options3D);
+  if (typeof radarHTML != "undefined"){
+    radar_viewer = new Cesium.Viewer('radar_viewer', options3D);
   // /// view in ECEF, no need to update icrf
   // radar_viewer.scene.postUpdate.addEventListener(icrf_radar); // enable Earth rotation, everything is seen to be in eci
   radar_viewer.scene.globe.enableLighting = true;
-
-  radar_viewer.scene.primitives.add(debri_collection_radar);
-
 
   ///// disable the default event handlers
   radar_viewer.scene.screenSpaceCameraController.enableRotate = false;
@@ -1008,21 +1232,21 @@ var hollowCircle = viewer_main.entities.add({
   radar_viewer.scene.screenSpaceCameraController.enableLook = false;
 
   radar_viewer.scene.frameState.creditDisplay.removeDefaultCredit();
-*/
+
 
   var radar_position_ecef = new Cesium.Cartesian3(0, 0, 0);
 
   radar_position_ecef = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
 
-  // // /// show the position of the telescope
-  // var redpoint = viewer_main.entities.add({
-  //   id: "London",
-  //   name: 'Telescope Point',
-  //   position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
-  //   point: { pixelSize: 15, color: Cesium.Color.PINK }
-  // });
-  // viewer_main.trackedEntity=redpoint
-  // console.log(viewer_main.trackedEntity)
-  //radar_screen(radar_position_ecef);
+  // /// show the position of the telescope
+  var redpoint = viewer_main.entities.add({
+    id: "London",
+    name: 'Telescope Point',
+    position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
+    point: { pixelSize: 15, color: Cesium.Color.PINK }
+  });
 
+  radar_screen(radar_position_ecef);
+  }
+  
 }

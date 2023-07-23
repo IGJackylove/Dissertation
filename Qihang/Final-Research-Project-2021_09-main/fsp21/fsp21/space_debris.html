@@ -14,205 +14,150 @@
   <!-- Tell IE to use the latest, best version. -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Space debris telescope simulation</title>
- 	
+
   <style>
     @import url(Cesium/Widgets/widgets.css);
-     html, body {
-     width: 100%;
-     height: 100%;
-     margin: 0;
-     padding: 0;
-     overflow: hidden;
-}
 
-     #main_viewer {
-       width: 100%;
-       height: 100%;
-       margin: 0;
-       padding: 0;
-       overflow: visible;
-       position: relative; /* Used as position the legend*/
-     }
-     
- </style>
- 
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #main_viewer {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      position: relative;
+      /* Used as position the legend*/
+    }
+  </style>
+
 
 </head>
 
 <body>
- <div class="cesiumContainer" id="main_viewer">
-   <div class="panel" id="legend1">
-     <ul id="legend1-ul">
-       <li id = "active_num" style="color: rgb(38, 146, 16); font-size: 13pt; ">Active satellite</li>
-       <li id = "inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
-     </ul>
-   </div>
- </div>
-  
-  <!-- <div class="radar_viewer" id="radar_viewer" ></div>
-		<style>
-		.radar_viewer{
-			position:absolute;
-			width:400px;
-			height:400px;
-			z-index:999;
-			top:22px;
-			left:30px;
-			background-color:#000000;
-			opacity:1;
-      border: 1px solid;
-      color:#f0f0f0;
-		}
-    </style> -->
-  <!-- <div class="panel" id="user_input">
-    <label id = "label1" for="user_latitude">Telescope Latitude</label><input type="text" size="30" id="user_latitude" value= "51"/>
-    <label id = "label2" for="user_longitude">Telescope Longitude</label><input type="text" size="30" id="user_longitude" value= "0"/>
-    <label style="color: rgb(255, 255, 255); font-style: italic; font-size: 11pt;">Note: The default telescope position is set as London</label>
-    <button id= "button1" onclick="set_value()">click to set</button>
-  </div> -->
-  <!-- <style>
-    @import url(widgets/widgets.css);
-    #user_latitude {
-      background-image: url("images/searchicon.png");
-      background-position: right; background-repeat: no-repeat;
-      width: 95%; font-size: 12pt; padding: 10px 5px 10px 5px; margin: 5px 0px 1px 0px; 
-      border: 0px;
-    }
-    #user_longitude {
-      background-image: url("images/searchicon.png");
-      background-position: right; background-repeat: no-repeat;
-      width: 95%; font-size: 12pt; padding: 10px 5px 10px 5px; margin: 5px 0px 1px 0px; 
-      border: 0px;
-    }
-		#user_input{
-      padding: 0 7px;
-			position:absolute;
-			width:280px;
-			height:208px;
-			z-index:999;
-			top:435px;
-			left:77px;
-      border: 1px solid;
-      color:#f0f0f0;
-			background-color:#00000096;
-			opacity:0.9;
-		}
-    #button1{
-    color: #000000;
-    background-color:#ffffff;
-    font-family: "Roboto";
-    font-size: 12pt;
-    border: 4px solid;
-    border-radius: 2px;
-    padding: 5 5px;
-    display: block;
-    margin: 0 auto;
-}
-    #label1{
-      color:#ffffff;
-      font-size: 12.5pt;
-    }
-    #label2{
-      color:#ffffff;
-      font-size: 12.5pt
-    }
-    </style> -->
-
-
-  <div class="panel" id="pie_chart">
+  <div class="cesiumContainer" id="main_viewer">
+    <div class="panel" id="legend1">
+      <ul id="legend1-ul">
+        <li id="active_num" style="color: rgb(38, 146, 16); font-size: 13pt; ">Active satellite</li>
+        <li id="inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
+      </ul>
+    </div>
   </div>
 
+  <div class="search-container">
+    <input type="text" id="object-search" placeholder="Search Space Object based on COSPAR ID" onkeydown="checkEnterKey(event)">
+    <img id="search-img" src="https://img.icons8.com/ios-glyphs/30/000000/search.png" /> <!-- 这是一个公开可用的放大镜图标的URL，你可以替换为你自己的图标 -->
+  </div>
+
+
+
   <style>
+    .search-container {
+      position: absolute;
+      display: flex;
+      /* 使用flex布局来使输入框和按钮在一行 */
+      align-items: center;
+      /* 使输入框和按钮垂直居中 */
+      top: 2.5%;
+      left: 37.5%;
+      background-color: transparent;
+      width: 30%;
+      height: 20px;
+      z-index: 999;
+    }
+
+    #object-search {
+      width: 350px;
+      height: 20px;
+      border-radius: 7px;
+      border: 1px solid #dfe1e5;
+      padding: 3px 20px 3px 40px;
+      /* 调整左右内边距，使得输入的文字不会覆盖图标 */
+      font-size: 16px;
+      outline: none;
+      position: relative;
+      font-size: 10px;
+    }
+
+    #search-img {
+      position: absolute;
+      /* 使用绝对定位将图标放在输入框上 */
+      left: 12px;
+      /* 调整图标的水平位置，使其在输入框内部，你可能需要根据实际效果调整这个值 */
+      z-index: 1000;
+      /* 设置一个较大的z-index，确保图标在输入框之上 */
+      width: 20px;
+      height: 20px;
+    }
+
+
+
     #legend1-ul {
-			position: absolute;
-      right:0.5%;
-			width:200px;
-			height:40px;
-			z-index:999;
-			bottom: 5%;
+      position: absolute;
+      right: 0.5%;
+      width: 200px;
+      height: 40px;
+      z-index: 999;
+      bottom: 4%;
       border: 1px solid;
-      color:#f0f0f0c0;
-			background-color:#000000;
+      color: #f0f0f0c0;
+      background-color: #000000;
       list-style-position: inside;
       text-align: left;
       margin: 0px;
       padding: 0.5%;
     }
 
-
-    /* #pie_chart{
-      padding: 0 7px;
-			position:absolute;
-			width:365px;
-			height:207px;
-			z-index:999;
-			top:200px;
-			right:15px;
-      border: 1px solid;
-      color:#f0f0f08e;
-			background-color:#333333;
-    } */
-
-    /* #catelabel{
-      padding: 5px 25px;
-    } */
-  
   </style>
 
-  <div id = "chart_div">
-  </div>
-  <!-- <style>
-    #chart_div{
-      padding: 0 7px;
-			position:absolute;
-			width:395px;
-			height:300px;
-			z-index:999;
-			top:418px;
-			right:15px;
-      border: 1px solid;
-      color:#b8b8b8c9;
-      background-color:#333333;
-    }
 
-  </style> -->
-
-  <div id = "catalogue_alert">
-    <label id = "Label3">Please choose a FSP Catalogue file</label>
+  <div id="catalogue_alert">
+    <label id="Label3">Please choose a FSP Catalogue file</label>
   </div>
 
   <style>
-    #catalogue_alert{
+    #catalogue_alert {
       padding: 0 7px;
-      position: fixed;  
+      position: fixed;
       width: 20%;
       height: 2.5%;
       z-index: 999;
-      top: 5px;  
-      left: 5px;  
+      top: 5px;
+      left: 5px;
       border: 2px solid;
       color: #f0f0f0e7;
       background-color: #000000;
       opacity: 0.9;
     }
 
-    #label3{
-    color:#ffffff;
-    font-size: 10pt;
-  }
+    #label3 {
+      color: #ffffff;
+      font-size: 10pt;
+    }
   </style>
-  
+
   <div id="datgui">
   </div>
 
   <style>
-     #datgui {
-    position: fixed;  /* 使用 fixed 使元素相对于浏览器窗口定位 */
-    top: 30px;  /* 放在底部，但从底部留出5px的空间 */
-    left: 5px;  /* 距离左边5px */
-  }
+    #datgui {
+      position: fixed;
+      /* 使用 fixed 使元素相对于浏览器窗口定位 */
+      top: 30px;
+      /* 放在底部，但从底部留出5px的空间 */
+      left: 5px;
+      /* 距离左边5px */
+    }
   </style>
 
 
@@ -230,7 +175,7 @@
         </a>
       </li>
       <li class="single-infor">
-        <a href="#">
+        <a href="Owner.html">
           <div>
             <p class="title">OWNER</p>
             <p class="question">Who own these space objects?</p>
@@ -265,42 +210,47 @@
   </div>
 
   <style>
-    .background_infor{
+    .background_infor {
       display: inline-flex;
       justify-content: space-around;
       background-color: transparent;
       padding: 0px;
       position: fixed;
       bottom: 5%;
-      left:22.5%;
+      left: 22.5%;
       width: 55%;
     }
 
-    .info-item{
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        list-style-type: none; /* Remove default bullet points */
-        padding: 0; /* Remove default padding */
-        gap: 2%;
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      list-style-type: none;
+      /* Remove default bullet points */
+      padding: 0;
+      /* Remove default padding */
+      gap: 2%;
     }
 
-    .single-infor{
+    .single-infor {
       display: block;
       width: 22.5%;
 
     }
 
     .single-infor a {
-      text-decoration: none; /* Removes the underline */
-      color:  #fffc;; /* Makes the link color the same as the surrounding text */
+      text-decoration: none;
+      /* Removes the underline */
+      color: #fffc;
+      ;
+      /* Makes the link color the same as the surrounding text */
       display: block;
       font-family: "Poppins", sans-serif;
-      
+
     }
 
 
-    .single-infor p.title{
+    .single-infor p.title {
       text-align: left;
       font-weight: bold;
       margin-bottom: 2px;
@@ -309,32 +259,35 @@
     }
 
     .single-infor p.question {
-      border-top: 2px solid white; /* Add a thick white line above the question */
+      border-top: 2px solid white;
+      /* Add a thick white line above the question */
       margin-top: 0px;
       margin-bottom: 0px;
       padding-top: 2px;
       font-size: 13px;
       /* text-align: center; */
-      transition: border-color 0.5s ease; /* Add transition effect */
+      transition: border-color 0.5s ease;
+      /* Add transition effect */
     }
 
     .single-infor a:hover p.question {
-    border-color: orange; /* Apply orange color on hover */
-  }
-
+      border-color: orange;
+      /* Apply orange color on hover */
+    }
   </style>
-    
-  
+
+
 
   <script src="Cesium/Cesium.js"> </script>
   <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
-  <script src = "spacedebris_viewer_js/satellite.min.js"> </script> 
-  <script src = "spacedebris_viewer_js/dat.gui.min.js"> </script> 
-  <script src ="spacedebris_viewer_js/Catalogue.js"> </script> 
-  <script src ="spacedebris_viewer_js/KeplerianElement.js"> </script> 
-  <script src ="spacedebris_viewer_js/main.js"> </script>
-  <script src ="spacedebris_viewer_js/echarts.min.js"> </script>
+  <script src="spacedebris_viewer_js/satellite.min.js"> </script>
+  <script src="spacedebris_viewer_js/dat.gui.min.js"> </script>
+  <script src="spacedebris_viewer_js/Catalogue.js"> </script>
+  <script src="spacedebris_viewer_js/KeplerianElement.js"> </script>
+  <script src="spacedebris_viewer_js/main.js"> </script>
+  <script src="spacedebris_viewer_js/echarts.min.js"> </script>
 
-  
+
 </body>
+
 </html>

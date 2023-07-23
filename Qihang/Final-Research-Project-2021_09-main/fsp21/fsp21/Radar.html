@@ -1,0 +1,234 @@
+<!-- Use correct character set. 
+// author: Zhen Li
+// email: hpulizhen@163.com
+// enhanced author: Luyang Han
+// email: hanluhou98@gmail.com
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>Space debris telescope simulation</title>
+ 	
+  <style>
+    @import url(Cesium/Widgets/widgets.css);
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #main_viewer {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      position: relative;
+      /* Used as position the legend*/
+    }
+  </style>
+  
+
+</head>
+
+<body>
+  <div class="cesiumContainer" id="main_viewer">
+    <div class="panel" id="legend1">
+      <ul id="legend1-ul">
+        <li id="active_num" style="color: rgb(38, 146, 16); font-size: 13pt; ">Active satellite</li>
+        <li id="inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="radar_viewer" id="radar_viewer" ></div>
+		<style>
+		.radar_viewer{
+			position:absolute;
+			width:400px;
+			height:400px;
+			z-index:999;
+			top:22px;
+			left:30px;
+			background-color:#000000;
+			opacity:1;
+      border: 1px solid;
+      color:#f0f0f0;
+		}
+    </style>
+  <div class="panel" id="user_input">
+    <label id = "label1" for="user_latitude">Telescope Latitude</label><input type="text" size="30" id="user_latitude" value= "51"/>
+    <label id = "label2" for="user_longitude">Telescope Longitude</label><input type="text" size="30" id="user_longitude" value= "0"/>
+    <label style="color: rgb(255, 255, 255); font-style: italic; font-size: 11pt;">Note: The default telescope position is set as London</label>
+    <button id= "button1" onclick="set_value()">click to set</button>
+  </div>
+  <style>
+    @import url(widgets/widgets.css);
+    #user_latitude {
+      background-image: url("images/searchicon.png");
+      background-position: right; background-repeat: no-repeat;
+      width: 95%; font-size: 12pt; padding: 10px 5px 10px 5px; margin: 5px 0px 1px 0px; 
+      border: 0px;
+    }
+    #user_longitude {
+      background-image: url("images/searchicon.png");
+      background-position: right; background-repeat: no-repeat;
+      width: 95%; font-size: 12pt; padding: 10px 5px 10px 5px; margin: 5px 0px 1px 0px; 
+      border: 0px;
+    }
+		#user_input{
+      padding: 0 7px;
+			position:absolute;
+			width:280px;
+			height:208px;
+			z-index:999;
+			top:435px;
+			left:77px;
+      border: 1px solid;
+      color:#f0f0f0;
+			background-color:#00000096;
+			opacity:0.9;
+		}
+    #button1{
+    color: #000000;
+    background-color:#ffffff;
+    font-family: "Roboto";
+    font-size: 12pt;
+    border: 4px solid;
+    border-radius: 2px;
+    padding: 5 5px;
+    display: block;
+    margin: 0 auto;
+}
+    #label1{
+      color:#ffffff;
+      font-size: 12.5pt;
+    }
+    #label2{
+      color:#ffffff;
+      font-size: 12.5pt
+    }
+    </style>
+
+  
+  <div class="cesiumContainer" id="main_viewer">
+    <div class="panel" id="legend1">
+      <ul id="legend1-ul">
+        <li id="active_num" style="color: rgb(38, 146, 16); font-size: 13pt; ">Active satellite</li>
+        <li id="inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <style>
+    #legend1-ul {
+      position: absolute;
+      right: 0.5%;
+      width: 200px;
+      height: 40px;
+      z-index: 999;
+      bottom: 4%;
+      border: 1px solid;
+      color: #f0f0f0c0;
+      background-color: #000000;
+      list-style-position: inside;
+      text-align: left;
+      margin: 0px;
+      padding: 0.5%;
+    }
+
+    #catelabel{
+      padding: 5px 25px;
+    }
+  
+  </style>
+
+
+  <div id = "catalogue_alert">
+    <label id = "Label3">Please choose a FSP Catalogue file</label>
+  </div>
+
+  <style>
+    /* #catalogue_alert{
+      padding: 0 7px;
+			position:absolute;
+			width:225px;
+			height:20px;
+			z-index:999;
+			top:2px;
+			right:415px;
+      border: 2px solid;
+      color:#f0f0f0e7;
+			background-color:#000000;
+			opacity:0.9;
+    } */
+
+    #catalogue_alert {
+      padding: 0 7px;
+      position: fixed;
+      width: 20%;
+      height: 2.5%;
+      z-index: 999;
+      top: 5px;
+      right: 125px;
+      border: 2px solid;
+      color: #f0f0f0e7;
+      background-color: #000000;
+      opacity: 0.9;
+    }
+
+    #label3{
+    color:#ffffff;
+    font-size: 10pt;
+  }
+  </style>
+  
+  <div id="datgui">
+    
+  </div>
+
+  <style>
+    #datgui {
+      position: fixed;
+      /* 使用 fixed 使元素相对于浏览器窗口定位 */
+      top: 30px;
+      /* 放在底部，但从底部留出5px的空间 */
+      right: 125px;
+      /* 距离左边5px */
+    }
+  </style>
+  <script>
+    let radarHTML = true;
+  </script>
+
+
+
+
+
+  <canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;"> </canvas>
+
+
+  <script src="Cesium/Cesium.js"> </script>
+  <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
+  <script src = "spacedebris_viewer_js/satellite.min.js"> </script> 
+  <script src = "spacedebris_viewer_js/dat.gui.min.js"> </script> 
+  <script src ="spacedebris_viewer_js/Catalogue.js"> </script> 
+  <script src ="spacedebris_viewer_js/KeplerianElement.js"> </script> 
+  <script src ="spacedebris_viewer_js/main.js"> </script>
+  <script src ="spacedebris_viewer_js/echarts.min.js"> </script>
+  
+</body>
+</html>

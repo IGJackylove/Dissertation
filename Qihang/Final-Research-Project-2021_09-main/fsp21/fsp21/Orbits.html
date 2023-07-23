@@ -56,9 +56,7 @@
   </div>
 
 
-  <script>
-    window.shouldAddEntities = true;  // A global variable
-  </script>
+
 
   <style>
     #legend1-ul {
@@ -67,7 +65,7 @@
       width: 200px;
       height: 40px;
       z-index: 999;
-      bottom: 5%;
+      bottom: 4%;
       border: 1px solid;
       color: #f0f0f0c0;
       background-color: #000000;
@@ -130,22 +128,22 @@
       <p class="title_rec_LEO"> LEO (Low Earth Orbit)</p>
       <svg width="100%" height="15px">
         <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
-        <rect class="rect_front" x="0" y="0" height="20" width="5%" fill="rgb(238, 128, 38)"></rect>;
-        <text x="5%" y="90%" class="rect_label">4,042 satellites (85.62%)</text>;
+        <rect class="rect_front" id="LEO_num" x="0" y="0" height="20" width="0%" fill="rgb(238, 128, 38)"></rect>;
+        <text x="2%" y="85%" class="rect_label" id="LEO_text">0 Objects (0%)</text>;
       </svg>
 
       <p class="title_rec_MEO"> MEO (Middle Earth Orbit)</p>
       <svg width="100%" height="15px">
         <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
-        <rect class="rect_front" x="0" y="0" height="20" width="5%" fill="#bdbf47"></rect>;
-        <text x="5%" y="90%" class="rect_label">4,042 satellites (85.62%)</text>;
+        <rect class="rect_front" id="MEO_num" x="0" y="0" height="20" width="0%" fill="#bdbf47"></rect>;
+        <text x="2%" y="85%" class="rect_label" id="MEO_text">0 Objects (0%)</text>;
       </svg>
 
-      <p class="title_rec_GEO"> GEO (Geosynchronous Earth Orbit)</p>
+      <p class="title_rec_GEO"> GEO (Geosynchronous Equatorial Orbit)</p>
       <svg width="100%" height="15px">
         <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
-        <rect class="rect_front" x="0" y="0" height="20" width="5%" fill="#5ec491"></rect>;
-        <text x="5%" y="90%" class="rect_label">4,042 satellites (85.62%)</text>;
+        <rect class="rect_front" id="GEO_num" x="0" y="0" height="20" width="0%" fill="#5ec491"></rect>;
+        <text x="2%" y="85%" class="rect_label" id="GEO_text">0 Objects (0%)</text>;
       </svg>
 
     </div>
@@ -153,7 +151,7 @@
     <div class="block_orbit">
       <p class="orbit_bot">160 km / 99 miles</p>
       <div id="content_LEO">
-        <button class="interactive_button" id="button_LEO">Low Earth Orbit</button>
+        <button class="interactive_button" id="button_LEO" onclick="showLEO()">Low Earth Orbit</button>
         - typically take between 90 minutes and 2 hours to complete one full orbit around the Earth. Low altitudes in
         combination with short orbital periods make LEO satellites ideally situated for remote sensing missions,
         including Earth observation and reconnaissance.
@@ -163,7 +161,7 @@
     <div class="block_orbit">
       <p class="orbit_bot">2,000 km / 1,243 miles</p>
       <div id="content_MEO">
-        <button class="interactive_button" id="button_MEO">Medium Earth Orbit</button>
+        <button class="interactive_button" id="button_MEO" onclick="showMEO()">Medium Earth Orbit</button>
         - navigation satellite systems (like the ones used by our car's GPS) work well at this altitude. Being so high
         up they have larger footprints and can see more of the Earth's surface at a time. One reason there are fewer
         satellites in this region is the presence of the Van Allen Radiation Belt, which can damage satellites' onboard
@@ -171,22 +169,48 @@
       </div>
     </div>
 
-    
-    <div class="clock_orbit">
+
+    <div class="block_orbit">
       <p class="orbit_bot">35,000 km / 21,748 miles</p>
       <p class="orbit_bot" id="GEO_bot">35,786 km / 22,236 miles</p>
       <div id="content_GEO">
-        <button class="interactive_button" id="button_GEO">Geosychronous Orbit</button>
-        - have an orbital period that matches Earth's rotation around its axis. These satellites have a constant altitude
-        of 35,786km (22,236 miles). A special case of geosynchronous orbit is the geostationary orbit which is a circular
+        <button class="interactive_button" id="button_GEO" onclick="showGEO()">Geosynchronous Equatorial Orbit</button>
+        - have an orbital period that matches Earth's rotation around its axis. These satellites have a constant
+        altitude
+        of 35,786km (22,236 miles). A special case of geosynchronous orbit is the geostationary orbit which is a
+        circular
         geosynchronous orbit in Earth's equatorial plane (their inclination is zero).
       </div>
       <p class="orbit_bot" id="GEO_bot">35,786 km / 22,236 miles</p>
     </div>
 
 
+    <div class="block_orbit">
+      <div id="content_HEO">
+        <button class="interactive_button" id="button_HEO" onclick="showHEO()">Hightly Elliptical Orbit</button>
+        - orbit the Earth on a long elliptical path. These satellites spend a significantly greater portion of time over
+        one hemisphere or the other. For example, the Molniya orbits are designed to provide communications and remote
+        sensing coverage over high latitudes.
+      </div>
+    </div>
+
+    <div class="block_orbit">
+      <div id="content_Unknown">
+        <button class="interactive_button" id="button_Unknown" onclick="showUnknown()">Unknown</button>
+        <p id="text_Unknown">Test Version</p>
+      </div>
+    </div>
+
+    <a href="space_debris.html" class="backButton">&laquo; Back</a>
+
+
+
 
     <style>
+      #text_Unknown{
+        padding-right: 25px ;
+      }
+
       #background_infor {
         position: fixed;
         top: 0;
@@ -205,11 +229,12 @@
         overflow: auto;
         text-align: justify;
 
-        
+
       }
+
       .backButton {
-          color: rgb(219, 216, 216);
-        }
+        color: rgb(219, 216, 216);
+      }
 
       .background_title {
         font-size: 20px;
@@ -235,7 +260,9 @@
       }
 
       .rect_label {
-        fill: antiquewhite
+        fill: rgb(248, 246, 244);
+        font-size: 13px;
+        font-weight: 550;
       }
 
 
@@ -250,8 +277,9 @@
         margin: 20px 0;
       }
 
-      #GEO_bot{
-        margin: 45px 0; /*set to make the GEO rect far from the MEO*/
+      #GEO_bot {
+        margin: 45px 0;
+        /*set to make the GEO rect far from the MEO*/
       }
 
       .orbit_bot::before,
@@ -277,19 +305,24 @@
       }
 
       #content_LEO,
-      #content_MEO
-      {
+      #content_MEO {
         border-left: 1px dashed rgb(219, 216, 216);
         padding: 20px 15px;
         margin-top: -27px;
         margin-bottom: -29px;
       }
 
-      #content_GEO{
+      #content_GEO {
         border-left: 1px dashed rgb(219, 216, 216);
         padding: 20px 15px;
         margin-top: -52px;
         margin-bottom: -52px;
+      }
+
+      #content_Unknown {
+        position: absolute;
+        margin-top: 30px;
+        padding-bottom: 30px;
       }
 
 
@@ -304,28 +337,37 @@
 
       #button_LEO {
         border: 2px solid rgb(238, 128, 38);
-        /* 设置边框颜色为橙色，你可以调整边框的粗细 */
         color: rgb(238, 128, 38);
-        /* 设置字体颜色为橙色 */
       }
 
       #button_MEO {
         border: 2px solid #bdbf47;
-        /* 设置边框颜色为橙色，你可以调整边框的粗细 */
         color: #bdbf47;
-        /* 设置字体颜色为橙色 */
       }
 
       #button_GEO {
         border: 2px solid #5ec491;
-        /* 设置边框颜色为橙色，你可以调整边框的粗细 */
         color: #5ec491;
-        /* 设置字体颜色为橙色 */
+
+      }
+
+      #button_HEO {
+        border: 2px solid #3399FF;
+        color: #3399FF;
+      }
+
+      #button_Unknown {
+        border: 2px solid darkgrey;
+        color: darkgrey;
       }
     </style>
 
 
   </div>
+
+  <script>
+    let orbitHTML = true;
+  </script>
 
 
 

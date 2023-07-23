@@ -14,51 +14,338 @@
   <!-- Tell IE to use the latest, best version. -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Space debris telescope simulation</title>
- 	
- 	<style>
-     @import url(Cesium/Widgets/widgets.css);
-      html, body {
+
+  <style>
+    @import url(Cesium/Widgets/widgets.css);
+
+    html,
+    body {
       width: 100%;
       height: 100%;
       margin: 0;
       padding: 0;
       overflow: hidden;
-}
+    }
 
-      #main_viewer {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: visible;
-        position: relative; /* Used as position the legend*/
-      }
-      
+    #main_viewer {
+      width: 70%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      position: relative;
+      /* Used as position the legend*/
+    }
   </style>
-  
+
 
 </head>
 
 <body>
   <div class="cesiumContainer" id="main_viewer">
+    <div class="panel" id="legend1">
+      <ul id="legend1-ul">
+        <li id="active_num" style="color: rgb(38, 146, 16); font-size: 13pt; ">Active satellite</li>
+        <li id="inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
+      </ul>
+    </div>
+
   </div>
-  
+
+
+  <style>
+    #legend1-ul {
+      position: absolute;
+      right: 0.5%;
+      width: 200px;
+      height: 40px;
+      z-index: 999;
+      bottom: 4%;
+      border: 1px solid;
+      color: #f0f0f0c0;
+      background-color: #000000;
+      list-style-position: inside;
+      text-align: left;
+      margin: 0px;
+      padding: 0.5%;
+    }
+  </style>
+
+
+  <div id="catalogue_alert">
+    <label id="Label3">Please choose a FSP Catalogue file</label>
+  </div>
+
+  <style>
+    #catalogue_alert {
+      padding: 0 7px;
+      position: fixed;
+      width: 20%;
+      height: 2.5%;
+      z-index: 999;
+      top: 5px;
+      left: 5px;
+      border: 2px solid;
+      color: #f0f0f0e7;
+      background-color: #000000;
+      opacity: 0.9;
+    }
+
+    #label3 {
+      color: #ffffff;
+      font-size: 10pt;
+    }
+  </style>
+
+  <div id="datgui">
+  </div>
+
+  <style>
+    #datgui {
+      position: fixed;
+      /* 使用 fixed 使元素相对于浏览器窗口定位 */
+      top: 30px;
+      /* 放在底部，但从底部留出5px的空间 */
+      left: 5px;
+      /* 距离左边5px */
+    }
+  </style>
+
+  <!-- Reference for the design and information in this part: https://geoxc-apps.bd.esri.com/space/satellite-explorer/ -->
+  <div id="background_infor">
+    <a href="space_debris.html" class="backButton">&laquo; Back</a>
+    <h1 class="background_title">Who own these space objects?</h1>
+    <div class="content" id="intro">
+      With the rapid development of technology, an increasing number of operators and nations are launching their own
+      objects into space. Here, you can explore these owners and the quantity of objects they own.
+    </div>
+
+    <div>
+
+      <h3 class="filter-title">Filter owner</h3>
+      <h5 id="filter-tip"> Tip: Some owners have too few ownerships, please zoom out and drag for visualisation</h5>
+      <select id="ownership-list" onchange="getSelectedOption()">
+        <option value="" disabled selected hidden>Select Owner</option>
+      </select>
+
+
+      <h3 class="filter-title" id="top10">Top 10 Owners</h3>
+
+
+
+      <button class="interactive_button" id="owner1" onclick="showOwner(0)">Owner1</button>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" id="owner1_num" x="0" y="0" height="20" width="0%" fill="rgb(219, 216, 216)"></rect>;
+        <text x="99%" y="75%" class="rect_label" id="owner1_text">0 Objects (0%)</text>;
+      </svg>
+
+      <button class="interactive_button" id="owner2" onclick="showOwner(1)">Owner2</button>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" id="owner2_num" x="0" y="0" height="20" width="0%" fill="rgb(219, 216, 216)"></rect>;
+        <text x="99%" y="75%" class="rect_label" id="owner2_text">0 Objects (0%)</text>;
+      </svg>
+
+      <button class="interactive_button" id="owner3" onclick="showOwner(2)">Owner3</button>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" id="owner3_num" x="0" y="0" height="20" width="0%" fill="rgb(219, 216, 216)"></rect>;
+        <text x="99%" y="75%" class="rect_label" id="owner3_text">0 Objects (0%)</text>;
+      </svg>
+
+      <button class="interactive_button" id="owner4" onclick="showOwner(3)">Owner4</button>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" id="owner4_num" x="0" y="0" height="20" width="0%" fill="rgb(219, 216, 216)"></rect>;
+        <text x="99%" y="75%" class="rect_label" id="owner4_text">0 Objects (0%)</text>;
+      </svg>
+
+      <button class="interactive_button" id="owner5" onclick="showOwner(4)">Owner5</button>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" id="owner5_num" x="0" y="0" height="20" width="0%" fill="rgb(219, 216, 216)"></rect>;
+        <text x="99%" y="75%" class="rect_label" id="owner5_text">0 Objects (0%)</text>;
+      </svg>
+
+      <button class="interactive_button" id="owner6" onclick="showOwner(5)">Owner6</button>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" id="owner6_num" x="0" y="0" height="20" width="0%" fill="rgb(219, 216, 216)"></rect>;
+        <text x="99%" y="75%" class="rect_label" id="owner6_text">0 Objects (0%)</text>;
+      </svg>
+
+      <button class="interactive_button" id="owner7" onclick="showOwner(6)">Owner7</button>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" id="owner7_num" x="0" y="0" height="20" width="0%" fill="rgb(219, 216, 216)"></rect>;
+        <text x="99%" y="75%" class="rect_label" id="owner7_text">0 Objects (0%)</text>;
+      </svg>
+
+      <button class="interactive_button" id="owner8" onclick="showOwner(7)">Owner8</button>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" id="owner8_num" x="0" y="0" height="20" width="0%" fill="rgb(219, 216, 216)"></rect>;
+        <text x="99%" y="75%" class="rect_label" id="owner8_text">0 Objects (0%)</text>;
+      </svg>
+
+      <button class="interactive_button" id="owner9" onclick="showOwner(8)">Owner9</button>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" id="owner9_num" x="0" y="0" height="20" width="0%" fill="rgb(219, 216, 216)"></rect>;
+        <text x="99%" y="75%" class="rect_label" id="owner9_text">0 Objects (0%)</text>;
+      </svg>
+
+      <button class="interactive_button" id="owner10" onclick="showOwner(9)">Owner10</button>
+      <svg width="100%" height="15px">
+        <rect class="rect_back" x="0" y="0" height="20" width="100%" fill="#666a70"></rect>;
+        <rect class="rect_front" id="owner10_num" x="0" y="0" height="20" width="0%" fill="rgb(219, 216, 216)"></rect>;
+        <text x="99%" y="75%" class="rect_label" id="owner10_text">0 Objects (0%)</text>;
+      </svg>
+
+      <button class="interactive_button" id="clearFilter" onclick="clearFilter()">Remove filter</button>
+
+    
+    </div>
+
+
+    <a href="space_debris.html" class="backButton">&laquo; Back</a>
 
 
     
-  
+    
+
+
+
+    <style>
+      select {
+        text-align-last: center;
+      }
+
+      .filter-title {
+        font-size: 20px;
+        margin-bottom: 0px;
+        margin-top: 50px;
+      }
+
+      #filter-tip {
+        margin-bottom: 5px;
+        margin-top: 10px;
+      }
+
+      #top10{
+        border-top:  solid rgb(219, 216, 216);
+        border-bottom:  solid rgb(219, 216, 216);
+        text-align: center;
+      }
+
+      #background_infor {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 30%;
+        height: 100%;
+        background: linear-gradient(180deg, #000d14 0%, #1B3944 100%);
+        color: rgb(219, 216, 216);
+        font-family: "Poppins", sans-serif;
+        font-size: 15px;
+        padding: 25px;
+        box-sizing: border-box;
+        border-style: inset;
+        border-width: 3px;
+        border-color: rgb(131, 207, 182);
+        overflow: auto;
+        text-align: justify;
+
+
+      }
+
+      .backButton {
+        color: rgb(219, 216, 216);
+      }
+
+      .background_title {
+        font-size: 20px;
+
+      }
+
+      #ownership-list {
+        width: 100%;
+        height: 30px;
+        border-radius: 25px;
+        margin-top: 0px;
+      }
+
+      /* .title_rec_owner {
+        font-size: 14px;
+        color: #d6d7d8;
+        margin-bottom: 0%;
+      } */
+
+
+      .rect_label {
+        fill: rgb(219, 216, 216);
+        font-size: 13px;
+        font-weight: 550;
+        text-anchor: end;
+      }
+
+      .subtitle {
+        margin-top: 20px;
+        font-size: 17px;
+        font-weight: 600;
+      }
+
+      .interactive_button {
+        background-color: transparent;
+        /* 设置背景色为透明 */
+        color: rgb(219, 216, 216);
+        border: 1px solid rgb(219, 216, 216);
+        border-radius: 5px;
+        /* 设置边角的圆弧半径，你可以调整这个值以获得你想要的效果 */
+        padding: 2PX;
+        /* 设置内边距，增加button的可点击区域，你可以根据需要调整这个值 */
+        font-size: 14px;
+        margin-bottom: 5px;
+        margin-top: 10px;
+      }
+
+      #clearFilter {
+        position: relative;
+        left: 0%;
+        width: 100%;
+        border: 2px solid rgb(219, 216, 216);
+        font-size: 15px;
+        background-color: rgb(219, 216, 216);
+        color:#000000;
+        font-weight: 600;
+      }
+    </style>
+
+
+  </div>
+
+  <script>
+    let ownerHTML = true;
+  </script>
+
+
+
+
 
   <script src="Cesium/Cesium.js"> </script>
   <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
-  <script src = "spacedebris_viewer_js/satellite.min.js"> </script> 
-  <script src = "spacedebris_viewer_js/dat.gui.min.js"> </script> 
-  <script src ="spacedebris_viewer_js/Catalogue.js"> </script> 
-  <script src ="spacedebris_viewer_js/KeplerianElement.js"> </script> 
-  <script src ="spacedebris_viewer_js/main.js"> </script>
-  <script src ="spacedebris_viewer_js/echarts.min.js"> </script>
+  <script src="spacedebris_viewer_js/satellite.min.js"> </script>
+  <script src="spacedebris_viewer_js/dat.gui.min.js"> </script>
+  <script src="spacedebris_viewer_js/Catalogue.js"> </script>
+  <script src="spacedebris_viewer_js/KeplerianElement.js"> </script>
+  <script src="spacedebris_viewer_js/main.js"> </script>
+  <script src="spacedebris_viewer_js/echarts.min.js"> </script>
 
-  
+
 </body>
+
 </html>
