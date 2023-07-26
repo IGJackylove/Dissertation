@@ -35,6 +35,7 @@ let previousPick = null;
 let showSelection = false;
 let entries;
 let radar_pick = null;
+let data_load_dafault = true;
 
 
 
@@ -228,6 +229,7 @@ function radar_screen(radar_position_ecef) {
   radar_viewer.camera.frustum.far = 20000000.0;
   radar_viewer.camera.frustum.aspectRatio = radar_viewer.scene.canvas.clientWidth / radar_viewer.scene.canvas.clientHeight;
 
+  radar_viewer._cesiumWidget._creditContainer.style.display = "none"; // remove the cesium ion in radar viewer
 
   // View in east-north-up frame
   // var camera = viewer_main.camera;
@@ -323,7 +325,7 @@ var cataloglist =
 }
 
 function GUIset() {
-  var gui = new dat.GUI({ width: 350 });
+  var gui = new dat.GUI({ width: 280 });
   gui.domElement.id = 'datgui';
   // gui.domElement.id = 'datgui';
 
@@ -339,6 +341,9 @@ function GUIset() {
       satcat.clear_catalog();
       data_load = false;
       debris_collection.removeAll();
+      removeInfoBox();
+      removeOrbitEntity();
+      removePrevisouPick();
       //debri_collection_radar.removeAll();
 
       var satcat_logfile = "";
@@ -395,6 +400,7 @@ function GUIset() {
       }
 
       satcat.loadcatlog(type, satcat_logfile);
+
       ///load the corresponding catalog files
       // console.log("successfully loaded data");
     }
@@ -403,7 +409,6 @@ function GUIset() {
 
 
 }
-
 
 function set_value() {
   var radar_position_ecef = new Cesium.Cartesian3(0, 0, 0);
@@ -495,23 +500,22 @@ function removeInfoBox() {
 
 function addOrbit(pick) {
   let orbitPosArray = [];
-  var debris_set = debris_collection; //这里的debris_collection在下边的window.onload()中定义了
   // console.log(debris_set)
-  var viewer = viewer_main; //这里的viewer_main也在下边的window.onload()中定义了
   console.log("add orbit")
   // for (let i = 0; i < ){
-
   clickedObject = pick
   if (clickedObject) {
+    removeOrbitEntity();
+    removeInfoBox();
     orbitPeriod = parseFloat(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"])) * 60;
     // console.log(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"]) + " " + orbitPeriod)
-    let currentTime = viewer.clock.currentTime;
+    let currentTime = viewer_main.clock.currentTime;
     let tai_utc = Cesium.JulianDate.computeTaiMinusUtc(currentTime);
     let startTime = Cesium.JulianDate.addSeconds(currentTime, tai_utc, new Cesium.JulianDate());
     let endTime = Cesium.JulianDate.addSeconds(startTime, orbitPeriod, new Cesium.JulianDate());
     let timeStep = orbitPeriod / 360; // divide orbit period into 360 parts to calculate the position
     let time = new Cesium.JulianDate();
-    let points = debris_set._pointPrimitives;
+    let points = debris_collection._pointPrimitives;
     let clickIndex = undefined;
 
     for (let i = 0; i < points.length; ++i) {
@@ -541,11 +545,6 @@ function addOrbit(pick) {
     }
 
 
-    if (orbitEntity) {
-      viewer_main.entities.removeById(orbitEntity.id);
-      orbitEntity = undefined;
-    }
-
     /* add orbit basedon operation status */
     if (clickedObject.id["Operation Status"] !== "Decayed"
       && clickedObject.id["Operation Status"] !== "Non-operational"
@@ -569,11 +568,104 @@ function addOrbit(pick) {
           material: Cesium.Color.RED,
           loop: true
         },
-      })
+      });
 
     }
   }
-} // end of addOrbit
+  if (typeof clickedObject == "undefined" && typeof customOrbitHTML != "undefined") {
+    removePrevisouPick();
+    removeOrbitEntity();
+    removeInfoBox();
+    let semiMajorAxis = parseFloat(document.getElementById('semi-major axis').value);
+    let eccentricity = parseFloat(document.getElementById('eccentricity').value);
+    let inclination = parseFloat(document.getElementById('inclination').value);
+    let longitudeOfTheAscendingNode = parseFloat(document.getElementById('longitude of the ascending node').value);
+    let argumentOfPerigee = parseFloat(document.getElementById('argument of perigee').value);
+    let trueAnomaly = parseFloat(document.getElementById('true anomaly').value);
+
+    let customOrbitElement = {
+      "semi_major_axis": semiMajorAxis,
+      "eccentricity": eccentricity,
+      "inclination": inclination,
+      "RAAN": longitudeOfTheAscendingNode,
+      "argument_of_perigee": argumentOfPerigee,
+      "true_anomaly": trueAnomaly
+    }
+
+    console.log(customOrbitElement)
+    orbitPeriod = 100000; //24 hours in minutes
+    // console.log(satcat.getDebriOrbitPeriod(clickedObject.id["COSPAR ID"]) + " " + orbitPeriod)
+    let currentTime = viewer_main.clock.currentTime;
+    let tai_utc = Cesium.JulianDate.computeTaiMinusUtc(currentTime);
+    let startTime = Cesium.JulianDate.addSeconds(currentTime, tai_utc, new Cesium.JulianDate());
+    // let endTime = Cesium.JulianDate.addSeconds(startTime, orbitPeriod, new Cesium.JulianDate());
+    let timeStep = orbitPeriod / 360; // divide orbit period into 360 parts to calculate the position
+    let time = new Cesium.JulianDate();
+
+    for (let i = 0; i < 361; i++) {
+      time = Cesium.JulianDate.addSeconds(startTime, i * timeStep, time);
+      let icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
+      let time_date_js = Cesium.JulianDate.toDate(time); /// convert time into js Date()
+      let position_ecef = new Cesium.Cartesian3();
+
+      if (Cesium.defined(icrfToFixed)) {
+        let positionAndVelocity = compute_custom_position_eci(customOrbitElement, time_date_js);//  satellite.propagate(tle_rec,time_date);
+
+
+        var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x * 1000, positionAndVelocity.position.y * 1000, positionAndVelocity.position.z * 1000);
+
+        position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef)
+
+        orbitPosArray.push(position_eci)
+      }
+
+    }
+
+
+    // create Polyline Entity
+    orbitEntity = viewer_main.entities.add({
+      id: "Custom Orbit",
+      polyline: {
+        positions: orbitPosArray,
+        width: 2,
+        material: Cesium.Color.GREEN,
+        loop: true
+      },
+    });
+  }
+}
+
+/// compute the positon of debris in eci
+/// time is in  JavaScript Date in UTC
+function compute_custom_position_eci(array, time) {
+  let positionAndVelocity2 = { position: { x: 0, y: 0, z: 0 }, velocity: { x: 0, y: 0, z: 0 } };
+  let kep = new KeplerianElement();
+  kep.setElements(array['semi_major_axis'], array["eccentricity"],
+    array["inclination"], array["RAAN"],
+    array["argument_of_perigee"], array["true_anomaly"]
+  );
+
+  let currentTime = Cesium.JulianDate.now();  // 获取当前时间
+  let date = Cesium.JulianDate.toDate(currentTime);  // 转换成JavaScript Date对象
+
+  var tt0 = date
+
+  var time_diff = (time - tt0) / 1000.0; /// in sec
+
+  kep.updateElements(time_diff);
+  var pv = kep.getStateVector();
+  positionAndVelocity2.position.x = pv[0];//cartesian X
+  positionAndVelocity2.position.y = pv[1];//cartesian Y
+  positionAndVelocity2.position.z = pv[2];//Cartesian Z
+
+  positionAndVelocity2.velocity.x = pv[3];
+  positionAndVelocity2.velocity.y = pv[4];
+  positionAndVelocity2.velocity.z = pv[5];
+
+  return positionAndVelocity2;
+}
+
+// end of addOrbit
 
 function showLEO() {
   console.log("filter LEO")
@@ -760,6 +852,8 @@ function clearFilter() {
 
 }
 
+
+
 window.onload = function () {
   satcat = new Catalogue();
 
@@ -783,12 +877,16 @@ window.onload = function () {
   viewer_main.scene.globe.enableLighting = true;
   viewer_main.clock.multiplier = 15;               // speed of the simulation
 
-  var mycredit = new Cesium.Credit("Space Geodesy and Navigation Laboratory", 'data/sgnl.png', 'https://www.ucl.ac.uk');
-  // var mycredit = new Cesium.Credit('Cesium', 'data/sgnl.png', 'https://www.ucl.ac.uk');
-  viewer_main.scene.frameState.creditDisplay.addDefaultCredit(mycredit);
-  viewer_main.CreditDisplay = true;
+  // var mycredit = new Cesium.Credit("Space Geodesy and Navigation Laboratory", 'data/sgnl.png', 'https://www.ucl.ac.uk');
+  // // var mycredit = new Cesium.Credit('Cesium', 'data/sgnl.png', 'https://www.ucl.ac.uk');
+  // viewer_main.scene.frameState.creditDisplay.addDefaultCredit(mycredit);
+
+
+  viewer_main.CreditDisplay = false;
   viewer_main.scene.debugShowFramesPerSecond = true;
-  viewer_main.scene.frameState.creditDisplay.removeDefaultCredit();
+  viewer_main._cesiumWidget._creditContainer.style.display = "none"; // remove the cesium ion in radar viewer
+
+
 
 
 
@@ -798,6 +896,21 @@ window.onload = function () {
   viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
   viewer_main.timeline.updateFromClock();
   viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
+
+  /* Code to add baseline visualizer*/
+  if (data_load_dafault && typeof customOrbitHTML == "undefined") {
+    console.log(data_load_dafault)
+    start_jd = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z");
+    viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z"); ///It is in system loal time
+    viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
+    viewer_main.timeline.updateFromClock();
+    viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
+    satcat.loadcatlog("kep", "data/catalogue/fspcat_baseline_20190522_v280819_nodeb.json");
+  }
+
+
+
+
 
 
   GUIset();
@@ -833,7 +946,7 @@ window.onload = function () {
     let description = '';
 
     /*Only when data is loaded, pick and pick.id are defined and is primitive will call the following code */
-    if (data_load && Cesium.defined(pick) && Cesium.defined(pick.id) && pick.primitive.constructor.name === 'f') {
+    if ((data_load || data_load_dafault) && Cesium.defined(pick) && Cesium.defined(pick.id) && pick.primitive.constructor.name === 'f') {
       showSelection = true;
       let tableItems = Object.entries(pick.id).map(function ([key, value]) {
         return '<tr><td style="text-align:left; font-size: 15px; font-weight: bold;">' + key + ':' + '</td><td style="text-align:center; width: 250px;">' + value + '</td></tr>';
@@ -874,7 +987,7 @@ window.onload = function () {
   var timename = setInterval(function () {
     console.log('time_interval start')
     if (satcat.data_load_complete == true
-      && data_load == false) {
+      && (data_load == false || data_load_dafault == true)) {
       console.log('load complete, start counting')
       //ShowDebris(viewer_main,mycatlog,4);
 
@@ -1066,7 +1179,7 @@ window.onload = function () {
 
         // Get the <i> element (Font Awesome icon) and add a click event listener
         const dropdownIcon = document.querySelector(".custom-dropdown-icon i");
-        dropdownIcon.addEventListener("click", function(){console.log("Hide the datalist")});
+        dropdownIcon.addEventListener("click", function () { console.log("Hide the datalist") });
       }
 
       if (typeof ownerHTML !== 'undefined') {
@@ -1170,7 +1283,7 @@ window.onload = function () {
           let description2 = '';
 
           /*Only when data is loaded, pick and pick.id are defined and is primitive will call the following code */
-          if (data_load && Cesium.defined(pick2) && Cesium.defined(pick2.id) && pick2.primitive.constructor.name === 'f') {
+          if ((data_load || data_load_dafault) && Cesium.defined(pick2) && Cesium.defined(pick2.id) && pick2.primitive.constructor.name === 'f') {
             showSelection = true;
             console.log("radar click")
             let tableItems = Object.entries(pick2.id).map(function ([key, value]) {
@@ -1222,6 +1335,7 @@ window.onload = function () {
       document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
 
       data_load = true;
+      data_load_dafault = false;
       // // clearInterval(timename); /// clear itself
     }
   }, 1000); /// allow sometime to load the Earth 

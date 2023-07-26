@@ -78,15 +78,15 @@
 
 
   <div id="catalogue_alert">
-    <label id="Label3">Please choose a FSP Catalogue file</label>
+    <label id="Label3">Please choose a FSP Catalogue file <br>(Default: 2019/05/22)</label>
   </div>
 
   <style>
     #catalogue_alert {
       padding: 0 7px;
       position: fixed;
-      width: 20%;
-      height: 2.5%;
+      width: 15%;
+      height: 5%;
       z-index: 999;
       top: 5px;
       left: 5px;
@@ -109,7 +109,7 @@
     #datgui {
       position: fixed;
       /* 使用 fixed 使元素相对于浏览器窗口定位 */
-      top: 30px;
+      top: 52px;
       /* 放在底部，但从底部留出5px的空间 */
       left: 5px;
       /* 距离左边5px */
@@ -203,7 +203,21 @@
 
     <a href="space_debris.html" class="backButton">&laquo; Back</a>
 
-
+    <div class="creditContainer"> 
+      <style>
+        .creditContainer {
+            width: 90px;
+            height: 75px;
+            position: fixed;
+            z-index: 99999;
+            background: url(images/sgnl.png) 50% 50% no-repeat;
+            background-size: cover;
+            bottom: 22px;
+            left: 170px;
+            background-color: transparent;
+        }
+    </style>  
+    </div>
 
 
     <style>

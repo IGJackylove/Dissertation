@@ -484,8 +484,7 @@ class Catalogue
 	
 	/// compute the positon of debris in eci
 	/// time is in  JavaScript Date in UTC
-	compute_debri_position_eci(isat, time)
-	{
+	compute_debri_position_eci(isat, time){
 		if(isat < this.debris_kep.length) /// using keplerian propagation
 		{
 			var idebri = this.debris_kep[isat];
@@ -533,10 +532,7 @@ class Catalogue
 
 	}
 	/*convert from keplerian elements to twoline elements */
-	kep2tle(kep)
-	{
-
-	}
+	kep2tle(kep){}
 
 
 }

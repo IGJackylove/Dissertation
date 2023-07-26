@@ -78,12 +78,28 @@
 
 
   <div id="catalogue_alert">
-    <label id="Label3">Please choose a FSP Catalogue file</label>
+    <label id="Label3">Please choose a FSP Catalogue file (Default: 2019/05/22)</label>
   </div>
 
 
   <div id="datgui"></div>
   <a href="space_debris.html" class="backButton">&laquo; Back</a>
+
+  <div class="creditContainer"> 
+    <style>
+      .creditContainer {
+          width: 90px;
+          height: 75px;
+          position: fixed;
+          z-index: 99999;
+          background: url(images/sgnl.png) 50% 50% no-repeat;
+          background-size: cover;
+          bottom: 22px;
+          left: 170px;
+          background-color: transparent;
+      }
+  </style>  
+  </div>
 
   <style>
     .radar_viewer {
@@ -196,7 +212,7 @@
     #catalogue_alert {
       padding: 0 7px;
       position: fixed;
-      width: 20%;
+      width: 21.5%;
       height: 2.5%;
       z-index: 999;
       top: 5px;
@@ -228,6 +244,7 @@
       top: 10px;
       font-size: 25px;
     }
+
   </style>
   <script>
     let radarHTML = true;

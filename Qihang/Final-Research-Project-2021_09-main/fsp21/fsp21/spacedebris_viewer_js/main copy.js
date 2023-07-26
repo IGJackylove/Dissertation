@@ -219,7 +219,9 @@ function radar_screen(radar_position_ecef)
   radar_viewer.camera.frustum.far = 20000000.0;
   radar_viewer.camera.frustum.aspectRatio = radar_viewer.scene.canvas.clientWidth/radar_viewer.scene.canvas.clientHeight;
 
-  
+  radar_viewer._cesiumWidget._creditContainer.parentNode.removeChild(
+    viewer._cesiumWidget._creditContainer
+    );
   // View in east-north-up frame
   // var camera = viewer_main.camera;
   // camera.constrainedAxis = Cesium.Cartesian3.UNIT_Z;

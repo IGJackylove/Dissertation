@@ -1,0 +1,304 @@
+<!-- Use correct character set. 
+// author: Zhen Li
+// email: hpulizhen@163.com
+// enhanced author: Luyang Han
+// email: hanluhou98@gmail.com
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>Space debris telescope simulation</title>
+
+  <style>
+    @import url(Cesium/Widgets/widgets.css);
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #main_viewer {
+      width: 70%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      position: relative;
+      /* Used as position the legend*/
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <div class="cesiumContainer" id="main_viewer">
+    <div class="panel" id="legend1">
+      <ul id="legend1-ul">
+        <li id="active_num" style="color: rgb(38, 146, 16); font-size: 13pt; ">Active satellite</li>
+        <li id="inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
+      </ul>
+    </div>
+
+  </div>
+
+
+  <style>
+    #legend1-ul {
+      position: absolute;
+      right: 0.5%;
+      width: 200px;
+      height: 40px;
+      z-index: 999;
+      bottom: 4%;
+      border: 1px solid;
+      color: #f0f0f0c0;
+      background-color: #000000;
+      list-style-position: inside;
+      text-align: left;
+      margin: 0px;
+      padding: 0.5%;
+    }
+  </style>
+
+
+  <div id="catalogue_alert">
+    <label id="Label3">Please choose a FSP Catalogue file </label>
+  </div>
+
+  <style>
+    #catalogue_alert {
+      padding: 0 7px;
+      position: fixed;
+      width: 15%;
+      height: 2.5%;
+      z-index: 999;
+      top: 5px;
+      left: 5px;
+      border: 2px solid;
+      color: #f0f0f0e7;
+      background-color: #000000;
+      opacity: 0.9;
+    }
+
+    #label3 {
+      color: #ffffff;
+      font-size: 10pt;
+    }
+  </style>
+
+  <div id="datgui">
+  </div>
+
+  <style>
+    #datgui {
+      position: fixed;
+      /* 使用 fixed 使元素相对于浏览器窗口定位 */
+      top: 25px;
+      /* 放在底部，但从底部留出5px的空间 */
+      left: 5px;
+      /* 距离左边5px */
+    }
+  </style>
+
+  <!-- Reference for the design and information in this part: https://geoxc-apps.bd.esri.com/space/satellite-explorer/ -->
+  <div id="background_infor">
+    <a href="space_debris.html" class="backButton">&laquo; Back</a>
+    <h1 class="background_title">How we design an orbit</h1>
+    <div class="content" id="intro">
+      Keplerian elements, or orbital elements, are parameters that define celestial orbits. They include the semi-major
+      axis, eccentricity, inclination, Longitude of the ascending node, argument of perigee, and true anomaly,
+      based on Kepler's laws of orbital motion.
+    </div>
+
+    <div>
+      <div>{"COSPAR_ID": "2017-048B ", "RSO_name": "H-2A R/B ", "orbital_period": "622.4 ", "mass": "0 ", "maneuverable": "0 ",
+        "spin_stabilised": "0 ", "inclination_deg": "19.5 ", "apogee_hgt": "35274 ", "perigee_hgt": "264 ",
+        "radar_cross_section": "0 ", "characteristic_area": "0 ", "charactersitic_length": "0 ", "propulsion_type": "u
+        ", "orbital_status_code": " ", "epoch_of_orbit": "2019-05-22", "semi_major_axis": "24138.2 ", "eccentricity":
+        "0.724495 ", "inclination": "0.339607 ", "argument_of_perigee": "4.78993 ", "RAAN": "3.4354 ", "true_anomaly":
+        "4.79441 "}</div>
+      <h3 class="filter-title">Custom Your Own Orbit</h3>
+      <div class="block-title"> Semi-major Aixs</div>
+      <input type="number" class = "input-custom" id="semi-major axis" placeholder="Type your semi-major axis">
+      <div class="block-title"> Eccentricity</div>
+      <input type="number" class = "input-custom" id="eccentricity" placeholder="Type your eccentricity">
+      <div class="block-title"> Inclination</div>
+      <input type="number" class = "input-custom" id="inclination" placeholder="Type your inclination">
+      <div class="block-title"> Longitude of the ascending node</div>
+      <input type="number" class = "input-custom" id="longitude of the ascending node" placeholder="Type your Longitude of the ascending node">
+      <div class="block-title"> Argument of perigee</div>
+      <input type="number" class = "input-custom" id="argument of perigee" placeholder="Type your argument of perigee">
+      <div class="block-title"> True Anomaly</div>
+      <input type="number" class = "input-custom" id="true anomaly" placeholder="Type your true anomaly"><br>
+      <button id="buttom-submit" onclick="addOrbit()"> Submit </button>
+
+
+
+    </div>
+
+
+    <a href="space_debris.html" class="backButton">&laquo; Back</a>
+
+    <div class="creditContainer">
+      <style>
+        .creditContainer {
+          width: 90px;
+          height: 75px;
+          position: fixed;
+          z-index: 99999;
+          background: url(images/sgnl.png) 50% 50% no-repeat;
+          background-size: cover;
+          bottom: 22px;
+          left: 170px;
+          background-color: transparent;
+        }
+      </style>
+    </div>
+
+
+
+
+
+    <style>
+      select {
+        text-align-last: center;
+      }
+
+      .filter-title {
+        font-size: 20px;
+        margin-bottom: 0px;
+        margin-top: 50px;
+      }
+
+      #filter-tip {
+        margin-bottom: 5px;
+        margin-top: 10px;
+      }
+
+      #top10 {
+        border-top: solid rgb(219, 216, 216);
+        border-bottom: solid rgb(219, 216, 216);
+        text-align: center;
+      }
+
+      #background_infor {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 30%;
+        height: 100%;
+        background: linear-gradient(180deg, #000d14 0%, #1B3944 100%);
+        color: rgb(219, 216, 216);
+        font-family: "Poppins", sans-serif;
+        font-size: 15px;
+        padding: 25px;
+        box-sizing: border-box;
+        border-style: inset;
+        border-width: 3px;
+        border-color: rgb(131, 207, 182);
+        overflow: auto;
+        text-align: justify;
+
+
+      }
+
+      .backButton {
+        color: rgb(219, 216, 216);
+      }
+
+      .background_title {
+        font-size: 20px;
+
+      }
+
+      #ownership-list {
+        width: 100%;
+        height: 30px;
+        border-radius: 25px;
+        margin-top: 0px;
+      }
+
+      /* .title_rec_owner {
+        font-size: 14px;
+        color: #d6d7d8;
+        margin-bottom: 0%;
+      } */
+
+
+      .rect_label {
+        fill: rgb(219, 216, 216);
+        font-size: 13px;
+        font-weight: 550;
+        text-anchor: end;
+      }
+
+      .subtitle {
+        margin-top: 20px;
+        font-size: 17px;
+        font-weight: 600;
+      }
+
+      .interactive_button {
+        background-color: transparent;
+        /* 设置背景色为透明 */
+        color: rgb(219, 216, 216);
+        border: 1px solid rgb(219, 216, 216);
+        border-radius: 5px;
+        /* 设置边角的圆弧半径，你可以调整这个值以获得你想要的效果 */
+        padding: 2PX;
+        /* 设置内边距，增加button的可点击区域，你可以根据需要调整这个值 */
+        font-size: 14px;
+        margin-bottom: 5px;
+        margin-top: 10px;
+      }
+
+      #clearFilter {
+        position: relative;
+        left: 0%;
+        width: 100%;
+        border: 2px solid rgb(219, 216, 216);
+        font-size: 15px;
+        background-color: rgb(219, 216, 216);
+        color: #000000;
+        font-weight: 600;
+      }
+    </style>
+
+
+  </div>
+
+  <script>
+    let customOrbitHTML = true;
+  </script>
+
+
+
+
+
+  <script src="Cesium/Cesium.js"> </script>
+  <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
+  <script src="spacedebris_viewer_js/satellite.min.js"> </script>
+  <script src="spacedebris_viewer_js/dat.gui.min.js"> </script>
+  <script src="spacedebris_viewer_js/Catalogue.js"> </script>
+  <script src="spacedebris_viewer_js/KeplerianElement.js"> </script>
+  <script src="spacedebris_viewer_js/main.js"> </script>
+  <script src="spacedebris_viewer_js/echarts.min.js"> </script>
+
+
+</body>
+
+</html>

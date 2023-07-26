@@ -162,6 +162,7 @@ function xyz2enu_matrix(lat,lon)
     return E;
 }
 /** simulate the radar screen*/
+// There is a problem with the radar view that only view the right side of the point!
 function radar_screen(radar_position_ecef)
 {
 
@@ -215,7 +216,7 @@ function radar_screen(radar_position_ecef)
   camera_up  = Cesium.Cartesian3.cross(camera_target_ecef,normal_tmp,camera_up);
   radar_viewer.camera.up = camera_up;
 
-  radar_viewer.camera.frustum.fov = 60/180* Cesium.Math.PI; /// field of view
+  radar_viewer.camera.frustum.fov = 60/180 * Cesium.Math.PI; /// field of view
   radar_viewer.camera.frustum.near = 0.1;
   radar_viewer.camera.frustum.far = 20000000.0;
   radar_viewer.camera.frustum.aspectRatio = radar_viewer.scene.canvas.clientWidth/radar_viewer.scene.canvas.clientHeight;

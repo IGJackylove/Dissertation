@@ -20,10 +20,16 @@
         <p class="title_main">Excutive summary for the result of the future space population</p>
     </div>
 
-    <div class="scatter plot">
-        <div id="scatter_2023"></div>
-        <div id="scatter_2028"></div>
-        <div id="scatter_2043"></div>
+    <div class="block-height">
+        <h2>Height distribution</h2> 
+        <select id="select-height">
+            <option value="scatter plot">Scatter Plot</option>
+            <option value="radar plot">Radar Plot</option>
+            <option value="Histogram">Histogram</option>
+        </select>
+        <div id="height_2023"></div>
+        <div id="height_2028"></div>
+        <div id="height_2043"></div>
     </div>
 
     <script>
@@ -74,8 +80,8 @@
                 console.log(results_active)
                 console.log(results_inactive)
 
-                let scatter_2023 = document.getElementById('scatter_2023');
-                let scatter_2023_plot = echarts.init(scatter_2023, "dark");
+                let height_2023 = document.getElementById('height_2023');
+                let height_2023_ini = echarts.init(height_2023, "dark");
                 option = {
                     title: {
                         text: 'Distribution of Future Space Population by Height in 2023',
@@ -115,7 +121,7 @@
                         }
                     ]
                 };
-                option && scatter_2023_plot.setOption(option);
+                option && height_2023_ini.setOption(option);
 
 
 
@@ -178,11 +184,11 @@
 
                 }
                 data_load2 = true;
-                console.log(results_active2)
-                console.log(results_inactive2)
+                // console.log(results_active2)
+                // console.log(results_inactive2)
 
-                let scatter_2028 = document.getElementById('scatter_2028');
-                let scatter_2028_plot = echarts.init(scatter_2028, "dark");
+                let height_2028 = document.getElementById('height_2028');
+                let height_2028_ini = echarts.init(height_2028, "dark");
                 option2 = {
                     title: {
                         text: 'Distribution of Future Space Population by Height in 2028',
@@ -222,7 +228,7 @@
                         }
                     ]
                 };
-                option2 && scatter_2028_plot.setOption(option2);
+                option2 && height_2028_ini.setOption(option2);
 
 
 
@@ -278,8 +284,8 @@
                 console.log(results_active3)
                 console.log(results_inactive3)
 
-                let scatter_2043 = document.getElementById('scatter_2043');
-                let scatter_2043_plot = echarts.init(scatter_2043, "dark");
+                let height_2043 = document.getElementById('height_2043');
+                let height_2043_ini = echarts.init(height_2043, "dark");
                 option3 = {
                     title: {
                         text: 'Distribution of Future Space Population by Height in 2043',
@@ -319,7 +325,7 @@
                         }
                     ]
                 };
-                option3 && scatter_2043_plot.setOption(option3);
+                option3 && height_2043_ini.setOption(option3);
 
 
 
@@ -363,21 +369,21 @@
             z-index: 999;
         }
 
-        #scatter_2023 {
+        #height_2023 {
             display: flex;
             justify-content: center;
             height: 350px;
             width: 60%;
         }
 
-        #scatter_2028 {
+        #height_2028 {
             display: flex;
             justify-content: center;
             height: 350px;
             width: 60%;
         }
 
-        #scatter_2043 {
+        #height_2043 {
             display: flex;
             justify-content: center;
             height: 350px;
