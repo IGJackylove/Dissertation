@@ -117,34 +117,72 @@
   <!-- Reference for the design and information in this part: https://geoxc-apps.bd.esri.com/space/satellite-explorer/ -->
   <div id="background_infor">
     <a href="space_debris.html" class="backButton">&laquo; Back</a>
-    <h1 class="background_title">How we design an orbit</h1>
+    <h2 class="background_title">How we design an orbit</h2>
     <div class="content" id="intro">
       Keplerian elements, or orbital elements, are parameters that define celestial orbits. They include the semi-major
       axis, eccentricity, inclination, Longitude of the ascending node, argument of perigee, and true anomaly,
       based on Kepler's laws of orbital motion.
     </div>
 
-    <div>
-      <div>{"COSPAR_ID": "2017-048B ", "RSO_name": "H-2A R/B ", "orbital_period": "622.4 ", "mass": "0 ", "maneuverable": "0 ",
-        "spin_stabilised": "0 ", "inclination_deg": "19.5 ", "apogee_hgt": "35274 ", "perigee_hgt": "264 ",
-        "radar_cross_section": "0 ", "characteristic_area": "0 ", "charactersitic_length": "0 ", "propulsion_type": "u
-        ", "orbital_status_code": " ", "epoch_of_orbit": "2019-05-22", "semi_major_axis": "24138.2 ", "eccentricity":
-        "0.724495 ", "inclination": "0.339607 ", "argument_of_perigee": "4.78993 ", "RAAN": "3.4354 ", "true_anomaly":
-        "4.79441 "}</div>
-      <h3 class="filter-title">Custom Your Own Orbit</h3>
-      <div class="block-title"> Semi-major Aixs</div>
-      <input type="number" class = "input-custom" id="semi-major axis" placeholder="Type your semi-major axis">
-      <div class="block-title"> Eccentricity</div>
-      <input type="number" class = "input-custom" id="eccentricity" placeholder="Type your eccentricity">
-      <div class="block-title"> Inclination</div>
-      <input type="number" class = "input-custom" id="inclination" placeholder="Type your inclination">
-      <div class="block-title"> Longitude of the ascending node</div>
-      <input type="number" class = "input-custom" id="longitude of the ascending node" placeholder="Type your Longitude of the ascending node">
-      <div class="block-title"> Argument of perigee</div>
-      <input type="number" class = "input-custom" id="argument of perigee" placeholder="Type your argument of perigee">
-      <div class="block-title"> True Anomaly</div>
-      <input type="number" class = "input-custom" id="true anomaly" placeholder="Type your true anomaly"><br>
-      <button id="buttom-submit" onclick="addOrbit()"> Submit </button>
+
+    <div class="infor-kepler">
+      <img src="images/kepler.png" alt="Kepler Elements" id="kepler-elements">
+
+      <div class="block-kepler">
+        <!-- https://undergroundmathematics.org/glossary/semi-major-axis -->
+        <div class="block-title"> Semi-major Aixs (Unit: km) </div>
+        This is the longest radius of an ellipse, which describes the size of the orbit.
+        <br>
+        <input type="number" class="input-custom" id="semi-major axis" placeholder="Type your semi-major axis">
+      </div>
+
+      <div class="block-kepler">
+        <!-- https://en.wikipedia.org/wiki/Orbital_elements -->
+        <div class="block-title"> Eccentricity (0-1)</div>
+        This measures the shape of the orbit, specifically how much it deviates from a perfect circle. A circular orbit
+        has an eccentricity of 0, an elliptical orbit has an eccentricity between 0 and 1
+        <br>
+        <input type="number" class="input-custom" id="eccentricity" placeholder="Type your eccentricity">
+      </div>
+
+
+      <div class="block-kepler">
+        <div class="block-title"> Inclination (Unit: radians)</div>
+        The inclination is the angle between the plane of the orbit and a reference plane. For objects orbiting the
+        Earth,the reference plane is usually the plane of the Earth's equator.
+        <br>
+        <input type="number" class="input-custom" id="inclination" placeholder="Type your inclination">
+      </div>
+
+
+      <div class="block-kepler">
+        <div class="block-title"> Longitude of the ascending node (Unit: degrees)</div>
+        The ascending node is the point where the orbit crosses the reference plane going upwards (north). The
+        longitude of this point is measured from a reference direction, usually the direction to the vernal equinox.
+        <br>
+        <input type="number" class="input-custom" id="longitude of the ascending node"
+          placeholder="Type your Longitude of the ascending node">
+      </div>
+
+      <div class="block-kepler">
+        <div class="block-title"> Argument of perigee (Unit: degrees)</div>
+        The Argument of Periapsis (ω), depicted as a purple angle in the diagram, determines the ellipse's orientation
+        within the orbital plane. It's the angular measure from the ascending node to the perigee, the point of closest
+        approach to the primary object.
+        <br>
+        <input type="number" class="input-custom" id="argument of perigee" placeholder="Type your argument of perigee">
+      </div>
+
+      <div class="block-kepler">
+        <div class="block-title"> True Anomaly (Unit: degrees)</div>
+        The true anomaly is the angle from the periapsis to the object's current position.
+        <br>
+        <input type="number" class="input-custom" id="true anomaly" placeholder="Type your true anomaly"><br>
+      </div>
+
+      <div class="button-container">
+        <button id="buttom-submit" onclick="addOrbit()">Draw Your Custom Orbit</button>
+      </div>
 
 
 
@@ -174,27 +212,6 @@
 
 
     <style>
-      select {
-        text-align-last: center;
-      }
-
-      .filter-title {
-        font-size: 20px;
-        margin-bottom: 0px;
-        margin-top: 50px;
-      }
-
-      #filter-tip {
-        margin-bottom: 5px;
-        margin-top: 10px;
-      }
-
-      #top10 {
-        border-top: solid rgb(219, 216, 216);
-        border-bottom: solid rgb(219, 216, 216);
-        text-align: center;
-      }
-
       #background_infor {
         position: fixed;
         top: 0;
@@ -212,68 +229,57 @@
         border-color: rgb(131, 207, 182);
         overflow: auto;
         text-align: justify;
-
-
       }
 
       .backButton {
         color: rgb(219, 216, 216);
+        margin-top: 30px;
       }
 
-      .background_title {
-        font-size: 20px;
 
-      }
-
-      #ownership-list {
-        width: 100%;
-        height: 30px;
-        border-radius: 25px;
-        margin-top: 0px;
-      }
-
-      /* .title_rec_owner {
-        font-size: 14px;
-        color: #d6d7d8;
-        margin-bottom: 0%;
+      /* .button-container {
+        display: flex;
+        justify-content: center;
       } */
 
 
-      .rect_label {
-        fill: rgb(219, 216, 216);
-        font-size: 13px;
-        font-weight: 550;
-        text-anchor: end;
+      #kepler-elements {
+        background-color: white;
+        width: 100%;
+        margin-top: 30px;
+        margin-bottom: 0px;
       }
 
-      .subtitle {
-        margin-top: 20px;
-        font-size: 17px;
+      .block-title {
+        font-size: 16px;
         font-weight: 600;
+        color: aquamarine;
+        margin-bottom: 10px;
       }
 
-      .interactive_button {
-        background-color: transparent;
-        /* 设置背景色为透明 */
-        color: rgb(219, 216, 216);
-        border: 1px solid rgb(219, 216, 216);
-        border-radius: 5px;
-        /* 设置边角的圆弧半径，你可以调整这个值以获得你想要的效果 */
-        padding: 2PX;
-        /* 设置内边距，增加button的可点击区域，你可以根据需要调整这个值 */
-        font-size: 14px;
-        margin-bottom: 5px;
+
+
+      .input-custom {
+        width: 100%;
+        text-align: center;
+        border-radius: 15px;
+        height: 25px;
         margin-top: 10px;
       }
 
-      #clearFilter {
+      .block-kepler {
+        margin-top: 20px;
+        margin-bottom: 20px;
+
+      }
+
+      #buttom-submit {
         position: relative;
-        left: 0%;
-        width: 100%;
-        border: 2px solid rgb(219, 216, 216);
-        font-size: 15px;
-        background-color: rgb(219, 216, 216);
-        color: #000000;
+        width: 60%;
+        border-radius: 50px;
+        height: 25px;
+        background-color: white;
+        left: 20%;
         font-weight: 600;
       }
     </style>
