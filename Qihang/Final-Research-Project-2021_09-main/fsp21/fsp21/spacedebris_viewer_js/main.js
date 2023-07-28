@@ -1096,7 +1096,7 @@ window.onload = function () {
 
         //radar cross section identifier
         /// for the radar_view
-        if (cross_section == "RCS <= 1") {
+        if (cross_section == "RCS ≤ 1") {
           debri_collection_radar.add({
             name: 'point',
             id: {
@@ -1118,7 +1118,7 @@ window.onload = function () {
           rc_1 = rc_1 + 1;
         }
 
-        if (cross_section == "1 < RCS <= 10") {
+        if (cross_section == "1 < RCS ≤ 10") {
           debri_collection_radar.add({
             name: 'point',
             id: {

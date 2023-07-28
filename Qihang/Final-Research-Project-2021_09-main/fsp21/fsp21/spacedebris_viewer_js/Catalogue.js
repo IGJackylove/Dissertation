@@ -329,8 +329,8 @@ class Catalogue
 		{
 			var cross_section_0 = this.debris_kep[isat]["radar_cross_section"].trim()
 			var cross_section = Number(cross_section_0);
-			if (cross_section <= 1) {m = "RCS <= 1"}
-			else if (cross_section <= 10 && cross_section > 1) {m = "1 < RCS <= 10"}
+			if (cross_section <= 1) {m = "RCS ≤ 1"}
+			else if (cross_section <= 10 && cross_section > 1) {m = "1 < RCS ≤ 10"}
 			else if (cross_section > 10) {m = "RCS > 10"}
 
 		}

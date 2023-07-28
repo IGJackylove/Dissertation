@@ -52,6 +52,21 @@
         <li id="inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
       </ul>
     </div>
+
+    <div id="legend-radar">
+      <p id="legend-title">Legend of radar view </p>
+      <p id="legend-unit">(Unit: m^2)</p>
+      <ul id="legend-radar-ul">
+        <li id="rcs1" style="color: rgb(38, 146, 16); ">RCS ≤ 1 (Active)</li>
+        <li id="rcs4" style="color: rgb(216, 0, 0); ">RCS ≤ 1 (Inactive)</li>
+        <li id="rcs2" style="color: rgb(38, 146, 16); ">1 &gt RCS ≤ 10 (Active)</li>
+        <li id="rcs5" style="color: rgb(216, 0, 0); ">1 &gt RCS ≤ 10 (Inactive)</li>
+        <li id="rcs3" style="color: rgb(38, 146, 16); ">RCS &gt 10 (Active)</li>
+        <li id="rcs6" style="color: rgb(216, 0, 0); ">RCS &gt 10 (Inactive)</li>
+      </ul>
+    </div>
+
+
   </div>
 
   <div class="radar_viewer" id="radar_viewer"></div>
@@ -67,16 +82,6 @@
   </div>
 
 
-  <div class="cesiumContainer" id="main_viewer">
-    <div class="panel" id="legend1">
-      <ul id="legend1-ul">
-        <li id="active_num" style="color: rgb(38, 146, 16); font-size: 13pt; ">Active satellite</li>
-        <li id="inactive_num" style="color: rgb(216, 0, 0); font-size: 13pt;">Inactive satellite</li>
-      </ul>
-    </div>
-  </div>
-
-
   <div id="catalogue_alert">
     <label id="Label3">Please choose a FSP Catalogue file (Default: 2019/05/22)</label>
   </div>
@@ -85,21 +90,9 @@
   <div id="datgui"></div>
   <a href="space_debris.html" class="backButton">&laquo; Back</a>
 
-  <div class="creditContainer"> 
-    <style>
-      .creditContainer {
-          width: 90px;
-          height: 75px;
-          position: fixed;
-          z-index: 99999;
-          background: url(images/sgnl.png) 50% 50% no-repeat;
-          background-size: cover;
-          bottom: 22px;
-          left: 170px;
-          background-color: transparent;
-      }
-  </style>  
-  </div>
+  <div class="creditContainer"></div>
+
+
 
   <style>
     .radar_viewer {
@@ -142,11 +135,11 @@
     #user_input {
       padding: 0 7px;
       position: absolute;
-      width: 280px;
+      width: 180px;
       height: 208px;
       z-index: 999;
       top: 500px;
-      left: 55px;
+      left: 5px;
       border: 1px solid;
       color: #f0f0f0;
       background-color: #00000096;
@@ -195,20 +188,6 @@
       padding: 5px 25px;
     }
 
-    /* #catalogue_alert{
-      padding: 0 7px;
-			position:absolute;
-			width:225px;
-			height:20px;
-			z-index:999;
-			top:2px;
-			right:415px;
-      border: 2px solid;
-      color:#f0f0f0e7;
-			background-color:#000000;
-			opacity:0.9;
-    } */
-
     #catalogue_alert {
       padding: 0 7px;
       position: fixed;
@@ -245,6 +224,130 @@
       font-size: 25px;
     }
 
+    .creditContainer {
+      width: 90px;
+      height: 75px;
+      position: fixed;
+      z-index: 99999;
+      background: url(images/sgnl.png) 50% 50% no-repeat;
+      background-size: cover;
+      bottom: 22px;
+      left: 170px;
+      background-color: transparent;
+    }
+
+    #legend-radar {
+      position: absolute;
+      left: 205px;
+      width: 185px;
+      height: 192px;
+      z-index: 999;
+      top: 500px;
+      border: 1px solid;
+      color: #f0f0f0c0;
+      list-style-position: inside;
+      text-align: left;
+      margin: 0px;
+      padding: 8px;
+      background-color: #00000096;
+    }
+
+    #legend-title {
+      position: relative;
+      left: 25px;
+      margin-top: 3px;
+      margin-bottom: 0px;
+
+    }
+
+    #legend-unit {
+      position: relative;
+      left: 30%;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    #legend-radar-ul {
+      font-weight: 600;
+      list-style-type: none;
+      padding-left: 5px;
+    }
+
+    #rcs1:before {
+      position: relative;
+      left: 2.1px;
+      content: "";
+      display: inline-block;
+      width: 3px;
+      height: 3px;
+      background-color: rgb(38, 146, 16);
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle; /* 垂直居中对齐 */
+    }
+
+    #rcs2:before {
+      position: relative;
+      left: 1px;
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background-color: rgb(38, 146, 16);
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle; /* 垂直居中对齐 */
+    }
+
+    #rcs3:before {
+      content: "";
+      display: inline-block;
+      /*set the size of the point in the legend*/
+      width: 9px; 
+      height: 9px;
+      background-color: rgb(38, 146, 16);
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle; /* 垂直居中对齐 */
+    }
+
+    #rcs4:before {
+      position: relative;
+      left: 2.1px;
+      content: "";
+      display: inline-block;
+      width: 3px;
+      height: 3px;
+      background-color: rgb(216, 0, 0);
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle; /* 垂直居中对齐 */
+    }
+
+    #rcs5:before {
+      position: relative;
+      left: 1px;
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background-color: rgb(216, 0, 0);
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle; /* 垂直居中对齐 */
+    }
+
+    #rcs6:before {
+      content: "";
+      display: inline-block;
+      /*set the size of the point in the legend*/
+      width: 9px; 
+      height: 9px;
+      background-color: rgb(216, 0, 0);
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle; /* 垂直居中对齐 */
+    }
   </style>
   <script>
     let radarHTML = true;
