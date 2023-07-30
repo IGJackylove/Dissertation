@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
     <script src="spacedebris_viewer_js/Catalogue.js"></script>
     <script src="spacedebris_viewer_js/echarts.min.js"> </script>
+    <script src="spacedebris_viewer_js/excutive_summary.js"></script>
 </head>
 
 
@@ -21,634 +22,46 @@
     </div>
 
     <div class="block-height">
-        <h2>Height distribution</h2>
+        <h2>Height distribution in LEO</h2>
         <select id="select-height" onchange="addGraph()">
             <option value="scatter plot">Scatter Plot</option>
             <option value="histogram">Histogram</option>
         </select>
-        <div class="block-height">
+        <div class="block-plot-height">
             <div id="height_2023"></div>
             <div id="height_2028"></div>
             <div id="height_2043"></div>
         </div>
     </div>
 
+    <div class="block-owner">
+        <h2>Ownership Distribution</h2>
+        <select id="select-owner" onchange="addGraph()">
+            <option value="pie chart">Pie Chart</option>
+            <option value="histogram">Histogram</option>
+        </select>
+        <div class="block-plot-owner">
+            <div id="owner_2023"></div>
+            <div id="owner_2028"></div>
+            <div id="owner_2043"></div>
+        </div>
+    </div>
+
+    <div class="block-orbit">
+        <h2>Orbit Distribution</h2>
+        <select id="select-orbit" onchange="addGraph()">
+            <option value="histogram">Histogram</option>
+            <option value="pie chart">Pie Chart</option>
+        </select>
+        <div class="block-plot-orbit">
+            <div id="orbit_2023"></div>
+            <div id="orbit_2028"></div>
+            <div id="orbit_2043"></div>
+        </div>
+    </div>
+
     <script>
         addGraph();
-        function addGraph() {
-            let satcat = new Catalogue();
-            let satcat2 = new Catalogue();
-            let satcat3 = new Catalogue();
-            satcat.loadcatlog("kep", "data/catalogue/fspcat_20230101_v280819_nodeb.json");
-            satcat2.loadcatlog("kep", "data/catalogue/fspcat_20280101_v280819_nodeb.json");
-            satcat3.loadcatlog("kep", "data/catalogue/fspcat_20430701_v280819_nodeb.json");
-            let data_load = false;
-            let data_load2 = false;
-            let data_load3 = false;
-            let getYMax = false
-            let maxNumber;
-            // 初始化 source 数组并添加表头
-            let source = [['range', 'Active', 'Inactive']];
-            let source2 = [['range', 'Active', 'Inactive']];
-            let source3 = [['range', 'Active', 'Inactive']];
-            let results_active = []; // for scatter
-            let results_inactive = []; // for scatter
-            let results_active2 = []; // for scatter
-            let results_inactive2 = []; // for scatter
-            let results_active3 = []; // for scatter
-            let results_inactive3 = []; // for scatter
-            let results_active_hist = Array.from({ length: 184 }, (_, i) => ({
-                height: `${160 + 10 * i}-${170 + 10 * i}`,
-                number: 0,
-            }));
-
-            let results_inactive_hist = Array.from({ length: 184 }, (_, i) => ({
-                height: `${160 + 10 * i}-${170 + 10 * i}`,
-                number: 0,
-            }));
-
-            let results_active2_hist = Array.from({ length: 184 }, (_, i) => ({
-                height: `${160 + 10 * i}-${170 + 10 * i}`,
-                number: 0,
-            }));
-
-            let results_inactive2_hist = Array.from({ length: 184 }, (_, i) => ({
-                height: `${160 + 10 * i}-${170 + 10 * i}`,
-                number: 0,
-            }));
-
-            let results_active3_hist = Array.from({ length: 184 }, (_, i) => ({
-                height: `${160 + 10 * i}-${170 + 10 * i}`,
-                number: 0,
-            }));
-
-            let results_inactive3_hist = Array.from({ length: 184 }, (_, i) => ({
-                height: `${160 + 10 * i}-${170 + 10 * i}`,
-                number: 0,
-            }));
-
-
-            let selection_height = document.getElementById("select-height")
-            let selected_height = selection_height.value
-
-            // setInterval(function () {
-            //     if (data_load && data_load2 && data_load3 && getYMax == false) {
-            //         let allSources = [...source.slice(1), ...source2.slice(1), ...source3.slice(1)];
-
-            //         maxNumber = allSources.reduce((max, current) => {
-            //             let active = current[1];
-            //             let inactive = current[2];
-            //             return Math.max(max, active, inactive);
-            //         }, -Infinity);
-
-            //         console.log(maxNumber);  // prints the maximum number in 'active' and 'inactive' across all sources
-            //         getYMax = true;
-            //     }
-            // })
-
-
-
-            setInterval(function () {
-                if (satcat.data_load_complete == true && data_load == false) {
-                    for (let debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) {
-                        let operation_status1 = satcat.getDebriOperation_status("isat", debrisID);
-                        let sat_category1 = satcat.getDebriCategory(debrisID);
-                        let cross_section1 = satcat.getDebriCross_Section(debrisID);
-                        let country1 = satcat.getDebriCountry(debrisID);
-                        let sat_infor1 = satcat.getDebriInfo(debrisID);
-                        let sat_name1 = satcat.getDebriName(debrisID).trim();
-                        let sat_Id1 = satcat.getDebriID(debrisID).trim();
-                        let sat_type1 = satcat.getDebriType(debrisID).trim();
-                        let sat_sma1 = satcat.getSemiMajorAxis(debrisID);
-                        let apogee1 = parseFloat(satcat.getApogee(debrisID));
-                        let perigee1 = parseFloat(satcat.getPerigee(debrisID));
-                        let eccentricity1 = parseFloat(satcat.getEccentricity(debrisID));
-                        let inclinationAng1 = parseFloat(satcat.getInclinationAng(debrisID));
-                        let height = avg(apogee1, perigee1);
-                        // for histogram
-                        let index = Math.floor((height - 160) / 10);
-
-                        if (sat_category1 == "Low Earth Orbit") {
-                            if (operation_status1 !== "Decayed" && operation_status1 !== "Non-operational" && operation_status1 !== "Unknown") {
-                                // for scatter plot
-                                results_active.push([
-                                    height,
-                                    Math.random()
-                                ]);
-                                if (index >= 0 && index < 184) {
-                                    results_active_hist[index].number++;
-                                }
-                            } else {
-                                results_inactive.push([
-                                    height,
-                                    Math.random()
-                                ])
-
-                                if (index >= 0 && index < 184) {
-                                    results_inactive_hist[index].number++;
-                                }
-                            }
-
-
-
-
-                        }
-                    }// end of for loop
-                    data_load = true;
-                    console.log(selected_height)
-
-                    if (selected_height == "scatter plot") {
-                        let height_2023 = document.getElementById('height_2023');
-                        let height_2023_ini = echarts.init(height_2023, "dark");
-
-                        let option = {
-                            title: {
-                                text: 'Distribution of Future Space Population by Height in 2023',
-                                left: 'center',
-                                padding: [20, 0, 0, 0] // 设置标题的上内边距为20，其他方向为0
-                            },
-                            legend: {
-                                right: '5%',  // 10% from the right
-                                top: '5%'  // 5% from the top
-                            },
-                            xAxis: {
-                                type: 'value',
-                                name: 'Height (km)', // X-axis label
-                                min: 160,
-                                max: 2000,
-                                nameLocation: 'center', // 将x轴标签居中对齐
-                                nameTextStyle: {
-                                    fontWeight: 'bold', // 加粗x轴标签文本
-                                    fontSize: 16,
-                                    padding: [10, 0, 0, 0]
-                                }
-                            },
-                            yAxis: {},
-                            backgroundColor: "#1F2A40",
-                            grid: {
-                                left: '5%', // 将图表左侧空白缩小为容器宽度的 2%
-                                right: '5%', // 将图表右侧空白缩小为容器宽度的 2%
-                            },
-                            series: [
-                                {
-                                    symbolSize: 3,
-                                    data: results_active,
-                                    type: 'scatter',
-                                    color: ["#00CC00"],
-                                    name: "Active"
-                                },
-                                {
-                                    symbolSize: 3,
-                                    data: results_inactive,
-                                    type: 'scatter',
-                                    color: ["#FF3333"],
-                                    name: "Inactive"
-                                }
-                            ]
-                        };
-                        height_2023_ini.clear();
-                        option && height_2023_ini.setOption(option);
-                    }
-                    else if (selected_height == "histogram") {
-                        let height_2023 = document.getElementById('height_2023');
-                        let height_2023_ini = echarts.init(height_2023, "dark");
-                        console.log("its histogram")
-                        // 初始化 source 数组并添加表头
-
-                        // 遍历 results_active_hist 和 results_inactive_hist
-                        for (let i = 0; i < results_active_hist.length; i++) {
-                            // ge the range
-                            let range = results_active_hist[i].height;
-
-                            // 获取当前区间的 active 和 inactive 数据
-                            let active = results_active_hist[i].number;
-                            let inactive = results_inactive_hist[i].number;
-
-                            // 将当前区间的数据添加到 source 数组
-                            source.push([range, active, inactive]);
-                        }
-
-
-                        option = {
-                            title: {
-                                text: 'Distribution of Future Space Population by Height in 2023',
-                                left: 'center',
-                                padding: [20, 0, 0, 0] // 设置标题的上内边距为20，其他方向为0
-                            },
-                            xAxis: {
-                                type: 'category',
-                                name: 'Height (km)', // X-axis label
-                                nameLocation: 'center', // 将x轴标签居中对齐
-                                nameTextStyle: {
-                                    fontWeight: 'bold', // 加粗x轴标签文本
-                                    fontSize: 16,
-                                    padding: [10, 0, 0, 0]
-                                }
-                            },
-                            yAxis: {
-                                type: 'value',
-                                name: 'Counting', // Y-axis label
-                                min: 0,
-                                max: 1600, 
-                                max: maxNumber,
-                                nameLocation: 'center', // 将x轴标签居中对齐
-                                nameTextStyle: {
-                                    fontWeight: 'bold', // 加粗x轴标签文本
-                                    fontSize: 16,
-                                    padding: [0, 0, 25, 0]
-                                },
-                                splitNumber: 10
-
-                            },
-                            backgroundColor: "#1F2A40",
-                            grid: {
-                                left: '5%', // 将图表左侧空白缩小为容器宽度的 2%
-                                right: '5%', // 将图表右侧空白缩小为容器宽度的 2%
-                            },
-                            legend: {
-                                right: '5%',  // 10% from the right
-                                top: '5%'  // 5% from the top
-                            },
-                            tooltip: {},
-                            dataset: {
-                                source: source
-                            },
-
-                            // Declare several bar series, each will be mapped
-                            // to a column of dataset.source by default.
-                            series: [{ type: 'bar', color: ["#00CC00"] }, { type: 'bar', color: ["#FF3333"] }]
-                        };
-                        height_2023_ini.clear();
-                        option && height_2023_ini.setOption(option);
-                    }
-
-
-
-                }
-
-            }, 1000);
-
-
-
-
-            setInterval(function () {
-                if (satcat2.data_load_complete == true && data_load2 == false) {
-                    for (let debrisID = 0; debrisID < satcat2.getNumberTotal(); debrisID++) {
-                        let operation_status2 = satcat2.getDebriOperation_status("isat", debrisID);
-                        let sat_category2 = satcat2.getDebriCategory(debrisID);
-                        let cross_section2 = satcat2.getDebriCross_Section(debrisID);
-                        let country2 = satcat2.getDebriCountry(debrisID);
-                        let sat_infor2 = satcat2.getDebriInfo(debrisID);
-                        let sat_name2 = satcat2.getDebriName(debrisID).trim();
-                        let sat_Id2 = satcat2.getDebriID(debrisID).trim();
-                        let sat_type2 = satcat2.getDebriType(debrisID).trim();
-                        let sat_sma2 = satcat2.getSemiMajorAxis(debrisID);
-                        let apogee2 = parseFloat(satcat2.getApogee(debrisID));
-                        let perigee2 = parseFloat(satcat2.getPerigee(debrisID));
-                        let height2 = avg(apogee2, perigee2);
-                        let index2 = Math.floor((height2 - 160) / 10);
-
-                        if (sat_category2 == "Low Earth Orbit") {
-                            if (operation_status2 !== "Decayed" && operation_status2 !== "Non-operational" && operation_status2 !== "Unknown") {
-
-                                results_active2.push([
-                                    height2,
-                                    Math.random()
-                                ]);
-                                if (index2 >= 0 && index2 < 184) {
-                                    results_active2_hist[index2].number++;
-                                }
-                            } else {
-
-                                results_inactive2.push([
-                                    height2,
-                                    Math.random()
-                                ])
-
-                                if (index2 >= 0 && index2 < 184) {
-                                    results_inactive2_hist[index2].number++;
-                                }
-                            }
-                        }
-
-                    }
-                    data_load2 = true;
-                    // console.log(results_active2)
-                    // console.log(results_inactive2)
-
-                    if (selected_height == "scatter plot") {
-                        let height_2028 = document.getElementById('height_2028');
-                        let height_2028_ini = echarts.init(height_2028, "dark");
-
-                        option2 = {
-                            title: {
-                                text: 'Distribution of Future Space Population by Height in 2023',
-                                left: 'center',
-                                padding: [20, 0, 0, 0] // 设置标题的上内边距为20，其他方向为0
-                            },
-                            legend: {
-                                right: '5%',  // 10% from the right
-                                top: '5%'  // 5% from the top
-                            },
-                            xAxis: {
-                                type: 'value',
-                                name: 'Height (km)', // X-axis label
-                                min: 160,
-                                max: 2000,
-                                nameLocation: 'center', // 将x轴标签居中对齐
-                                nameTextStyle: {
-                                    fontWeight: 'bold', // 加粗x轴标签文本
-                                    fontSize: 16,
-                                    padding: [10, 0, 0, 0]
-                                }
-                            },
-                            yAxis: {},
-                            backgroundColor: "#1F2A40",
-                            grid: {
-                                left: '5%', // 将图表左侧空白缩小为容器宽度的 2%
-                                right: '5%', // 将图表右侧空白缩小为容器宽度的 2%
-                            },
-                            series: [
-                                {
-                                    symbolSize: 3,
-                                    data: results_active2,
-                                    type: 'scatter',
-                                    color: ["#00CC00"],
-                                    name: "Active"
-                                },
-                                {
-                                    symbolSize: 3,
-                                    data: results_inactive2,
-                                    type: 'scatter',
-                                    color: ["#FF3333"],
-                                    name: "Inactive"
-                                }
-                            ]
-                        };
-                        height_2028_ini.clear();
-                        option2 && height_2028_ini.setOption(option2);
-                    }
-                    else if (selected_height == "histogram") {
-                        let height_2028 = document.getElementById('height_2028');
-                        let height_2028_ini = echarts.init(height_2028, "dark");
-
-
-                        // 遍历 results_active_hist 和 results_inactive_hist
-                        for (let i = 0; i < results_active2_hist.length; i++) {
-                            // ge the range
-                            let range2 = results_active2_hist[i].height;
-
-                            // 获取当前区间的 active 和 inactive 数据
-                            let active2 = results_active2_hist[i].number;
-                            let inactive2 = results_inactive2_hist[i].number;
-
-                            // 将当前区间的数据添加到 source 数组
-                            source2.push([range2, active2, inactive2]);
-                        }
-
-
-                        option2 = {
-                            title: {
-                                text: 'Distribution of Future Space Population by Height in 2023',
-                                left: 'center',
-                                padding: [20, 0, 0, 0] // 设置标题的上内边距为20，其他方向为0
-                            },
-                            xAxis: {
-                                type: 'category',
-                                name: 'Height (km)', // X-axis label
-                                nameLocation: 'center', // 将x轴标签居中对齐
-                                nameTextStyle: {
-                                    fontWeight: 'bold', // 加粗x轴标签文本
-                                    fontSize: 16,
-                                    padding: [10, 0, 0, 0]
-                                }
-                            },
-                            yAxis: {
-                                type: 'value',
-                                name: 'Counting', // Y-axis label
-                                min: 0,
-                                max: 1600,
-                                nameLocation: 'center', // 将x轴标签居中对齐
-                                nameTextStyle: {
-                                    fontWeight: 'bold', // 加粗x轴标签文本
-                                    fontSize: 16,
-                                    padding: [0, 0, 25, 0]
-                                },
-                                splitNumber: 10
-
-                            },
-                            backgroundColor: "#1F2A40",
-                            grid: {
-                                left: '5%', // 将图表左侧空白缩小为容器宽度的 2%
-                                right: '5%', // 将图表右侧空白缩小为容器宽度的 2%
-                            },
-                            legend: {
-                                right: '5%',  // 10% from the right
-                                top: '5%'  // 5% from the top
-                            },
-                            tooltip: {},
-                            dataset: {
-                                source: source2
-                            },
-
-                            // Declare several bar series, each will be mapped
-                            // to a column of dataset.source by default.
-                            series: [{ type: 'bar', color: ["#00CC00"] }, { type: 'bar', color: ["#FF3333"] }]
-                        };
-                        height_2028_ini.clear();
-                        option2 && height_2028_ini.setOption(option2);
-                    }
-
-
-
-
-
-                }
-
-            }, 1000);
-
-
-
-
-            setInterval(function () {
-                if (satcat3.data_load_complete == true && data_load3 == false) {
-                    for (let debrisID = 0; debrisID < satcat3.getNumberTotal(); debrisID++) {
-                        let operation_status3 = satcat3.getDebriOperation_status("isat", debrisID);
-                        let sat_category3 = satcat3.getDebriCategory(debrisID);
-                        let cross_section3 = satcat3.getDebriCross_Section(debrisID);
-                        let country3 = satcat3.getDebriCountry(debrisID);
-                        let sat_infor3 = satcat3.getDebriInfo(debrisID);
-                        let sat_name3 = satcat3.getDebriName(debrisID).trim();
-                        let sat_Id3 = satcat3.getDebriID(debrisID).trim();
-                        let sat_type3 = satcat3.getDebriType(debrisID).trim();
-                        let sat_sma3 = satcat3.getSemiMajorAxis(debrisID);
-                        let apogee3 = parseFloat(satcat3.getApogee(debrisID));
-                        let perigee3 = parseFloat(satcat3.getPerigee(debrisID));
-                        let height3 = avg(apogee3, perigee3);
-                        let index3 = Math.floor((height3 - 160) / 10);
-
-                        if (sat_category3 == "Low Earth Orbit") {
-                            if (operation_status3 !== "Decayed" && operation_status3 !== "Non-operational" && operation_status3 !== "Unknown") {
-                                results_active3.push([
-                                    height3,
-                                    Math.random()
-                                ]);
-                                if (index3 >= 0 && index3 < 184) {
-                                    results_active3_hist[index3].number++;
-                                }
-                            } else {
-                                results_inactive3.push([
-                                    height3,
-                                    Math.random()
-                                ])
-                                if (index3 >= 0 && index3 < 184) {
-                                    results_inactive3_hist[index3].number++;
-                                }
-                            }
-                        }
-
-                    }
-                    data_load3 = true;
-
-                    if (selected_height == "scatter plot") {
-                        let height_2043 = document.getElementById('height_2043');
-                        let height_2043_ini = echarts.init(height_2043, "dark");
-
-                        option3 = {
-                            title: {
-                                text: 'Distribution of Future Space Population by Height in 2023',
-                                left: 'center',
-                                padding: [20, 0, 0, 0] // 设置标题的上内边距为20，其他方向为0
-                            },
-                            legend: {
-                                right: '5%',  // 10% from the right
-                                top: '5%'  // 5% from the top
-                            },
-                            xAxis: {
-                                type: 'value',
-                                name: 'Height (km)', // X-axis label
-                                min: 160,
-                                max: 2000,
-                                nameLocation: 'center', // 将x轴标签居中对齐
-                                nameTextStyle: {
-                                    fontWeight: 'bold', // 加粗x轴标签文本
-                                    fontSize: 16,
-                                    padding: [10, 0, 0, 0]
-                                }
-                            },
-                            yAxis: {},
-                            backgroundColor: "#1F2A40",
-                            grid: {
-                                left: '5%', // 将图表左侧空白缩小为容器宽度的 2%
-                                right: '5%', // 将图表右侧空白缩小为容器宽度的 2%
-                            },
-                            series: [
-                                {
-                                    symbolSize: 3,
-                                    data: results_active3,
-                                    type: 'scatter',
-                                    color: ["#00CC00"],
-                                    name: "Active"
-                                },
-                                {
-                                    symbolSize: 3,
-                                    data: results_inactive3,
-                                    type: 'scatter',
-                                    color: ["#FF3333"],
-                                    name: "Inactive"
-                                }
-                            ]
-                        };
-                        height_2043_ini.clear();
-                        option3 && height_2043_ini.setOption(option3);
-                    }
-                    else if (selected_height == "histogram") {
-                        let height_2043 = document.getElementById('height_2043');
-                        let height_2043_ini = echarts.init(height_2043, "dark");
-
-
-        
-                        // 遍历 results_active_hist 和 results_inactive_hist
-                        for (let i = 0; i < results_active3_hist.length; i++) {
-                            // ge the range
-                            let range3 = results_active3_hist[i].height;
-
-                            // 获取当前区间的 active 和 inactive 数据
-                            let active3 = results_active3_hist[i].number;
-                            let inactive3 = results_inactive3_hist[i].number;
-
-                            // 将当前区间的数据添加到 source 数组
-                            source3.push([range3, active3, inactive3]);
-        
-                        }
-               
-
-
-
-                        option3 = {
-                            title: {
-                                text: 'Distribution of Future Space Population by Height in 2023',
-                                left: 'center',
-                                padding: [20, 0, 0, 0] // 设置标题的上内边距为20，其他方向为0
-                            },
-                            xAxis: {
-                                type: 'category',
-                                name: 'Height (km)', // X-axis label
-                                nameLocation: 'center', // 将x轴标签居中对齐
-                                nameTextStyle: {
-                                    fontWeight: 'bold', // 加粗x轴标签文本
-                                    fontSize: 16,
-                                    padding: [10, 0, 0, 0]
-                                }
-                            },
-                            yAxis: {
-                                type: 'value',
-                                name: 'Counting', // Y-axis label
-                                min: 0,
-                                max: 1600,
-                                nameLocation: 'center', // 将x轴标签居中对齐
-                                nameTextStyle: {
-                                    fontWeight: 'bold', // 加粗x轴标签文本
-                                    fontSize: 16,
-                                    padding: [0, 0, 25, 0]
-                                },
-                                splitNumber: 10
-
-                            },
-                            backgroundColor: "#1F2A40",
-                            grid: {
-                                left: '5%', // 将图表左侧空白缩小为容器宽度的 2%
-                                right: '5%', // 将图表右侧空白缩小为容器宽度的 2%
-                            },
-                            legend: {
-                                right: '5%',  // 10% from the right
-                                top: '5%'  // 5% from the top
-                            },
-                            tooltip: {},
-                            dataset: {
-                                source: source3
-                            },
-
-                            // Declare several bar series, each will be mapped
-                            // to a column of dataset.source by default.
-                            series: [{ type: 'bar', color: ["#00CC00"] }, { type: 'bar', color: ["#FF3333"] }]
-                        };
-                        height_2043_ini.clear();
-                        option3 && height_2043_ini.setOption(option3);
-                        console.log(source3)
-                    
-                    }
-                }
-
-            }, 1000);
-
-
-
-        }
-
-        function avg(num1, num2) {
-            return (num1 + num2) / 2
-        }
     </script>
     <style>
         body,
@@ -683,26 +96,42 @@
             color: white;
             z-index: 999;
         }
+        
+        
 
-        #height_2023 {
-            display: flex;
-            justify-content: center;
-            height: 375px;
-            width: 100%;
-        }
-
-        #height_2028 {
-            display: flex;
-            justify-content: center;
-            height: 375px;
-            width: 100%;
-        }
-
+        #height_2023,
+        #height_2028,
         #height_2043 {
             display: flex;
             justify-content: center;
             height: 375px;
             width: 100%;
+        }
+
+        .block-plot-owner {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #owner_2023,
+        #owner_2028,
+        #owner_2043 {
+            display: flex;
+            height: 500px;
+            width: 32.5%;
+        }
+
+        .block-plot-orbit {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #orbit_2023,
+        #orbit_2028,
+        #orbit_2043 {
+            display: flex;
+            height: 500px;
+            width: 32.5%;
         }
     </style>
 </body>
