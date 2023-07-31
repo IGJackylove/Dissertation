@@ -19,6 +19,7 @@
 
     <div class="title">
         <p class="title_main">Excutive summary for the result of the future space population</p>
+        <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
     </div>
 
     <div class="block-height">
@@ -58,7 +59,10 @@
             <div id="orbit_2028"></div>
             <div id="orbit_2043"></div>
         </div>
+        <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
     </div>
+
+    
 
     <script>
         addGraph();
@@ -71,6 +75,22 @@
             overflow: auto;
             color: white;
         }
+
+        .backButton {
+        width: 30px;
+        height: 30px;
+        border: 2px solid white;
+        border-radius: 30%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        position: absolute; /* 使用绝对定位 */
+        right: 10px; /* 从右侧0px的位置开始 */
+
+      }
 
         .background {
             position: fixed;
@@ -90,6 +110,9 @@
         }
 
         .title {
+            display: flex;
+            justify-content: space-between; /* 这会让p和a在同一行显示，并且a显示在最右侧 */
+            align-items: flex-start; /* 这会让a显示在最上方 */
             font-family: "Poppins", sans-serif;
             font-size: 30px;
             text-align: left;

@@ -67,7 +67,7 @@
     <div class="custom-dropdown-icon">
       <i class="fas fa-chevron-down"></i>
     </div>
-    
+
   </div>
 
 
@@ -198,66 +198,28 @@
 
 
   <canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;"> </canvas>
-  <div class="background_infor">
-    <ul class="info-item">
-      <li class="single-infor">
-        <a href="Orbits.html">
-          <div>
-            <p class="title">ORBITS</p>
-            <p class="question">Where are space orbit?</p>
-          </div>
-        </a>
-      </li>
-      <li class="single-infor">
-        <a href="Owner.html">
-          <div>
-            <p class="title">OWNER</p>
-            <p class="question">Who own these space objects?</p>
-          </div>
-        </a>
-      </li>
-      <li class="single-infor">
-        <a href="Radar.html">
-          <div>
-            <p class="title">RADAR</p>
-            <p class="question">What's it like over you from a radar perspective?</p>
-          </div>
-        </a>
-      </li>
-      <li class="single-infor">
-        <a href="Custom_Orbit.html">
-          <div>
-            <p class="title">CUSTOM ORBITS</p>
-            <p class="question">Create your own orbit?</p>
-          </div>
-        </a>
-      </li>
-      <li class="single-infor">
-        <a href="Excutive_Summary.html">
-          <div>
-            <p class="title">Excutive Summary</p>
-            <p class="question">What's the summary?</p>
-          </div>
-        </a>
-      </li>
-      
-      
-    </ul>
+  <div class="background-container">
+    <a href="Orbits.html" class="svg-item"><img src="resources/Orbit.svg" title="Orbits"></a>
+    <a href="Owner.html" class="svg-item"><img src="resources/person.svg" title="Owners"></a>
+    <a href="Radar.html" class="svg-item"><img src="resources/radar.svg" title="Radar"></a>
+    <a href="Custom_Orbit.html" class="svg-item"><img src="resources/customOrbit.svg" title="Custom Orbit"></a>
+    <a href="Excutive_Summary.html" class="svg-item"><img src="resources/excutiveSummary.svg" title="Excutive Summary"></a>
   </div>
-  <div class="creditContainer"> 
+
+  <div class="creditContainer">
     <style>
       .creditContainer {
-          width: 90px;
-          height: 75px;
-          position: fixed;
-          z-index: 99999;
-          background: url(images/sgnl.png) 50% 50% no-repeat;
-          background-size: cover;
-          bottom: 22px;
-          left: 170px;
-          background-color: transparent;
+        width: 90px;
+        height: 75px;
+        position: fixed;
+        z-index: 99999;
+        background: url(images/sgnl.png) 50% 50% no-repeat;
+        background-size: cover;
+        bottom: 22px;
+        left: 170px;
+        background-color: transparent;
       }
-  </style>  
+    </style>
   </div>
 
   <script>
@@ -265,70 +227,37 @@
   </script>
 
   <style>
-    .background_infor {
-      display: inline-flex;
-      justify-content: space-around;
-      background-color: transparent;
-      padding: 0px;
-      position: fixed;
-      bottom: 5%;
-      left: 22.5%;
-      width: 55%;
-    }
-
-    .info-item {
+    .background-container {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
       display: flex;
-      justify-content: space-between;
-      width: 100%;
-      list-style-type: none;
-      /* Remove default bullet points */
-      padding: 0;
-      /* Remove default padding */
-      gap: 2%;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
-    .single-infor {
-      display: block;
-      width: 22.5%;
-
-    }
-
-    .single-infor a {
-      text-decoration: none;
-      /* Removes the underline */
-      color: #fffc;
-      ;
-      /* Makes the link color the same as the surrounding text */
-      display: block;
-      font-family: "Poppins", sans-serif;
-
+    .svg-item {
+      width: 40px;
+      height: 40px;
+      border: 2px solid white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      background-color: white;
     }
 
 
-    .single-infor p.title {
-      text-align: left;
-      font-weight: bold;
-      margin-bottom: 2px;
-      font-size: 15px;
-      /* text-align: center; */
+    .svg-item img {
+      width: 30px;
+      /* 控制每个SVG的显示宽度 */
+      height: 30px;
+      /* 保持SVG的高宽比 */
     }
 
-    .single-infor p.question {
-      border-top: 2px solid white;
-      /* Add a thick white line above the question */
-      margin-top: 0px;
-      margin-bottom: 0px;
-      padding-top: 2px;
-      font-size: 13px;
-      /* text-align: center; */
-      transition: border-color 0.5s ease;
-      /* Add transition effect */
-    }
-
-    .single-infor a:hover p.question {
-      border-color: orange;
-      /* Apply orange color on hover */
-    }
+  
   </style>
 
 

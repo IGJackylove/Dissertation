@@ -116,7 +116,7 @@
 
   <!-- Reference for the design and information in this part: https://geoxc-apps.bd.esri.com/space/satellite-explorer/ -->
   <div id="background_infor">
-    <a href="space_debris.html" class="backButton">&laquo; Back</a>
+    <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
     <h2 class="background_title">How we design an orbit</h2>
     <div class="content" id="intro">
       Keplerian elements, or orbital elements, are parameters that define celestial orbits. They include the semi-major
@@ -189,7 +189,7 @@
     </div>
 
 
-    <a href="space_debris.html" class="backButton">&laquo; Back</a>
+    <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
 
     <div class="creditContainer">
       <style>
@@ -232,8 +232,15 @@
       }
 
       .backButton {
-        color: rgb(219, 216, 216);
-        margin-top: 30px;
+        width: 30px;
+        height: 30px;
+        border: 2px solid white;
+        border-radius: 30%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+
       }
 
 

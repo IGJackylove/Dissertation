@@ -118,7 +118,7 @@
 
   <!-- Reference for the design and information in this part: https://geoxc-apps.bd.esri.com/space/satellite-explorer/ -->
   <div id="background_infor">
-    <a href="space_debris.html" class="backButton">&laquo; Back</a>
+    <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
     <h1 class="background_title">Where are space orbit?</h1>
     <div class="content" id="intro">
       Despite the immense expanse of space beyond Earth's atmosphere, human-made space object predominantly occupy one
@@ -198,31 +198,33 @@
       <div id="content_Unknown">
         <button class="interactive_button" id="button_Unknown" onclick="showUnknown()">Unknown</button>
         <p id="text_Unknown">Test Version</p>
+        
       </div>
+      <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
     </div>
 
-    <a href="space_debris.html" class="backButton">&laquo; Back</a>
+    
 
-    <div class="creditContainer"> 
+    <div class="creditContainer">
       <style>
         .creditContainer {
-            width: 90px;
-            height: 75px;
-            position: fixed;
-            z-index: 99999;
-            background: url(images/sgnl.png) 50% 50% no-repeat;
-            background-size: cover;
-            bottom: 22px;
-            left: 170px;
-            background-color: transparent;
+          width: 90px;
+          height: 75px;
+          position: fixed;
+          z-index: 99999;
+          background: url(images/sgnl.png) 50% 50% no-repeat;
+          background-size: cover;
+          bottom: 22px;
+          left: 170px;
+          background-color: transparent;
         }
-    </style>  
+      </style>
     </div>
 
 
     <style>
-      #text_Unknown{
-        padding-right: 25px ;
+      #text_Unknown {
+        padding-right: 25px;
       }
 
       #background_infor {
@@ -247,7 +249,14 @@
       }
 
       .backButton {
-        color: rgb(219, 216, 216);
+        width: 30px;
+        height: 30px;
+        border: 2px solid white;
+        border-radius: 30%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
       }
 
       .background_title {
@@ -334,7 +343,6 @@
       }
 
       #content_Unknown {
-        position: absolute;
         margin-top: 30px;
         padding-bottom: 30px;
       }
