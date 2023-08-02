@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reference</title>
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
+    <script src="spacedebris_viewer_js/Catalogue.js"></script>
+    <script src="spacedebris_viewer_js/echarts.min.js"> </script>
+    <script src="spacedebris_viewer_js/excutive_summary.js"></script>
+</head>
+
+
+<body style="background-color:#141b2d;">
+    <!-- <div class="background">
+        <img class="background_image" src="images/background.jpg" alt="Background Image">
+    </div> -->
+
+    <div class="title">
+        <p class="title_main">References</p>
+        <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
+    </div>
+    <div class="block-genereal">
+        <h2>Genereal</h2>
+        <h3>Future Space Population Result :</h3>
+        Bhattarai, S., & Ziebart, M. (2021). The university college london future space population
+        model (v2019) - overview. Space Geodesy Navigation Laboratory (SGNL), UCL.
+        <h3>Virtual Earth Exploration</h3>
+        Cesium. (2023, August). Cesium. Retrieved from https://cesium.com/platform/cesiumjs
+
+        <h2>Orbits</h2>
+        <h3>Orbit description</h3>
+        Roberts, T.G. (2022). <i>Popular Orbits 101</i> . Available at
+        https://aerospace.csis.org/aerospace101/earth-orbit-101/ (Accessed: 17 July 2023).
+        <br>
+        Via Satellite (2023). <i>GEO, MEO and LEO</i> . Available at
+        https://www.satellitetoday.com/content-collection/ses-hub-geo-meo-and-leo/ (Accessed: 17 July 2023)
+        <br>
+        Ashley Campbell (2018). <i>Highly Elliptical Orbit</i>. Available at
+        https://www.nasa.gov/directorates/heo/scan/communications/outreach/a_to_z/h (Accessed: 17 July 2023)
+        <h3>Source of  unknown</h3>
+        Vallado, D., Crawford, P., Hujsak, R., & Kelso, T. S. (2006). Revisiting spacetrack report# 3. In
+        AIAA/AAS Astrodynamics Specialist Conference and Exhibit (p. 6753).
+        <br>
+        Graveyard Orbit (2023). Wikipedia. Available at 
+        https://en.wikipedia.org/wiki/Graveyard_orbit (Accessed 20 July 2023)
+
+        <h2>Custom Orbit</h2>
+        <h3>Kepler Element</h3>
+        AMSAT (2023). <I>Keplerian Elements Tutorial</I> Available at 
+        https://www.amsat.org/keplerian-elements-tutorial/ (Accessed 20 July 2023)
+        <br>
+        Orbital Elements (2023). Wikipedia. Available at
+        https://en.wikipedia.org/wiki/Orbital_elements (Accessed: 20 July 2023)
+
+
+        <h2>Coding</h2>
+        <h3>Click Event for pointprimitve</h3>
+        Cesium Team (2016). <i>Memory leak advice</i> Available at
+        https://community.cesium.com/t/memory-leak-advice/3928 (Accessed: 10 July 2023)
+        <h3>Style of the information bar for Orbits page</h3>
+        esri (2023). <i>SatelliteXplorer</i> Available at
+        https://geoxc-apps.bd.esri.com/space/satellite-explorer/ (Accessed: 8 July 2023)
+        <br>
+        <h3>Radar Input and timeline modification</h3>
+        Luyang Han (2021). 'An Enhanced Visualizer for Future Space Population', <I>CEGE0049 Research Project 20/21</I>
+        University College London. Unpublished essay.
+
+    </div>
+    <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
+    </div>
+
+
+
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+            color: white;
+            margin-left: 5px;
+        }
+
+        .backButton {
+            width: 30px;
+            height: 30px;
+            border: 2px solid white;
+            border-radius: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            position: absolute;
+            /* 使用绝对定位 */
+            right: 10px;
+            /* 从右侧0px的位置开始 */
+
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 50%;
+            left: 0;
+            overflow: hidden;
+            z-index: -999;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+
+
+        .title {
+            display: flex;
+            justify-content: space-between;
+            /* 这会让p和a在同一行显示，并且a显示在最右侧 */
+            align-items: flex-start;
+            /* 这会让a显示在最上方 */
+            font-family: "Poppins", sans-serif;
+            font-size: 50px;
+            text-align: left;
+            color: white;
+            z-index: 999;
+        }
+    
+
+        h2 {
+            margin: 0px;
+            margin-top: 30px;
+            border-top: solid 2px white;
+            border-bottom: solid 2px white;
+        }
+    </style>
+
+
+</body>
+
+
+
+</html>

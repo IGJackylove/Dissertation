@@ -18,9 +18,44 @@
     </div> -->
 
     <div class="title">
-        <p class="title_main">Excutive summary for the result of the future space population</p>
+        <p class="title_main">Dashboard for the result of the future space population</p>
         <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
     </div>
+
+
+    <!-- HTML Code: Place this code in the document's body (between the 'body' tags) where the table should appear -->
+    <h2>Space Object Counting</h2>
+    <table class="GeneratedTable" id="mytable">
+        <thead>
+            <tr>
+                <th></th>
+                <th>All Objects</th>
+                <th>Active Objects</th>
+                <th>Inactive Objects</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>2023</td>
+                <td id="all-23"></td>
+                <td id="act-23"></td>
+                <td id="inact-23"></td>
+            </tr>
+            <tr>
+                <td>2028</td>
+                <td id="all-28"></td>
+                <td id="act-28"></td>
+                <td id="inact-28"></td>
+            </tr>
+            <tr>
+                <td>2043</td>
+                <td id="all-43"></td>
+                <td id="act-43"></td>
+                <td id="inact-43"></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Codes by Quackit.com -->
 
     <div class="block-height">
         <h2>Height distribution in LEO</h2>
@@ -62,7 +97,7 @@
         <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
     </div>
 
-    
+
 
     <script>
         addGraph();
@@ -77,20 +112,22 @@
         }
 
         .backButton {
-        width: 30px;
-        height: 30px;
-        border: 2px solid white;
-        border-radius: 30%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: white;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        position: absolute; /* 使用绝对定位 */
-        right: 10px; /* 从右侧0px的位置开始 */
+            width: 30px;
+            height: 30px;
+            border: 2px solid white;
+            border-radius: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            position: absolute;
+            /* 使用绝对定位 */
+            right: 10px;
+            /* 从右侧0px的位置开始 */
 
-      }
+        }
 
         .background {
             position: fixed;
@@ -111,16 +148,18 @@
 
         .title {
             display: flex;
-            justify-content: space-between; /* 这会让p和a在同一行显示，并且a显示在最右侧 */
-            align-items: flex-start; /* 这会让a显示在最上方 */
+            justify-content: space-between;
+            /* 这会让p和a在同一行显示，并且a显示在最右侧 */
+            align-items: flex-start;
+            /* 这会让a显示在最上方 */
             font-family: "Poppins", sans-serif;
             font-size: 30px;
             text-align: left;
             color: white;
             z-index: 999;
         }
-        
-        
+
+
 
         #height_2023,
         #height_2028,
@@ -156,7 +195,43 @@
             height: 500px;
             width: 32.5%;
         }
+
+        table.GeneratedTable {
+            width: 100%;
+            background-color: #1f2a40;
+            border-collapse: separate;
+            border-width: 2px;
+            border-color: #1f2a40;
+            border-style: solid;
+            color: #5ce6e3;
+            font-size: 20px;
+            font-family: "Poppins", sans-serif;
+            font-weight: 700;
+
+        }
+
+        table.GeneratedTable td,
+        table.GeneratedTable th {
+            border-width: 2px;
+            border-color: #1f2a40;
+            border-style: solid;
+            padding: 3px;
+            text-align: center;
+        }
+
+        
+
+        table.GeneratedTable thead {
+            background-color: #1f2a40;
+        }
+
+        h2 {
+            border-top: solid 2px #5ce6e3;
+            border-bottom: solid 2px #5ce6e3;
+        }
     </style>
+
+
 </body>
 
 

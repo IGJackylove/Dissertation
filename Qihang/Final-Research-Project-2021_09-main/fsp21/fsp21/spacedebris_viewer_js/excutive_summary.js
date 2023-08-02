@@ -89,6 +89,15 @@ function addGraph() {
     let HEO_num3 = 0;
     let unknown_num3 = 0;
 
+
+    let active1 = 0;
+    let inactive1 = 0;
+    let active2 = 0;
+    let inactive2 = 0;
+    let active3 = 0;
+    let inactive3 = 0;
+
+
     setInterval(function () {
         if (satcat.data_load_complete == true && data_load == false) {
             for (let debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) {
@@ -109,7 +118,12 @@ function addGraph() {
                 // for histogram(height)
                 let index = Math.floor((height - 160) / 10);
 
-
+                /* Code for the table */
+                if (operation_status1 !== "Decayed" && operation_status1 !== "Non-operational" && operation_status1 !== "Unknown") {
+                    active1 += 1;
+                } else {
+                    inactive1 += 1;
+                }
 
                 /*Code for the height part*/
                 if (sat_category1 == "Low Earth Orbit") {
@@ -162,6 +176,13 @@ function addGraph() {
 
             }// end of for loop
 
+
+            let all_23 = document.getElementById("all-23")
+            let act_23 = document.getElementById("act-23")
+            let inact_23 = document.getElementById("inact-23")
+            all_23.innerHTML = satcat.getNumberTotal();
+            act_23.innerHTML = active1;
+            inact_23.innerHTML = inactive1;
 
             // Futher processing of owner data
             let entries = Object.entries(ownershipList1);
@@ -583,6 +604,14 @@ function addGraph() {
                 let index2 = Math.floor((height2 - 160) / 10);
 
 
+                /* Code for the table */
+                if (operation_status2!== "Decayed" && operation_status2 !== "Non-operational" && operation_status2 !== "Unknown") {
+                    active2 += 1;
+                } else {
+                    inactive2 += 1;
+                }
+
+
                 /*Code for height distribution*/
                 if (sat_category2 == "Low Earth Orbit") {
                     if (operation_status2 !== "Decayed" && operation_status2 !== "Non-operational" && operation_status2 !== "Unknown") {
@@ -633,6 +662,14 @@ function addGraph() {
                 }
 
             }
+
+
+            let all_28 = document.getElementById("all-28")
+            let act_28 = document.getElementById("act-28")
+            let inact_28 = document.getElementById("inact-28")
+            all_28.innerHTML = satcat2.getNumberTotal();
+            act_28.innerHTML = active2;
+            inact_28.innerHTML = inactive2;
 
             let entries = Object.entries(ownershipList2);
             entries.sort((a, b) => b[1] - a[1]);
@@ -1055,6 +1092,14 @@ function addGraph() {
                 let height3 = avg(apogee3, perigee3);
                 let index3 = Math.floor((height3 - 160) / 10);
 
+
+                /* Code for the table */
+                if (operation_status3 == operation_status3 !== "Decayed" && operation_status3 !== "Non-operational" && operation_status3 !== "Unknown") {
+                    active3 += 1;
+                } else {
+                    inactive3 += 1;
+                }
+
                 if (sat_category3 == "Low Earth Orbit") {
                     if (operation_status3 !== "Decayed" && operation_status3 !== "Non-operational" && operation_status3 !== "Unknown") {
                         results_active3.push([
@@ -1101,7 +1146,13 @@ function addGraph() {
                 }
 
             }
-
+            
+            let all_43 = document.getElementById("all-43")
+            let act_43 = document.getElementById("act-43")
+            let inact_43 = document.getElementById("inact-43")
+            all_43.innerHTML = satcat3.getNumberTotal();
+            act_43.innerHTML = active3;
+            inact_43.innerHTML = inactive3;
 
             let entries = Object.entries(ownershipList3);
             entries.sort((a, b) => b[1] - a[1]);

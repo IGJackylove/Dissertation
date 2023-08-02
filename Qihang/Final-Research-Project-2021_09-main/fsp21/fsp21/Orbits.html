@@ -152,9 +152,8 @@
       <p class="orbit_bot">160 km / 99 miles</p>
       <div id="content_LEO">
         <button class="interactive_button" id="button_LEO" onclick="showLEO()">Low Earth Orbit</button>
-        - typically take between 90 minutes and 2 hours to complete one full orbit around the Earth. Low altitudes in
-        combination with short orbital periods make LEO satellites ideally situated for remote sensing missions,
-        including Earth observation and reconnaissance.
+        - typically complete one full orbit around the Earth in 90 minutes to 2 hours. The low altitude, coupled with
+        short orbital periods, positions them ideally for science, imaging, and low-bandwidth telecommunications.
       </div>
     </div>
 
@@ -162,10 +161,9 @@
       <p class="orbit_bot">2,000 km / 1,243 miles</p>
       <div id="content_MEO">
         <button class="interactive_button" id="button_MEO" onclick="showMEO()">Medium Earth Orbit</button>
-        - navigation satellite systems (like the ones used by our car's GPS) work well at this altitude. Being so high
-        up they have larger footprints and can see more of the Earth's surface at a time. One reason there are fewer
-        satellites in this region is the presence of the Van Allen Radiation Belt, which can damage satellites' onboard
-        electronic systems.
+        - have larger footprints than LEO, seeing more Earth's surface, and lower transmission times than GEO, allowing
+        for better navigation systems like GPS. However, the presence of the Van Allen Radiation Belt in this region can
+        pose challenges, resulting in fewer satellites operating in MEO.
       </div>
     </div>
 
@@ -175,11 +173,10 @@
       <p class="orbit_bot" id="GEO_bot">35,786 km / 22,236 miles</p>
       <div id="content_GEO">
         <button class="interactive_button" id="button_GEO" onclick="showGEO()">Geosynchronous Equatorial Orbit</button>
-        - have an orbital period that matches Earth's rotation around its axis. These satellites have a constant
-        altitude
-        of 35,786km (22,236 miles). A special case of geosynchronous orbit is the geostationary orbit which is a
-        circular
-        geosynchronous orbit in Earth's equatorial plane (their inclination is zero).
+        - have a constant altitude of 35,786km, allows satellites to remain fixed over one-third of Earth's surface,
+        observing as if it
+        were not rotating. Geostationary orbit is a specific case of GEO with a circular path in the equatorial plane.
+        Around 35 percent of all operational satellites are in GEO, making it the second most popular orbital regime.
       </div>
       <p class="orbit_bot" id="GEO_bot">35,786 km / 22,236 miles</p>
     </div>
@@ -188,9 +185,9 @@
     <div class="block_orbit">
       <div id="content_HEO">
         <button class="interactive_button" id="button_HEO" onclick="showHEO()">Hightly Elliptical Orbit</button>
-        - orbit the Earth on a long elliptical path. These satellites spend a significantly greater portion of time over
-        one hemisphere or the other. For example, the Molniya orbits are designed to provide communications and remote
-        sensing coverage over high latitudes.
+        - a specific type of high Earth orbit situated above geosynchronous levels. Unlike a circular path, it follows a
+        long oval shape, with the perigee, or closest point to Earth, being hundreds of miles above the surface, and the
+        apogee, or farthest point, extending tens of thousands of miles above.
       </div>
     </div>
 
@@ -198,12 +195,12 @@
       <div id="content_Unknown">
         <button class="interactive_button" id="button_Unknown" onclick="showUnknown()">Unknown</button>
         <p id="text_Unknown">Test Version</p>
-        
       </div>
-      <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
-    </div>
+      <button class="interactive_button" id="clearFilter" onclick="clearFilter()">Remove filter</button>
 
-    
+    </div>
+    <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
+
 
     <div class="creditContainer">
       <style>
@@ -381,6 +378,17 @@
       #button_Unknown {
         border: 2px solid darkgrey;
         color: darkgrey;
+      }
+
+      #clearFilter {
+        position: relative;
+        left: 0%;
+        width: 100%;
+        border: 2px solid rgb(219, 216, 216);
+        font-size: 15px;
+        background-color: rgb(219, 216, 216);
+        color: #000000;
+        font-weight: 600;
       }
     </style>
 

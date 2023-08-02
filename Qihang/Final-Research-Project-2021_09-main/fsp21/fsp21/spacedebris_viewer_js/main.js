@@ -306,21 +306,10 @@ function update_debris_position() {
 
 var cataloglist =
 {
-  cat_1: "fspcat_test",  /// the catalogue file for test
-  cat_2: "fspcat_20190522_v04_nodeb", //// baseline_fspcat_20190522_v04_nodeb.json
-  cat_3: "fspcat_20280101_v04_nodeb", /// fspcat_20280101_v04_nodeb.json
-  cat_4: "fspcat_20230101", /// fspcat_20230101.json
-  cat_5: "fspcat_20230701", /// fspcat_20230701.json
-  cat_6: "fspcat_20230101_v16_nodeb",
-  cat_7: "fspcat_20280101_v230819_nodeb",
-  cat_8: "fspcat_20430701_v16_nodeb",
-  cat_9: "fspcat_20430701_sk_nodeb",
-  cat_10: "fspcat_20430701_v270819_nodeb",
-  cat_11: "fspcat_baseline_20190522_v280819_nodeb",
-  cat_12: "fspcat_20230101_v280819_nodeb",
-  cat_13: "fspcat_20280101_v280819_nodeb",
-  cat_14: "fspcat_20430701_v280819_nodeb",
-  cat_15: "fspcat_20430701_v280819_test"
+  cat_1: "fspcat_baseline_20190522_v280819_nodeb",
+  cat_2: "fspcat_20230101_v280819_nodeb",
+  cat_3: "fspcat_20280101_v280819_nodeb",
+  cat_4: "fspcat_20430701_v280819_nodeb",
   /// geo_tle.json	
 }
 
@@ -628,7 +617,7 @@ function addOrbit(pick) {
       polyline: {
         positions: orbitPosArray,
         width: 2,
-        material: Cesium.Color.GREEN,
+        material: Cesium.Color.WHITE,
         loop: true
       },
     });
@@ -675,16 +664,26 @@ function showLEO() {
   removeInfoBox();
 
   removePrevisouPick()
+  let active_num = 0;
+  let inactive_num =0;
 
   let points = debris_collection._pointPrimitives;
   for (let i = 0; i < points.length; i++) {
     let point = points[i];
     if (point.id["Orbit Type"] == "Low Earth Orbit") {
       point.show = true
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
+        active_num +=1
+      }else{
+        inactive_num +=1
+      }
+      
     } else {
       point.show = false
     }
   }
+  document.getElementById("active_num").innerHTML = "Active Number: " + active_num;
+  document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
 }
 
 function showMEO() {
@@ -695,15 +694,26 @@ function showMEO() {
 
   removePrevisouPick()
 
+  let active_num = 0;
+  let inactive_num =0;
+
+
   let points = debris_collection._pointPrimitives;
   for (let i = 0; i < points.length; i++) {
     let point = points[i];
     if (point.id["Orbit Type"] == "Middle Earth Orbit") {
       point.show = true
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
+        active_num +=1
+      }else{
+        inactive_num +=1
+      }
     } else {
       point.show = false
     }
   }
+  document.getElementById("active_num").innerHTML = "Active Number: " + active_num;
+  document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
 }
 
 function showGEO() {
@@ -713,15 +723,24 @@ function showGEO() {
   removeInfoBox();
 
   removePrevisouPick()
+  let active_num = 0;
+  let inactive_num =0;
   let points = debris_collection._pointPrimitives;
   for (let i = 0; i < points.length; i++) {
     let point = points[i];
     if (point.id["Orbit Type"] == "Geosynchronous Equatorial Orbit") {
-      point.show = true
+      point.show = true;
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
+        active_num +=1
+      }else{
+        inactive_num +=1
+      }
     } else {
       point.show = false
     }
   }
+  document.getElementById("active_num").innerHTML = "Active Number: " + active_num;
+  document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
 }
 
 function showHEO() {
@@ -731,15 +750,24 @@ function showHEO() {
   removeInfoBox();
 
   removePrevisouPick()
+  let active_num = 0;
+  let inactive_num =0;
   let points = debris_collection._pointPrimitives;
   for (let i = 0; i < points.length; i++) {
     let point = points[i];
     if (point.id["Orbit Type"] == "Highly Elliptical Orbit") {
-      point.show = true
+      point.show = true;
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
+        active_num +=1
+      }else{
+        inactive_num +=1
+      }
     } else {
       point.show = false
     }
   }
+  document.getElementById("active_num").innerHTML = "Active Number: " + active_num;
+  document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
 }
 
 function showUnknown() {
@@ -749,15 +777,24 @@ function showUnknown() {
   removeInfoBox();
 
   removePrevisouPick()
+  let active_num = 0;
+  let inactive_num =0;
   let points = debris_collection._pointPrimitives;
   for (let i = 0; i < points.length; i++) {
     let point = points[i];
     if (point.id["Orbit Type"] == "Unknown") {
-      point.show = true
+      point.show = true;
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
+        active_num +=1
+      }else{
+        inactive_num +=1
+      }
     } else {
       point.show = false
     }
   }
+  document.getElementById("active_num").innerHTML = "Active Number: " + active_num;
+  document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
 }
 
 function checkEnterKey(event) {
@@ -807,6 +844,8 @@ function getSelectedOption() {
   removeInfoBox();
   removeOrbitEntity();
   removePrevisouPick();
+  let active_num = 0;
+  let inactive_num = 0;
   let selectionElement = document.getElementById("ownership-list")
   let selectionOption = selectionElement.options[selectionElement.selectedIndex].text;
   console.log(debris_collection)
@@ -818,8 +857,15 @@ function getSelectedOption() {
       point.show = false;
     } else if (selectionOption == point.id["Owner"]) {
       point.show = true;
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
+        active_num +=1
+      }else{
+        inactive_num +=1
+      }
     }
   }
+  document.getElementById("active_num").innerHTML = "Active Number: " + active_num;
+  document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
 
 }
 
@@ -827,6 +873,8 @@ function showOwner(index) {
   removeInfoBox();
   removeOrbitEntity();
   removePrevisouPick();
+  let active_num = 0;
+  let inactive_num = 0;
   let points = debris_collection._pointPrimitives
   for (let i = 0; i < points.length; i++) {
     let point = points[i];
@@ -835,20 +883,36 @@ function showOwner(index) {
       point.show = false;
     } else if (entries[index][0] == point.id["Owner"]) {
       point.show = true;
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
+        active_num +=1
+      }else{
+        inactive_num +=1
+      }
     }
   }
+  document.getElementById("active_num").innerHTML = "Active Number: " + active_num;
+  document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
 }
 
 function clearFilter() {
   removeInfoBox();
   removeOrbitEntity();
   removePrevisouPick();
+  let active_num = 0;
+  let inactive_num = 0;
   let points = debris_collection._pointPrimitives
   for (let i = 0; i < points.length; i++) {
     let point = points[i];
     point.pixelSize = 4 // Make the point looks larger since some owner only have few point to visualize
     point.show = true;
+    if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
+      active_num +=1
+    }else{
+      inactive_num +=1
+    }
   }
+  document.getElementById("active_num").innerHTML = "Active Number: " + active_num;
+  document.getElementById("inactive_num").innerHTML = "Inactive Number: " + inactive_num;
 
 }
 
@@ -1350,6 +1414,7 @@ window.onload = function () {
 
   //********给雷达viewer添加点 ********
   if (typeof radarHTML != "undefined") {
+
     radar_viewer = new Cesium.Viewer('radar_viewer', options3D);
     // /// view in ECEF, no need to update icrf
     // radar_viewer.scene.postUpdate.addEventListener(icrf_radar); // enable Earth rotation, everything is seen to be in eci
@@ -1362,6 +1427,7 @@ window.onload = function () {
     radar_viewer.scene.screenSpaceCameraController.enableTilt = false;
     radar_viewer.scene.screenSpaceCameraController.enableLook = false;
 
+    // remove credit
     radar_viewer.scene.frameState.creditDisplay.removeDefaultCredit();
 
 

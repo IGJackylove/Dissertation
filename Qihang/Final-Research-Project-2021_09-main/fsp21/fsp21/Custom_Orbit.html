@@ -147,7 +147,7 @@
 
 
       <div class="block-kepler">
-        <div class="block-title"> Inclination (Unit: radians)</div>
+        <div class="block-title"> Inclination (Unit: radians, Range: 0-3.14)</div>
         The inclination is the angle between the plane of the orbit and a reference plane. For objects orbiting the
         Earth,the reference plane is usually the plane of the Earth's equator.
         <br>
@@ -156,7 +156,7 @@
 
 
       <div class="block-kepler">
-        <div class="block-title"> Longitude of the ascending node (Unit: degrees)</div>
+        <div class="block-title"> Longitude of the ascending node (Unit: degrees, Range: 0-6.28)</div>
         The ascending node is the point where the orbit crosses the reference plane going upwards (north). The
         longitude of this point is measured from a reference direction, usually the direction to the vernal equinox.
         <br>
@@ -165,7 +165,7 @@
       </div>
 
       <div class="block-kepler">
-        <div class="block-title"> Argument of perigee (Unit: degrees)</div>
+        <div class="block-title"> Argument of perigee (Unit: degrees, Range: 0-360)</div>
         The Argument of Periapsis (ω), depicted as a purple angle in the diagram, determines the ellipse's orientation
         within the orbital plane. It's the angular measure from the ascending node to the perigee, the point of closest
         approach to the primary object.
@@ -174,7 +174,7 @@
       </div>
 
       <div class="block-kepler">
-        <div class="block-title"> True Anomaly (Unit: degrees)</div>
+        <div class="block-title"> True Anomaly (Unit: degrees, Range: 0-360)</div>
         The true anomaly is the angle from the periapsis to the object's current position.
         <br>
         <input type="number" class="input-custom" id="true anomaly" placeholder="Type your true anomaly"><br>
@@ -258,7 +258,7 @@
       }
 
       .block-title {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
         color: aquamarine;
         margin-bottom: 10px;

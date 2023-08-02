@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Guideline</title>
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
+    <script src="spacedebris_viewer_js/Catalogue.js"></script>
+    <script src="spacedebris_viewer_js/echarts.min.js"> </script>
+    <script src="spacedebris_viewer_js/excutive_summary.js"></script>
+</head>
+
+
+<body style="background-color:#141b2d;">
+    <!-- <div class="background">
+        <img class="background_image" src="images/background.jpg" alt="Background Image">
+    </div> -->
+
+    <div class="title">
+        <p class="title_main">User Guideline</p>
+        <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
+    </div>
+    <div class="block-reference">
+        <h2>Home page</h2>
+        <br>
+        The top left corner of the Home page is the selection bar for the FSP file, which is loaded on 22 May 2019 by
+        default.
+        <br>
+        <br>
+        In the middle of the left side is a series of buttons to jump to different pages, from top to bottom they are
+        (User Guideline, Orbits, Owner, Radar, Custom Orbit, Dashboard and Reference).
+        <br>
+        <br>
+        The lower left hand side is always used to display the time of the visualisation and the acceleration factor of
+        the time change.
+        <br>
+        <br>
+        Above the middle is the input field, which can be used to HIGHLIGHT a specific OBJECT based on the COSPAR ID
+        entered, the user will expand the datalist to help with the input as they enter it, and closing the datalist can
+        be closed by clicking on the Expand button to the right of the input box.
+        <br>
+        <br>
+        The bottom right corner is the legend, which indicates the meaning of the colour of the dots and shows the
+        corresponding quantity.
+        <br>
+        <br>
+        All dots have a click event, when clicked they will be highlighted and a corresponding track will be drawn.
+        <img src="images/guide_main.png">
+        <h2>Click event</h2>
+        <br>
+        After clicking or entering a specific COSPAR ID in the input box and enter, the screen will automatically
+        highlight (make larger, mark yellow) the corresponding object and draw a orbit based on the operational status.
+        <img src="images/guide_click.png">
+        <h2>Orbits</h2>
+        <br>
+        The display box on the right is an interactive information bar with an exit button at the top left and bottom
+        left of the bar. The box corresponding to the orbit is an interactive button that, when clicked, filters out all
+        objects on the corresponding orbit
+        <img src="images/guide_orbits.png">
+        <h2>Owners</h2>
+        <br>
+        The right side of the owner is also an interactive information bar, except that there is an additional selection
+        bar that contains all the owners, which will filter out all the matching objects after they have been selected.
+        <img src="images/guide_owner.png">
+        <h2>Radar</h2>
+        <br>
+        Radar sits with an additional square window for displaying the obejct status above the corresponding telescope
+        location.
+        <br>
+        <br>
+        Below the radar window are two boxes corresponding to an input box for the user to enter the telescope location,
+        and a legend for the radar window.
+        <br>
+        <br>
+        The button to return to the home page is at the top right of the screen.
+        <img src="images/guide_radar.png">
+        <h2>Custom Orbit</h2>
+        <br>
+        For the clear presentation of user-defined orbits, the Custom orbit page does not automatically load the default
+        file (2019/5/22).
+        <br>
+        <br>
+        The right side is still an interactive information bar that displays the kepler element definition while
+        allowing the user to enter their own kepler element and draw the orbit.
+        <br>
+        <br>
+        If you want to add FSP file results for combined comparison, you can select a specific file from the file
+        selection bar in the upper left corner of the screen
+        <img src="images/guide_custom.png">
+        <h2>Dashboard</h2>
+        <br>
+        Instead of loading cesium earth, the Dashboard will only show the graphs. The file is not needed and
+        automatically loads the model results for 2023, 2028 and 2043.
+        <br>
+        <br>
+        There will be a chart category selection box under each major data category, which will allow you to define the
+        type of chart.
+        <br>
+        <br>
+        The buttons to return to the home page are distributed in the upper and lower right of the page.
+        <img src="images/guide_dashboard.png">
+        <h2>Reference</h2>
+        <img src="images/guide_reference.png">
+
+    </div>
+    <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
+    </div>
+
+
+
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+            color: white;
+            margin-left: 5px;
+        }
+
+        .backButton {
+            width: 30px;
+            height: 30px;
+            border: 2px solid white;
+            border-radius: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            position: absolute;
+            /* 使用绝对定位 */
+            right: 10px;
+            /* 从右侧0px的位置开始 */
+
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 50%;
+            left: 0;
+            overflow: hidden;
+            z-index: -999;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+
+
+        .title {
+            display: flex;
+            justify-content: space-between;
+            /* 这会让p和a在同一行显示，并且a显示在最右侧 */
+            align-items: flex-start;
+            /* 这会让a显示在最上方 */
+            font-family: "Poppins", sans-serif;
+            font-size: 50px;
+            text-align: left;
+            color: white;
+            z-index: 999;
+            left: 45%;
+        }
+
+
+        h2 {
+            margin: 0px;
+            margin-top: 30px;
+            border-top: solid 2px white;
+            border-bottom: solid 2px white;
+        }
+
+        img {
+            width: 90%;
+            margin: 2.5%;
+        }
+    </style>
+
+
+</body>
+
+
+
+</html>
