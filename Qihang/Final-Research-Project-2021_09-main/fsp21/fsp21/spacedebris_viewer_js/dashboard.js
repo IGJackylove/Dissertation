@@ -8,8 +8,8 @@ function addGraph() {
     let data_load = false;
     let data_load2 = false;
     let data_load3 = false;
-    let getYMax = false
-    let maxNumber;
+
+
     // 初始化 source 数组并添加表头
     let source = [['range', 'Active', 'Inactive']];
     let source2 = [['range', 'Active', 'Inactive']];
@@ -54,6 +54,8 @@ function addGraph() {
     let selected_owner = selection_owner.value
     let selection_orbit = document.getElementById("select-orbit")
     let selected_orbit = selection_orbit.value
+    let selection_status = document.getElementById("select-status")
+    let selected_status = selection_status.value
 
     let ownershipList1 = {};
     let ownershipList2 = {};
@@ -61,9 +63,7 @@ function addGraph() {
     let ownerdata1 = [];
     let ownerdata2 = [];
     let ownerdata3 = [];
-    let orbitdata1 = [];
-    let orbitdata2 = [];
-    let orbitdata3 = [];
+   
 
 
     let otherCountries1 = 0;
@@ -96,6 +96,15 @@ function addGraph() {
     let inactive2 = 0;
     let active3 = 0;
     let inactive3 = 0;
+
+    let operational_list1 = {};
+    let operational_list2 = {};
+    let operational_list3 = {};
+    let statusdata1 = [];
+    let statusdata2 = [];
+    let statusdata3 = [];
+
+
 
 
     setInterval(function () {
@@ -150,7 +159,6 @@ function addGraph() {
                 /* End of Code for the height part*/
 
                 /* Code for the owner part*/
-
                 // Check country
                 if (country1 in ownershipList1) {
                     // 如果已经在列表中，增加其值
@@ -174,8 +182,16 @@ function addGraph() {
                     unknown_num1 += 1;
                 }
 
+                /* Code for the status part*/
+                if (operation_status1 in operational_list1) {
+                    // 如果已经在列表中，增加其值
+                    operational_list1[operation_status1] += 1;
+                } else {
+                    // 如果还不在列表中，将其值设为1
+                    operational_list1[operation_status1] = 1;
+                }
+                /*End of code for status part*/
             }// end of for loop
-
 
             let all_23 = document.getElementById("all-23")
             let act_23 = document.getElementById("act-23")
@@ -206,9 +222,7 @@ function addGraph() {
                     name: "Other Countries"
                 }
             )
-            /* End of code to process the data*/
-
-
+            
             /* Code to set option and plot diagram*/
             if (selected_height == "scatter plot") {
                 let height_2023 = document.getElementById('height_2023');
@@ -576,6 +590,135 @@ function addGraph() {
                 option1 && orbit_2023_ini.setOption(option1);
             }
 
+            if (selected_status == "pie chart") {
+                // initialize the echart
+                let status_2023 = document.getElementById('status_2023');
+                let status_2023_ini = echarts.init(status_2023, "dark");
+
+                option1 = {
+                    title: {
+                        text: 'Operatiuonal Status Distribution of Space Population in 2023',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b}: {c} ({d}%)'
+                    },
+                    legend: {
+                        orient: 'horizontal', // 设置图例为水平排列
+                        left: 'center',       // 将图例居中
+                        top: 'bottom'         // 将图例放置在底部
+                    },
+                    backgroundColor: "#1F2A40",
+                    itemStyle: {
+                        borderColor: '#fff',
+                        borderWidth: 1
+                    },
+                    series: [
+                        {
+                            name: 'Access From',
+                            type: 'pie',
+                            radius: '50%',
+                            data: [
+                                { value: operational_list1["Operational"], name: 'Operational', itemStyle: { color: '#66FF66' } },
+                                { value: operational_list1["Non-operational"], name: 'Non-operational', itemStyle: { color: '#FF6666' } },
+                                { value: operational_list1["Partially operational"], name: 'Partially operational', itemStyle: { color: '#FFB266' } },
+                                { value: operational_list1["Backup/Standby"], name: 'Backup/Standby', itemStyle: { color: '#66FFB2' } },
+                                { value: operational_list1["Spare"], name: 'Spare', itemStyle: { color: '#66FFFF' } },
+                                { value: operational_list1["Extened mission"], name: 'Extened mission', itemStyle: { color: '#B266FF' } },
+                                { value: operational_list1["Decayed"], name: 'Decayed', itemStyle: { color: '#FFFF66' } },
+                                { value: operational_list1["Unknown"], name: 'Unknown', itemStyle: { color: '#808080' } },
+                            ],
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                status_2023_ini.clear();
+                option1 && status_2023_ini.setOption(option1);
+                data_load = true
+
+
+            }
+            else if (selected_status == "histogram") {
+                // initialize the echart
+                let status_2023 = document.getElementById('status_2023');
+                let status_2023_ini = echarts.init(status_2023, "dark");
+
+                option1 = {
+                    title: {
+                        text: 'Operational Status Distribution of Space Population in 2023',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+
+                    label: {
+                        show: true, // 显示标签
+                        position: 'top', // 标签的位置，'top' 表示在柱顶部
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [{
+                        type: 'category',
+                        data: ["Operational", "Non-operational", "Partially operational", "Backup/Standby", "Spare", "Extened mission","Decayed", "Unknown"],
+                        axisTick: {
+                            alignWithLabel: true
+                        },
+                        axisLabel: {
+                            interval: 0,
+                            textStyle: {
+                                fontSize: 10
+                            },
+                            rotate: 30,
+                        },
+                        
+                    }],
+                    yAxis: [{
+                        type: 'value',
+                        max: 11000,
+                        name: "Counting",
+                        nameLocation: 'center', // 将x轴标签居中对齐
+                        nameTextStyle: {
+                            fontWeight: 'bold', // 加粗x轴标签文本
+                            fontSize: 15,
+                            padding: [0, 0, 25, 0]
+                        },
+                    }],
+                    backgroundColor: "#1F2A40",
+                    series: {
+                        type: "bar",
+                        barWidth: '60%',
+                        data: [
+                            { value: operational_list1["Operational"], itemStyle: { color: '#66FF66' }},
+                            { value: operational_list1["Non-operational"], itemStyle: { color: '#FF6666' } },
+                            { value: operational_list1["Partially operational"], itemStyle: { color: '#66FFB2' } },
+                            { value: operational_list1["Backup/Standby"], itemStyle: { color: '#66FFB2' } },
+                            { value: operational_list1["Spare"], itemStyle: { color: '#66FFFF' } },
+                            { value: operational_list1["Extened mission"], itemStyle: { color: '#B266FF' } },
+                            { value: operational_list1["Decayed"], itemStyle: { color: '#FFFF66' } },
+                            { value: operational_list1["Unknown"], itemStyle: { color: '#808080' } },
+                        ]
+                    }
+                };
+                status_2023_ini.clear();
+                option1 && status_2023_ini.setOption(option1);
+                data_load = true;
+            }
+
 
         }
 
@@ -661,7 +804,17 @@ function addGraph() {
                     unknown_num2 += 1;
                 }
 
-            }
+                /* Code for the status part*/
+                if (operation_status2 in operational_list2) {
+                    // 如果已经在列表中，增加其值
+                    operational_list2[operation_status2] += 1;
+                } else {
+                    // 如果还不在列表中，将其值设为1
+                    operational_list2[operation_status2] = 1;
+                }
+                /*End of code for status part*/
+
+            } // end of for loop
 
 
             let all_28 = document.getElementById("all-28")
@@ -1016,7 +1169,6 @@ function addGraph() {
             }
             else if (selected_orbit == "pie chart") {
 
-                console.log(orbitdata3)
 
                 // initialize the echart
                 let orbit_2028 = document.getElementById('orbit_2028');
@@ -1067,7 +1219,135 @@ function addGraph() {
                 option2 && orbit_2028_ini.setOption(option2);
             }
 
+            if (selected_status == "pie chart") {
+                // initialize the echart
+                let status_2028 = document.getElementById('status_2028');
+                let status_2028_ini = echarts.init(status_2028, "dark");
 
+
+                option2 = {
+                    title: {
+                        text: 'Operatiuonal Status Distribution of Space Population in 2028',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b}: {c} ({d}%)'
+                    },
+                    legend: {
+                        orient: 'horizontal', // 设置图例为水平排列
+                        left: 'center',       // 将图例居中
+                        top: 'bottom'         // 将图例放置在底部
+                    },
+                    backgroundColor: "#1F2A40",
+                    itemStyle: {
+                        borderColor: '#fff',
+                        borderWidth: 1
+                    },
+                    series: [
+                        {
+                            name: 'Access From',
+                            type: 'pie',
+                            radius: '50%',
+                            data: [
+                                { value: operational_list2["Operational"], name: 'Operational', itemStyle: { color: '#66FF66' } },
+                                { value: operational_list2["Non-operational"], name: 'Non-operational', itemStyle: { color: '#FF6666' } },
+                                { value: operational_list2["Partially operational"], name: 'Partially operational', itemStyle: { color: '#FFB266' } },
+                                { value: operational_list2["Backup/Standby"], name: 'Backup/Standby', itemStyle: { color: '#66FFB2' } },
+                                { value: operational_list2["Spare"], name: 'Spare', itemStyle: { color: '#66FFFF' } },
+                                { value: operational_list2["Extened mission"], name: 'Extened mission', itemStyle: { color: '#B266FF' } },
+                                { value: operational_list2["Decayed"], name: 'Decayed', itemStyle: { color: '#FFFF66' } },
+                                { value: operational_list2["Unknown"], name: 'Unknown', itemStyle: { color: '#808080' } },
+                            ],
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                status_2028_ini.clear();
+                option2 && status_2028_ini.setOption(option2);
+                data_load2 = true
+
+
+            }
+            else if (selected_status == "histogram") {
+                // initialize the echart
+                let status_2028 = document.getElementById('status_2028');
+                let status_2028_ini = echarts.init(status_2028, "dark");
+
+                option2 = {
+                    title: {
+                        text: 'Operational Status Distribution of Space Population in 2028',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+
+                    label: {
+                        show: true, // 显示标签
+                        position: 'top', // 标签的位置，'top' 表示在柱顶部
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [{
+                        type: 'category',
+                        data: ["Operational", "Non-operational", "Partially operational", "Backup/Standby", "Spare", "Extened mission","Decayed", "Unknown"],
+                        axisTick: {
+                            alignWithLabel: true
+                        },
+                        axisLabel: {
+                            interval: 0,
+                            textStyle: {
+                                fontSize: 10
+                            },
+                            rotate: 30,
+                        },
+                        
+                    }],
+                    yAxis: [{
+                        type: 'value',
+                        max: 11000,
+                        name: "Counting",
+                        nameLocation: 'center', // 将x轴标签居中对齐
+                        nameTextStyle: {
+                            fontWeight: 'bold', // 加粗x轴标签文本
+                            fontSize: 15,
+                            padding: [0, 0, 25, 0]
+                        },
+                    }],
+                    backgroundColor: "#1F2A40",
+                    series: {
+                        type: "bar",
+                        barWidth: '60%',
+                        data: [
+                            { value: operational_list2["Operational"], itemStyle: { color: '#66FF66' }},
+                            { value: operational_list2["Non-operational"], itemStyle: { color: '#FF6666' } },
+                            { value: operational_list2["Partially operational"], itemStyle: { color: '#66FFB2' } },
+                            { value: operational_list2["Backup/Standby"], itemStyle: { color: '#66FFB2' } },
+                            { value: operational_list2["Spare"], itemStyle: { color: '#66FFFF' } },
+                            { value: operational_list2["Extened mission"], itemStyle: { color: '#B266FF' } },
+                            { value: operational_list2["Decayed"], itemStyle: { color: '#FFFF66' } },
+                            { value: operational_list2["Unknown"], itemStyle: { color: '#808080' } },
+                        ]
+                    }
+                };
+                status_2028_ini.clear();
+                option2 && status_2028_ini.setOption(option2);
+                data_load2 = true;
+            }
         }
 
     }, 1000);
@@ -1145,7 +1425,17 @@ function addGraph() {
                     unknown_num3 += 1;
                 }
 
-            }
+                /* Code for the status part*/
+                if (operation_status3 in operational_list3) {
+                    // if in the list add 1
+                    operational_list3[operation_status3] += 1;
+                } else {
+                    // if not in the list, set 1
+                    operational_list3[operation_status3] = 1;
+                }
+                /*End of code for status part*/
+
+            } // end of for loop
             
             let all_43 = document.getElementById("all-43")
             let act_43 = document.getElementById("act-43")
@@ -1500,7 +1790,6 @@ function addGraph() {
             }
             else if (selected_orbit == "pie chart") {
 
-                console.log(orbitdata3)
 
                 // initialize the echart
                 let orbit_2043 = document.getElementById('orbit_2043');
@@ -1551,6 +1840,133 @@ function addGraph() {
                 option3 && orbit_2043_ini.setOption(option3);
             }
 
+            if (selected_status == "pie chart") {
+                // initialize the echart
+                let status_2043 = document.getElementById('status_2043');
+                let status_2043_ini = echarts.init(status_2043, "dark");
+
+
+                option3 = {
+                    title: {
+                        text: 'Operatiuonal Status Distribution of Space Population in 2043',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b}: {c} ({d}%)'
+                    },
+                    legend: {
+                        orient: 'horizontal', // 设置图例为水平排列
+                        left: 'center',       // 将图例居中
+                        top: 'bottom'         // 将图例放置在底部
+                    },
+                    backgroundColor: "#1F2A40",
+                    itemStyle: {
+                        borderColor: '#fff',
+                        borderWidth: 1
+                    },
+                    series: [
+                        {
+                            name: 'Access From',
+                            type: 'pie',
+                            radius: '50%',
+                            data: [
+                                { value: operational_list1["Operational"], name: 'Operational', itemStyle: { color: '#66FF66' } },
+                                { value: operational_list1["Non-operational"], name: 'Non-operational', itemStyle: { color: '#FF6666' } },
+                                { value: operational_list1["Partially operational"], name: 'Partially operational', itemStyle: { color: '#FFB266' } },
+                                { value: operational_list1["Backup/Standby"], name: 'Backup/Standby', itemStyle: { color: '#66FFB2' } },
+                                { value: operational_list1["Spare"], name: 'Spare', itemStyle: { color: '#66FFFF' } },
+                                { value: operational_list1["Extened mission"], name: 'Extened mission', itemStyle: { color: '#B266FF' } },
+                                { value: operational_list1["Decayed"], name: 'Decayed', itemStyle: { color: '#FFFF66' } },
+                                { value: operational_list1["Unknown"], name: 'Unknown', itemStyle: { color: '#808080' } },
+                            ],
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                status_2043_ini.clear();
+                option3 && status_2043_ini.setOption(option3);
+                data_load3 = true
+            }
+            else if (selected_status == "histogram") {
+                // initialize the echart
+                let status_2043 = document.getElementById('status_2043');
+                let status_2043_ini = echarts.init(status_2043, "dark");
+
+                option3 = {
+                    title: {
+                        text: 'Operational Status Distribution of Space Population in 2043',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+
+                    label: {
+                        show: true, // 显示标签
+                        position: 'top', // 标签的位置，'top' 表示在柱顶部
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [{
+                        type: 'category',
+                        data: ["Operational", "Non-operational", "Partially operational", "Backup/Standby", "Spare", "Extened mission","Decayed", "Unknown"],
+                        axisTick: {
+                            alignWithLabel: true
+                        },
+                        axisLabel: {
+                            interval: 0,
+                            textStyle: {
+                                fontSize: 10
+                            },
+                            rotate: 30,
+                        },
+                        
+                    }],
+                    yAxis: [{
+                        type: 'value',
+                        max: 11000,
+                        name: "Counting",
+                        nameLocation: 'center', // 将x轴标签居中对齐
+                        nameTextStyle: {
+                            fontWeight: 'bold', // 加粗x轴标签文本
+                            fontSize: 15,
+                            padding: [0, 0, 25, 0]
+                        },
+                    }],
+                    backgroundColor: "#1F2A40",
+                    series: {
+                        type: "bar",
+                        barWidth: '60%',
+                        data: [
+                            { value: operational_list3["Operational"], itemStyle: { color: '#66FF66' }},
+                            { value: operational_list3["Non-operational"], itemStyle: { color: '#FF6666' } },
+                            { value: operational_list3["Partially operational"], itemStyle: { color: '#66FFB2' } },
+                            { value: operational_list3["Backup/Standby"], itemStyle: { color: '#66FFB2' } },
+                            { value: operational_list3["Spare"], itemStyle: { color: '#66FFFF' } },
+                            { value: operational_list3["Extened mission"], itemStyle: { color: '#B266FF' } },
+                            { value: operational_list3["Decayed"], itemStyle: { color: '#FFFF66' } },
+                            { value: operational_list3["Unknown"], itemStyle: { color: '#808080' } },
+                        ]
+                    }
+                };
+                status_2043_ini.clear();
+                option3 && status_2043_ini.setOption(option3);
+                data_load3 = true;
+            }
 
         }
 

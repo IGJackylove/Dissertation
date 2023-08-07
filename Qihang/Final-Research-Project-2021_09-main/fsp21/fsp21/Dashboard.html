@@ -8,7 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
     <script src="spacedebris_viewer_js/Catalogue.js"></script>
     <script src="spacedebris_viewer_js/echarts.min.js"> </script>
-    <script src="spacedebris_viewer_js/excutive_summary.js"></script>
+    <script src="spacedebris_viewer_js/dashboard.js"></script>
 </head>
 
 
@@ -93,6 +93,20 @@
             <div id="orbit_2023"></div>
             <div id="orbit_2028"></div>
             <div id="orbit_2043"></div>
+        </div>
+
+    </div>
+
+    <div class="block-status">
+        <h2>Operational Status Distribution</h2>
+        <select id="select-status" onchange="addGraph()">
+            <option value="pie chart">Pie Chart</option>
+            <option value="histogram">Histogram</option>
+        </select>
+        <div class="block-plot-status">
+            <div id="status_2023"></div>
+            <div id="status_2028"></div>
+            <div id="status_2043"></div>
         </div>
         <a href="space_debris.html" class="backButton" src><img src="resources/Exits.svg"></a>
     </div>
@@ -191,6 +205,19 @@
         #orbit_2023,
         #orbit_2028,
         #orbit_2043 {
+            display: flex;
+            height: 500px;
+            width: 32.5%;
+        }
+
+        .block-plot-status {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #status_2023,
+        #status_2028,
+        #status_2043 {
             display: flex;
             height: 500px;
             width: 32.5%;

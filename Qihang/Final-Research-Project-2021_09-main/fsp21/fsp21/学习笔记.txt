@@ -1,2 +1,0 @@
-update_debris_position():
-直接获取debris_collection,根据时间计算新的位置，然后赋值。
