@@ -156,7 +156,7 @@
 
 
   <div id="catalogue_alert">
-    <label id="Label3">Please choose a FSP Catalogue file <br>(Default: 2019/05/22)</label>
+    <label id="Label3">Please select a year to visualize <br>(Default: 2019/05/22)</label>
   </div>
 
   <style>
@@ -199,14 +199,57 @@
 
   <canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;"> </canvas>
   <div class="background-container">
-    <a href="User_Guideline.html" class="svg-item"><img src="resources/circle-info.svg" title="User Guide"></a>
-    <a href="Orbits.html" class="svg-item"><img src="resources/Orbit.svg" title="Orbits"></a>
-    <a href="Owner.html" class="svg-item"><img src="resources/person.svg" title="Owners"></a>
-    <a href="Radar.html" class="svg-item"><img src="resources/radar.svg" title="Radar"></a>
-    <a href="Custom_Orbit.html" class="svg-item"><img src="resources/customOrbit.svg" title="Custom Orbit"></a>
-    <a href="Dashboard.html" class="svg-item"><img src="resources/excutiveSummary.svg" title="Dashboard"></a>
-    <a href="Reference.html" class="svg-item"><img src="resources/books.svg" title="Reference"></a>
+    <a href="User_Guideline.html">
+      <div class="svg-item">
+        <img src="resources/circle-info.svg" title="User Guide">
+      </div>
+      <span>User Guide</span>
+    </a>
+
+    <a href="Orbits.html">
+      <div class="svg-item">
+        <img src="resources/Orbit.svg" title="Orbits">
+      </div>
+      <span>Orbits</span>
+    </a>
+
+    <a href="Owner.html">
+      <div class="svg-item">
+        <img src="resources/person.svg" title="Owners">
+      </div>
+      <span>Owners</span>
+    </a>
+
+    <a href="Radar.html">
+      <div class="svg-item">
+        <img src="resources/radar.svg" title="Radar">
+      </div>
+      <span>Radar</span>
+    </a>
+
+    <a href="Custom_Orbit.html">
+      <div class="svg-item">
+        <img src="resources/customOrbit.svg" title="Custom Orbit">
+      </div>
+      <span>Custom Orbit</span>
+    </a>
+
+    <a href="Dashboard.html">
+      <div class="svg-item">
+        <img src="resources/excutiveSummary.svg" title="Dashboard">
+      </div>
+      <span>Dashboard</span>
+    </a>
+
+    <a href="Reference.html">
+      <div class="svg-item">
+        <img src="resources/books.svg" title="Reference">
+      </div>
+      <span>Reference</span>
+    </a>
   </div>
+
+
 
   <div class="creditContainer">
     <style>
@@ -239,6 +282,14 @@
       align-items: flex-start;
     }
 
+    .background-container a {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+
     .svg-item {
       width: 40px;
       height: 40px;
@@ -247,19 +298,20 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 10px;
+      margin-right: 10px;
+      /* add distance between icon and svg */
       background-color: white;
     }
 
-
     .svg-item img {
       width: 30px;
-      /* 控制每个SVG的显示宽度 */
       height: 30px;
-      /* 保持SVG的高宽比 */
     }
 
-  
+    .background-container span {
+      vertical-align: middle;
+      color: white;
+    }
   </style>
 
 

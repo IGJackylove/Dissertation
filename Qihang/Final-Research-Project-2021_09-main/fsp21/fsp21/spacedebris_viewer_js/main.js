@@ -306,10 +306,10 @@ function update_debris_position() {
 
 var cataloglist =
 {
-  cat_1: "fspcat_baseline_20190522_v280819_nodeb",
-  cat_2: "fspcat_20230101_v280819_nodeb",
-  cat_3: "fspcat_20280101_v280819_nodeb",
-  cat_4: "fspcat_20430701_v280819_nodeb",
+  cat_1: "Future Space Population Simulation (2019)",
+  cat_2: "Future Space Population Simulation (2023)",
+  cat_3: "Future Space Population Simulation (2028)",
+  cat_4: "Future Space Population Simulation (2043)",
   /// geo_tle.json	
 }
 
@@ -318,7 +318,7 @@ function GUIset() {
   gui.domElement.id = 'datgui';
   // gui.domElement.id = 'datgui';
 
-  var folderSpacecraft = gui.addFolder('Catalogue option bar');
+  var folderSpacecraft = gui.addFolder('Selection bar for visualization');
   var aaa = {
     CatalogName: ""
   }; ///cataloglist.cat_1
@@ -334,14 +334,15 @@ function GUIset() {
       removeOrbitEntity();
       removePrevisouPick();
       //debri_collection_radar.removeAll();
-
+      console.log(value.substring(36, 40));
       var satcat_logfile = "";
       var type = "";
-      if (value.substring(0, 6) == "fspcat") {
+      if (value.substring(0, 34) == "Future Space Population Simulation") {
+        
         type = "kep";
         satcat_logfile = data_path + "catalogue/" + value + ".json";
         ///////////////////判断目录是哪一个日期开始
-        if (value.substring(6, 15) == "_20190522") {
+        if (value.substring(36, 40) == "2019") {
           start_jd = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z");
           viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z"); ///It is in system loal time
           viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
@@ -349,7 +350,7 @@ function GUIset() {
           viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
         }
 
-        if (value.substring(6, 15) == "_20280101") {
+        if (value.substring(36, 40) == "2028") {
           start_jd = Cesium.JulianDate.fromIso8601("2028-01-01T00:00:00Z");
           viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2028-01-01T00:00:00Z"); ///It is in system loal time
           viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
@@ -357,7 +358,7 @@ function GUIset() {
           viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
         }
 
-        if (value.substring(6, 15) == "_20230101") {
+        if (value.substring(36, 40) == "2023") {
           start_jd = Cesium.JulianDate.fromIso8601("2023-01-01T00:00:00Z");
           viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2023-01-01T00:00:00Z"); ///It is in system loal time
           viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
@@ -365,7 +366,7 @@ function GUIset() {
           viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
         }
 
-        if (value.substring(6, 15) == "_20430701") {
+        if (value.substring(36, 40) == "2043") {
           start_jd = Cesium.JulianDate.fromIso8601("2043-07-01T00:00:00Z");
           viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2043-07-01T00:00:00Z"); ///It is in system loal time
           viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
@@ -373,20 +374,20 @@ function GUIset() {
           viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
         }
 
-        if (value.substring(6, 15) == "_baseline") {
-          start_jd = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z");
-          viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z"); ///It is in system loal time
-          viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
-          viewer_main.timeline.updateFromClock();
-          viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
-        }
+        // if (value.substring(6, 15) == "2019") {
+        //   start_jd = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z");
+        //   viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z"); ///It is in system loal time
+        //   viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
+        //   viewer_main.timeline.updateFromClock();
+        //   viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
+        // }
 
 
       }
-      else if (value.substring(0, 3) == "tle") {
-        type = "tle";
-        satcat_logfile = data_path + "tle/" + value + ".json";
-      }
+      // else if (value.substring(0, 3) == "tle") {
+      //   type = "tle";
+      //   satcat_logfile = data_path + "tle/" + value + ".json";
+      // }
 
       satcat.loadcatlog(type, satcat_logfile);
 
@@ -969,7 +970,7 @@ window.onload = function () {
     viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
     viewer_main.timeline.updateFromClock();
     viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
-    satcat.loadcatlog("kep", "data/catalogue/fspcat_baseline_20190522_v280819_nodeb.json");
+    satcat.loadcatlog("kep", "data/catalogue/Future Space Population Simulation (2019).json");
   }
 
 
