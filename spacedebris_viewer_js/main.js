@@ -1231,7 +1231,7 @@ window.onload = function () {
       } // end of for loop
 
 
-      // add dynamic list to the search bar in space_debris.html
+      // add dynamic list to the search bar in index.html
       if (typeof mainPage !== "undefined") {
         let objectList = document.getElementById("object-list");
         let points = debris_collection._pointPrimitives;
