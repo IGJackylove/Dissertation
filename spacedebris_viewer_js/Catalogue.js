@@ -146,7 +146,7 @@ class Catalogue
 				cat = "Geosynchronous Equatorial Orbit"; 
 				//GEO (HEIGHT REFERENCE FROM https://earthobservatory.nasa.gov/features/OrbitsCatalog) 36000km
 				//https://www.esa.int/Enabling_Support/Space_Transportation/Types_of_orbits#GEO  35786km
-				//Current: https://orbitaldebris.jsc.nasa.gov/library/usg_orbital_debris_mitigation_standard_practices_november_2019.pdf 35586-35986(+300)
+				//Current: https://orbitaldebris.jsc.nasa.gov/library/usg_orbital_debris_mitigation_standard_practices_november_2019.pdf 35586-35986
 
 			}else if ((cat_2 > 0.05 && inclinationDegree >=25 && inclinationDegree <= 155) || cat_2 > 0.05 ){ 
 				cat = "Highly Elliptical Orbit"} //HEO	REFERENCE FROM https://www.itu.int/itunews/manager/display.asp?lang=en&year=2003&issue=05&ipage=heo&ext=html		
