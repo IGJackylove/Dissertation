@@ -76,15 +76,15 @@
 
 
   <div id="catalogue_alert">
-    <label id="Label3">Please select a year to visualize </label>
+    <label id="Label3">Please choose a FSP Catalogue file </label>
   </div>
 
   <style>
     #catalogue_alert {
       padding: 0 7px;
       position: fixed;
-      width: 260px;
-      height: 22px;
+      width: 15%;
+      height: 2.5%;
       z-index: 999;
       top: 5px;
       left: 5px;
@@ -130,7 +130,7 @@
 
       <div class="block-kepler">
         <!-- https://undergroundmathematics.org/glossary/semi-major-axis -->
-        <div class="block-title"> Semi-major Aixs (Unit: km, Range: > 6371) </div>
+        <div class="block-title"> Semi-major Aixs (Unit: km) </div>
         This is the longest radius of an ellipse, which describes the size of the orbit.
         <br>
         <input type="number" class="input-custom" id="semi-major axis" placeholder="Type your semi-major axis">
@@ -165,9 +165,9 @@
       </div>
 
       <div class="block-kepler">
-        <div class="block-title"> Argument of periapsis (Unit: degrees, Range: 0-360)</div>
+        <div class="block-title"> Argument of perigee (Unit: degrees, Range: 0-360)</div>
         The Argument of Periapsis (ω), depicted as a purple angle in the diagram, determines the ellipse's orientation
-        within the orbital plane. It's the angular measure from the ascending node to the periapsis, the point of closest
+        within the orbital plane. It's the angular measure from the ascending node to the perigee, the point of closest
         approach to the primary object.
         <br>
         <input type="number" class="input-custom" id="argument of perigee" placeholder="Type your argument of perigee">

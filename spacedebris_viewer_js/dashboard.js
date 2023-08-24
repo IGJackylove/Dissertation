@@ -2,9 +2,9 @@ function addGraph() {
     let satcat = new Catalogue();
     let satcat2 = new Catalogue();
     let satcat3 = new Catalogue();
-    satcat.loadcatlog("kep", "data/catalogue/Future Space Population Simulation (2023).json");
-    satcat2.loadcatlog("kep", "data/catalogue/Future Space Population Simulation (2028).json");
-    satcat3.loadcatlog("kep", "data/catalogue/Future Space Population Simulation (2043).json");
+    satcat.loadcatlog("kep", "data/catalogue/fspcat_20230101_v280819_nodeb.json");
+    satcat2.loadcatlog("kep", "data/catalogue/fspcat_20280101_v280819_nodeb.json");
+    satcat3.loadcatlog("kep", "data/catalogue/fspcat_20430701_v280819_nodeb.json");
     let data_load = false;
     let data_load2 = false;
     let data_load3 = false;

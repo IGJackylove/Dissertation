@@ -306,10 +306,10 @@ function update_debris_position() {
 
 var cataloglist =
 {
-  cat_1: "Future Space Population Simulation (2019)",
-  cat_2: "Future Space Population Simulation (2023)",
-  cat_3: "Future Space Population Simulation (2028)",
-  cat_4: "Future Space Population Simulation (2043)",
+  cat_1: "fspcat_baseline_20190522_v280819_nodeb",
+  cat_2: "fspcat_20230101_v280819_nodeb",
+  cat_3: "fspcat_20280101_v280819_nodeb",
+  cat_4: "fspcat_20430701_v280819_nodeb",
   /// geo_tle.json	
 }
 
@@ -318,7 +318,7 @@ function GUIset() {
   gui.domElement.id = 'datgui';
   // gui.domElement.id = 'datgui';
 
-  var folderSpacecraft = gui.addFolder('Selection bar for visualization');
+  var folderSpacecraft = gui.addFolder('Catalogue option bar');
   var aaa = {
     CatalogName: ""
   }; ///cataloglist.cat_1
@@ -334,15 +334,14 @@ function GUIset() {
       removeOrbitEntity();
       removePrevisouPick();
       //debri_collection_radar.removeAll();
-      console.log(value.substring(36, 40));
+
       var satcat_logfile = "";
       var type = "";
-      if (value.substring(0, 34) == "Future Space Population Simulation") {
-        
+      if (value.substring(0, 6) == "fspcat") {
         type = "kep";
         satcat_logfile = data_path + "catalogue/" + value + ".json";
         ///////////////////判断目录是哪一个日期开始
-        if (value.substring(36, 40) == "2019") {
+        if (value.substring(6, 15) == "_20190522") {
           start_jd = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z");
           viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z"); ///It is in system loal time
           viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
@@ -350,7 +349,7 @@ function GUIset() {
           viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
         }
 
-        if (value.substring(36, 40) == "2028") {
+        if (value.substring(6, 15) == "_20280101") {
           start_jd = Cesium.JulianDate.fromIso8601("2028-01-01T00:00:00Z");
           viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2028-01-01T00:00:00Z"); ///It is in system loal time
           viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
@@ -358,7 +357,7 @@ function GUIset() {
           viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
         }
 
-        if (value.substring(36, 40) == "2023") {
+        if (value.substring(6, 15) == "_20230101") {
           start_jd = Cesium.JulianDate.fromIso8601("2023-01-01T00:00:00Z");
           viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2023-01-01T00:00:00Z"); ///It is in system loal time
           viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
@@ -366,7 +365,7 @@ function GUIset() {
           viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
         }
 
-        if (value.substring(36, 40) == "2043") {
+        if (value.substring(6, 15) == "_20430701") {
           start_jd = Cesium.JulianDate.fromIso8601("2043-07-01T00:00:00Z");
           viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2043-07-01T00:00:00Z"); ///It is in system loal time
           viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
@@ -374,20 +373,20 @@ function GUIset() {
           viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
         }
 
-        // if (value.substring(6, 15) == "2019") {
-        //   start_jd = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z");
-        //   viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z"); ///It is in system loal time
-        //   viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
-        //   viewer_main.timeline.updateFromClock();
-        //   viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
-        // }
+        if (value.substring(6, 15) == "_baseline") {
+          start_jd = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z");
+          viewer_main.clock.currentTime = Cesium.JulianDate.fromIso8601("2019-05-22T00:00:00Z"); ///It is in system loal time
+          viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
+          viewer_main.timeline.updateFromClock();
+          viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
+        }
 
 
       }
-      // else if (value.substring(0, 3) == "tle") {
-      //   type = "tle";
-      //   satcat_logfile = data_path + "tle/" + value + ".json";
-      // }
+      else if (value.substring(0, 3) == "tle") {
+        type = "tle";
+        satcat_logfile = data_path + "tle/" + value + ".json";
+      }
 
       satcat.loadcatlog(type, satcat_logfile);
 
@@ -451,7 +450,7 @@ function set_value() {
 function removePrevisouPick(input) {
   // 取消上一次点击的颜色修改和点大小修改效果
   if (previousPick !== null) {
-    if (previousPick.id["Operational status"] !== "Decayed" && previousPick.id["Operational status"] !== "Non-operational" && previousPick.id["Operational status"] !== "Unknown") {
+    if (previousPick.id["Operation Status"] !== "Decayed" && previousPick.id["Operation Status"] !== "Non-operational" && previousPick.id["Operation Status"] !== "Unknown") {
       previousPick.color = Cesium.Color.GREEN;  // 恢复为默认颜色
       previousPick.pixelSize = 4;  // 恢复为默认大小
     }
@@ -462,7 +461,7 @@ function removePrevisouPick(input) {
   }
 
   if (input == "radar" && radar_pick != null) {
-    if (radar_pick.id["Operational status"] !== "Decayed" && radar_pick.id["Operational status"] !== "Non-operational" && radar_pick.id["Operational status"] !== "Unknown") {
+    if (radar_pick.id["Operation Status"] !== "Decayed" && radar_pick.id["Operation Status"] !== "Non-operational" && radar_pick.id["Operation Status"] !== "Unknown") {
       radar_pick.outlineColor = Cesium.Color.BLACK;  // 恢复为默认颜色
       radar_pick.outlineWidth = 0.5;  // 恢复为默认大小
     }
@@ -535,10 +534,10 @@ function addOrbit(pick) {
     }
 
 
-    /* add orbit basedon Operational status */
-    if (clickedObject.id["Operational status"] !== "Decayed"
-      && clickedObject.id["Operational status"] !== "Non-operational"
-      && clickedObject.id["Operational status"] !== "Unknown") {
+    /* add orbit basedon operation status */
+    if (clickedObject.id["Operation Status"] !== "Decayed"
+      && clickedObject.id["Operation Status"] !== "Non-operational"
+      && clickedObject.id["Operation Status"] !== "Unknown") {
       // create Polyline Entity
       orbitEntity = viewer_main.entities.add({
         id: "Orbit for" + " " + clickedObject.id["COSPAR ID"],
@@ -673,7 +672,7 @@ function showLEO() {
     let point = points[i];
     if (point.id["Orbit Type"] == "Low Earth Orbit") {
       point.show = true
-      if (point.id["Operational status"] !== "Decayed" && point.id["Operational status"] !== "Non-operational" && point.id["Operational status"] !== "Unknown"){
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
         active_num +=1
       }else{
         inactive_num +=1
@@ -704,7 +703,7 @@ function showMEO() {
     let point = points[i];
     if (point.id["Orbit Type"] == "Middle Earth Orbit") {
       point.show = true
-      if (point.id["Operational status"] !== "Decayed" && point.id["Operational status"] !== "Non-operational" && point.id["Operational status"] !== "Unknown"){
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
         active_num +=1
       }else{
         inactive_num +=1
@@ -731,7 +730,7 @@ function showGEO() {
     let point = points[i];
     if (point.id["Orbit Type"] == "Geosynchronous Equatorial Orbit") {
       point.show = true;
-      if (point.id["Operational status"] !== "Decayed" && point.id["Operational status"] !== "Non-operational" && point.id["Operational status"] !== "Unknown"){
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
         active_num +=1
       }else{
         inactive_num +=1
@@ -758,7 +757,7 @@ function showHEO() {
     let point = points[i];
     if (point.id["Orbit Type"] == "Highly Elliptical Orbit") {
       point.show = true;
-      if (point.id["Operational status"] !== "Decayed" && point.id["Operational status"] !== "Non-operational" && point.id["Operational status"] !== "Unknown"){
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
         active_num +=1
       }else{
         inactive_num +=1
@@ -785,7 +784,7 @@ function showUnknown() {
     let point = points[i];
     if (point.id["Orbit Type"] == "Unknown") {
       point.show = true;
-      if (point.id["Operational status"] !== "Decayed" && point.id["Operational status"] !== "Non-operational" && point.id["Operational status"] !== "Unknown"){
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
         active_num +=1
       }else{
         inactive_num +=1
@@ -858,7 +857,7 @@ function getSelectedOption() {
       point.show = false;
     } else if (selectionOption == point.id["Owner"]) {
       point.show = true;
-      if (point.id["Operational status"] !== "Decayed" && point.id["Operational status"] !== "Non-operational" && point.id["Operational status"] !== "Unknown"){
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
         active_num +=1
       }else{
         inactive_num +=1
@@ -884,7 +883,7 @@ function showOwner(index) {
       point.show = false;
     } else if (entries[index][0] == point.id["Owner"]) {
       point.show = true;
-      if (point.id["Operational status"] !== "Decayed" && point.id["Operational status"] !== "Non-operational" && point.id["Operational status"] !== "Unknown"){
+      if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
         active_num +=1
       }else{
         inactive_num +=1
@@ -906,7 +905,7 @@ function clearFilter() {
     let point = points[i];
     point.pixelSize = 4 // Make the point looks larger since some owner only have few point to visualize
     point.show = true;
-    if (point.id["Operational Status"] !== "Decayed" && point.id["Operational Status"] !== "Non-operational" && point.id["Operational Status"] !== "Unknown"){
+    if (point.id["Operation Status"] !== "Decayed" && point.id["Operation Status"] !== "Non-operational" && point.id["Operation Status"] !== "Unknown"){
       active_num +=1
     }else{
       inactive_num +=1
@@ -970,7 +969,7 @@ window.onload = function () {
     viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
     viewer_main.timeline.updateFromClock();
     viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
-    satcat.loadcatlog("kep", "data/catalogue/Future Space Population Simulation (2019).json");
+    satcat.loadcatlog("kep", "data/catalogue/fspcat_baseline_20190522_v280819_nodeb.json");
   }
 
 
@@ -1136,7 +1135,7 @@ window.onload = function () {
             "Name": sat_name, // .trim to remove the space after the string
             "Object Type": sat_type,
             "Orbit Type": sat_category,
-            "Operational Status": operation_status,
+            "Operation Status": operation_status,
             "Owner": country
           },
           position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
@@ -1169,7 +1168,7 @@ window.onload = function () {
               "Name": sat_name, // .trim to remove the space after the string
               "Object Type": sat_type,
               "Orbit Type": sat_category,
-              "Operational Status": operation_status,
+              "Operation Status": operation_status,
               "Owner": country,
               "Radar Cross Section(RCS/m^2)": cross_section,
             },
@@ -1191,7 +1190,7 @@ window.onload = function () {
               "Name": sat_name, // .trim to remove the space after the string
               "Object Type": sat_type,
               "Orbit Type": sat_category,
-              "Operational Status": operation_status,
+              "Operation Status": operation_status,
               "Owner": country,
               "Radar Cross Section(RCS/m^2)": cross_section,
             },
@@ -1213,7 +1212,7 @@ window.onload = function () {
               "Name": sat_name, // .trim to remove the space after the string
               "Object Type": sat_type,
               "Orbit Type": sat_category,
-              "Operational Status": operation_status,
+              "Operation Status": operation_status,
               "Owner": country,
               "Radar Cross Section(RCS/m^2)": cross_section,
             },
