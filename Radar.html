@@ -53,34 +53,48 @@
       </ul>
     </div>
 
-    <div id="legend-radar">
-      <p id="legend-title">Legend of radar view </p>
-      <p id="legend-unit">(Unit: m^2)</p>
-      <ul id="legend-radar-ul">
-        <li id="rcs1" style="color: rgb(38, 146, 16); ">RCS ≤ 1 (Active)</li>
-        <li id="rcs4" style="color: rgb(216, 0, 0); ">RCS ≤ 1 (Inactive)</li>
-        <li id="rcs2" style="color: rgb(38, 146, 16); ">1 &gt RCS ≤ 10 (Active)</li>
-        <li id="rcs5" style="color: rgb(216, 0, 0); ">1 &gt RCS ≤ 10 (Inactive)</li>
-        <li id="rcs3" style="color: rgb(38, 146, 16); ">RCS &gt 10 (Active)</li>
-        <li id="rcs6" style="color: rgb(216, 0, 0); ">RCS &gt 10 (Inactive)</li>
-      </ul>
+
+
+
+  </div>
+
+    <div class="radar_viewer" id="radar_viewer"></div>
+
+    <div class="left_bar">
+      <div class="panel" id="user_input">
+        <label id="label1" for="user_latitude">Telescope Latitude</label><input type="text" size="30" id="user_latitude"
+          value="51" />
+        <label id="label2" for="user_longitude">Telescope Longitude</label><input type="text" size="30"
+          id="user_longitude" value="0" />
+        <label style="color: rgb(255, 255, 255); font-style: italic; font-size: 11pt;">Note: The default telescope
+          position
+          is set as London</label>
+        <button id="button1" onclick="set_value()">click to set</button>
+      </div>
+
+      <div id="legend-radar">
+        <p id="legend-title">Legend of radar view </p>
+        <p id="legend-unit">(Unit: m^2)</p>
+        <ul id="legend-radar-ul">
+          <li id="rcs1" style="color: rgb(38, 146, 16); ">RCS ≤ 1 (Active)</li>
+          <li id="rcs4" style="color: rgb(216, 0, 0); ">RCS ≤ 1 (Inactive)</li>
+          <li id="rcs2" style="color: rgb(38, 146, 16); ">1 &gt RCS ≤ 10 (Active)</li>
+          <li id="rcs5" style="color: rgb(216, 0, 0); ">1 &gt RCS ≤ 10 (Inactive)</li>
+          <li id="rcs3" style="color: rgb(38, 146, 16); ">RCS &gt 10 (Active)</li>
+          <li id="rcs6" style="color: rgb(216, 0, 0); ">RCS &gt 10 (Inactive)</li>
+        </ul>
+      </div>
     </div>
 
-
-  </div>
-
-  <div class="radar_viewer" id="radar_viewer"></div>
-
-  <div class="panel" id="user_input">
-    <label id="label1" for="user_latitude">Telescope Latitude</label><input type="text" size="30" id="user_latitude"
-      value="51" />
-    <label id="label2" for="user_longitude">Telescope Longitude</label><input type="text" size="30" id="user_longitude"
-      value="0" />
-    <label style="color: rgb(255, 255, 255); font-style: italic; font-size: 11pt;">Note: The default telescope position
-      is set as London</label>
-    <button id="button1" onclick="set_value()">click to set</button>
-  </div>
-
+  <style>
+    .left_bar{
+      position: absolute;
+      width: 425px;
+      z-index: 999;
+      left: 5px;
+      top: 525px;
+    }
+  </style>
 
   <div id="catalogue_alert">
     <label id="Label3">Please select a year to visualize (Default: 2019/05/22)</label>
@@ -97,8 +111,8 @@
   <style>
     .radar_viewer {
       position: absolute;
-      width: 400px;
-      height: 400px;
+      width: 425px;
+      height: 425px;
       z-index: 999;
       top: 90px;
       left: 5px;
@@ -136,10 +150,10 @@
       padding: 0 7px;
       position: absolute;
       width: 180px;
-      height: 208px;
+      /* height: 208px; */
       z-index: 999;
-      top: 500px;
-      left: 5px;
+      /* top: 500px;
+      left: 5px; */
       border: 1px solid;
       color: #f0f0f0;
       background-color: #00000096;
@@ -189,8 +203,7 @@
     #catalogue_alert {
       padding: 0 7px;
       position: fixed;
-      width: 380px;
-      height: 25px;
+
       z-index: 999;
       top: 5px;
       left: 5px;
@@ -244,16 +257,19 @@
     #legend-radar {
       position: absolute;
       left: 205px;
-      width: 185px;
-      height: 192px;
+      /* width: 210px; */
+      /* height: 192px; */
       z-index: 999;
-      top: 500px;
+      /* top: 500px; */
       border: 1px solid;
       color: #f0f0f0c0;
       list-style-position: inside;
       text-align: left;
       margin: 0px;
-      padding: 8px;
+      padding-left: 5px;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      padding-right: 5px;
       background-color: #00000096;
     }
 

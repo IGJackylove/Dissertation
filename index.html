@@ -79,12 +79,15 @@
       /* 使用flex布局来使输入框和按钮在一行 */
       align-items: center;
       /* 使输入框和按钮垂直居中 */
-      top: 2.5%;
-      left: 41%;
+      top: 15px;
+      /* Center the search bar*/
+      left: 50%;
+      transform: translateX(-50%);
       background-color: transparent;
-      width: 400px;
-      height: 20px;
-      z-index: 999;
+      width: 20%;
+      height: 3%;
+      z-index: 1000;
+
     }
 
     #object-search {
@@ -114,10 +117,10 @@
     /* Position the custom dropdown icon */
     .custom-dropdown-icon {
       position: absolute;
-      right: 1%;
+      right: 2px;
       z-index: 1000;
       top: 50%;
-      width: 7%;
+      width: 30px;
       height: 20px;
       transform: translateY(-50%);
       /* Ensure the icon doesn't capture mouse events */
@@ -158,8 +161,6 @@
     #catalogue_alert {
       padding: 0 7px;
       position: fixed;
-      width: 280px;
-      height: 40px;
       z-index: 999;
       top: 5px;
       left: 5px;
