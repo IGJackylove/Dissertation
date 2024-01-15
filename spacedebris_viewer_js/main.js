@@ -451,7 +451,7 @@ function set_value() {
 function removePrevisouPick(input) {
   // 取消上一次点击的颜色修改和点大小修改效果
   if (previousPick !== null) {
-    if (previousPick.id["Operational status"] !== "Decayed" && previousPick.id["Operational status"] !== "Non-operational" && previousPick.id["Operational status"] !== "Unknown") {
+    if (previousPick.id["Operational Status"] !== "Decayed" && previousPick.id["Operational Status"] !== "Non-operational" && previousPick.id["Operational Status"] !== "Unknown") {
       previousPick.color = Cesium.Color.GREEN;  // 恢复为默认颜色
       previousPick.pixelSize = 4;  // 恢复为默认大小
     }
@@ -462,7 +462,7 @@ function removePrevisouPick(input) {
   }
 
   if (input == "radar" && radar_pick != null) {
-    if (radar_pick.id["Operational status"] !== "Decayed" && radar_pick.id["Operational status"] !== "Non-operational" && radar_pick.id["Operational status"] !== "Unknown") {
+    if (radar_pick.id["Operational Status"] !== "Decayed" && radar_pick.id["Operational Status"] !== "Non-operational" && radar_pick.id["Operational Status"] !== "Unknown") {
       radar_pick.outlineColor = Cesium.Color.BLACK;  // 恢复为默认颜色
       radar_pick.outlineWidth = 0.5;  // 恢复为默认大小
     }
@@ -494,6 +494,7 @@ function addOrbit(pick) {
   console.log("add orbit")
   // for (let i = 0; i < ){
   clickedObject = pick
+  console.log(clickedObject)
   if (clickedObject) {
     removeOrbitEntity();
     removeInfoBox();
@@ -536,9 +537,10 @@ function addOrbit(pick) {
 
 
     /* add orbit basedon Operational status */
-    if (clickedObject.id["Operational status"] !== "Decayed"
-      && clickedObject.id["Operational status"] !== "Non-operational"
-      && clickedObject.id["Operational status"] !== "Unknown") {
+    if (clickedObject.id["Operational Status"] !== "Decayed"
+      && clickedObject.id["Operational Status"] !== "Non-operational"
+      && clickedObject.id["Operational Status"] !== "Unknown") {
+        console.log(clickedObject.id["Operational Status"])
       // create Polyline Entity
       orbitEntity = viewer_main.entities.add({
         id: "Orbit for" + " " + clickedObject.id["COSPAR ID"],
